@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Outlet, Link } from 'react-router-dom';
-import { Menu, ShieldCheck, User, Database, ArrowUpRight } from 'lucide-react';
+import { Menu, ShieldCheck, User, Database, ArrowUpRight, Truck } from 'lucide-react';
 import AdminSidebar from './AdminSidebar';
 import { useAuth } from '../../context/AuthContext';
 
@@ -37,11 +37,11 @@ export const AdminLayout = () => {
 
           <div className="flex items-center gap-3">
             <Link
-              to="/admin/seed"
+              to="/admin/cjdropshipping"
               className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-300 text-xs font-medium rounded-lg transition-colors"
             >
-              <Database className="w-3.5 h-3.5 text-emerald-400" />
-              <span>Seed DB</span>
+              <Truck className="w-3.5 h-3.5 text-blue-400" />
+              <span>CJ Importer</span>
             </Link>
 
             <Link

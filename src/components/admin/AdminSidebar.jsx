@@ -24,7 +24,6 @@ export const AdminSidebar = ({ isOpen, onClose }) => {
     { label: 'Reviews', to: '/admin/reviews', icon: MessageSquare },
     { label: 'CJ Dropshipping', to: '/admin/cjdropshipping', icon: Truck },
     { label: 'Firebase Setup', to: '/admin/firebase-setup', icon: ShieldCheck },
-    { label: 'Firestore Seeder', to: '/admin/seed', icon: Database },
   ];
 
   return (

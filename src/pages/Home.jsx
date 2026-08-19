@@ -161,21 +161,21 @@ export const Home = () => {
             </div>
             <h3 className="text-lg font-bold text-amber-950 mb-1">Firestore Database is Clean & Ready</h3>
             <p className="text-xs text-amber-800 mb-6 leading-relaxed">
-              No hardcoded products are active. All items are dynamically sourced from Firestore. You can add products in the Admin panel or run the 1-Click Seeder.
+              No hardcoded products are active. All items are dynamically sourced from Firestore. You can import products from CJ Dropshipping or create them in Admin.
             </p>
             <div className="flex flex-wrap items-center justify-center gap-3">
               <Link
-                to="/admin/seed"
-                className="px-5 py-2.5 bg-amber-900 hover:bg-amber-950 text-white text-xs font-semibold rounded-xl shadow transition-all flex items-center gap-2"
+                to="/admin/cjdropshipping"
+                className="px-5 py-2.5 bg-slate-950 hover:bg-black text-white text-xs font-semibold rounded-xl shadow transition-all flex items-center gap-2"
               >
                 <PlusCircle className="w-4 h-4" />
-                Seed Firestore With Catalog
+                Import from CJ Dropshipping
               </Link>
               <Link
                 to="/admin/products"
                 className="px-5 py-2.5 bg-white border border-amber-300 text-amber-900 hover:bg-amber-100/50 text-xs font-semibold rounded-xl transition-all"
               >
-                Add Products Manually
+                Add Product Manually
               </Link>
             </div>
           </div>
