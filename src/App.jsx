@@ -29,6 +29,7 @@ import AdminReviews from './pages/admin/AdminReviews';
 import AdminCJDropshipping from './pages/admin/AdminCJDropshipping';
 
 import ErrorBoundary from './components/common/ErrorBoundary';
+import ScrollToTop from './components/common/ScrollToTop';
 
 // Customer Storefront Layout Wrapper
 const StorefrontLayout = () => {
@@ -51,6 +52,7 @@ export function App() {
       <AuthProvider>
         <CartProvider>
           <Router>
+            <ScrollToTop />
             <Routes>
               {/* Customer Storefront Routes */}
               <Route element={<StorefrontLayout />}>

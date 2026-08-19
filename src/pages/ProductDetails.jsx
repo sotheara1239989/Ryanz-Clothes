@@ -281,6 +281,7 @@ export const ProductDetails = () => {
   // 1. Listen to Firestore Product & Reviews (Only re-runs if product ID changes)
   useEffect(() => {
     if (!id) return;
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
     setLoading(true);
 
     const unsubProduct = listenToProduct(

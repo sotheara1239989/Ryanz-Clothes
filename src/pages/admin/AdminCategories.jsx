@@ -68,7 +68,6 @@ export const AdminCategories = () => {
       name: '',
       slug: '',
       description: '',
-      image: 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=800&auto=format&fit=crop&q=80',
       isActive: true
     });
     setIsEditing(false);
@@ -85,7 +84,6 @@ export const AdminCategories = () => {
       name: category.name || '',
       slug: category.slug || '',
       description: category.description || '',
-      image: category.image || 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=800&auto=format&fit=crop&q=80',
       isActive: category.isActive !== undefined ? Boolean(category.isActive) : true
     });
     setIsEditing(true);
@@ -119,10 +117,10 @@ export const AdminCategories = () => {
       setIsSaving(true);
       if (isEditing) {
         await updateCategory(currentCategoryId, formData);
-        showToast(`Category "${formData.name}" updated in Firestore!`, "success");
+        showToast(`Category "${formData.name}" updated!`, "success");
       } else {
         await addCategory(formData);
-        showToast(`Category "${formData.name}" created in Firestore!`, "success");
+        showToast(`Category "${formData.name}" created!`, "success");
       }
       setIsModalOpen(false);
       resetForm();
@@ -135,10 +133,10 @@ export const AdminCategories = () => {
   };
 
   const handleDelete = async (categoryId, name) => {
-    if (window.confirm(`Are you sure you want to delete category "${name}" from Firestore?`)) {
+    if (window.confirm(`Are you sure you want to delete category "${name}"?`)) {
       try {
         await deleteCategory(categoryId);
-        showToast(`Category "${name}" deleted from Firestore.`, "success");
+        showToast(`Category "${name}" deleted.`, "success");
       } catch (err) {
         console.error("Delete category error:", err);
         showToast("Failed to delete category.", "error");
@@ -168,11 +166,11 @@ export const AdminCategories = () => {
         </button>
       </div>
 
-      {/* Categories Cards Grid */}
+      {/* Categories Cards Grid (No Photos - Clean Typography & Badge Design) */}
       {loading ? (
         <LoadingSpinner message="Loading collections..." />
       ) : categories.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           {categories.map((cat) => {
             const productCount = products.filter(
               p => (p.category || '').toLowerCase() === (cat.slug || cat.name).toLowerCase()
@@ -181,49 +179,54 @@ export const AdminCategories = () => {
             return (
               <div
                 key={cat.id}
-                className="bg-[#0c121e] rounded-3xl border border-slate-800/80 overflow-hidden shadow-xl hover:border-slate-700/80 transition-all flex flex-col justify-between group"
+                className="bg-[#0c121e] rounded-2xl sm:rounded-3xl border border-slate-800/80 p-5 sm:p-6 shadow-xl hover:border-slate-700/80 transition-all flex flex-col justify-between group space-y-4"
               >
-                <div className="relative aspect-[16/9] w-full overflow-hidden bg-slate-900">
-                  <img
-                    src={cat.image || 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=800&auto=format&fit=crop&q=80'}
-                    alt={cat.name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#0c121e] via-[#0c121e]/40 to-transparent" />
-                  <div className="absolute top-3 right-3 flex gap-1.5">
-                    <button
-                      onClick={() => handleOpenEdit(cat)}
-                      className="p-2 bg-slate-950/80 hover:bg-slate-900 text-white rounded-xl backdrop-blur transition-colors border border-slate-700/60 shadow"
-                      title="Edit Category"
-                    >
-                      <Edit3 className="w-3.5 h-3.5" />
-                    </button>
-                    <button
-                      onClick={() => handleDelete(cat.id, cat.name)}
-                      className="p-2 bg-slate-950/80 hover:bg-rose-950 text-rose-400 rounded-xl backdrop-blur transition-colors border border-slate-700/60 shadow"
-                      title="Delete Category"
-                    >
-                      <Trash2 className="w-3.5 h-3.5" />
-                    </button>
+                <div>
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shrink-0 shadow-sm">
+                        <Layers className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <h3 className="text-base font-extrabold text-white group-hover:text-emerald-400 transition-colors">
+                          {cat.name}
+                        </h3>
+                        <span className="text-[10px] text-emerald-400 font-mono bg-emerald-500/10 px-2 py-0.5 rounded inline-block mt-0.5">
+                          /{cat.slug || cat.name}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-1.5 shrink-0">
+                      <button
+                        onClick={() => handleOpenEdit(cat)}
+                        className="p-2 bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white rounded-xl transition-colors border border-slate-800 shadow-sm"
+                        title="Edit Category"
+                      >
+                        <Edit3 className="w-3.5 h-3.5" />
+                      </button>
+                      <button
+                        onClick={() => handleDelete(cat.id, cat.name)}
+                        className="p-2 bg-slate-900 hover:bg-rose-950 text-rose-400 rounded-xl transition-colors border border-slate-800 shadow-sm"
+                        title="Delete Category"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
                   </div>
+
+                  <p className="text-xs text-slate-400 mt-3 leading-relaxed">
+                    {cat.description || 'Dynamic streetwear collection for Ryanz Clothes.'}
+                  </p>
                 </div>
 
-                <div className="p-6 space-y-2 flex-1 flex flex-col justify-between">
-                  <div>
-                    <div className="flex items-center justify-between">
-                      <h3 className="text-base font-bold text-white">{cat.name}</h3>
-                      <span className="text-[10px] text-emerald-400 font-mono bg-emerald-500/10 px-2 py-0.5 rounded">
-                        /{cat.slug || cat.name}
-                      </span>
-                    </div>
-                    <p className="text-xs text-slate-400 mt-1 line-clamp-2">
-                      {cat.description || 'Dynamic streetwear collection for Ryanz Clothes.'}
-                    </p>
-                  </div>
-
-                  <div className="pt-4 border-t border-slate-900 flex items-center justify-between text-xs text-slate-500">
-                    <span>{productCount} live products in category</span>
-                    <span className={`w-2 h-2 rounded-full ${cat.isActive !== false ? 'bg-emerald-400' : 'bg-rose-500'}`} />
+                <div className="pt-4 border-t border-slate-800/80 flex items-center justify-between text-xs text-slate-400 font-medium">
+                  <span className="font-semibold">{productCount} active item{productCount === 1 ? '' : 's'}</span>
+                  <div className="flex items-center gap-1.5">
+                    <span className={`w-2 h-2 rounded-full ${cat.isActive !== false ? 'bg-emerald-400 animate-pulse' : 'bg-rose-500'}`} />
+                    <span className="text-[11px] font-bold text-slate-300">
+                      {cat.isActive !== false ? 'Active' : 'Disabled'}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -231,8 +234,8 @@ export const AdminCategories = () => {
           })}
         </div>
       ) : (
-        <div className="bg-slate-950 rounded-3xl p-12 border border-slate-800 text-center space-y-4">
-          <p className="text-slate-400 text-xs">No categories found in Firestore. Add categories to structure the store filters!</p>
+        <div className="bg-[#0c121e] rounded-2xl sm:rounded-3xl p-12 border border-slate-800/80 text-center space-y-4">
+          <p className="text-slate-400 text-xs">No categories found in store. Add categories to structure the catalog filters!</p>
           <button
             onClick={handleOpenCreate}
             className="px-4 py-2 bg-emerald-500 text-slate-950 text-xs font-bold rounded-xl inline-flex items-center gap-1.5"
@@ -243,7 +246,7 @@ export const AdminCategories = () => {
         </div>
       )}
 
-      {/* Add / Edit Category Modal */}
+      {/* Add / Edit Category Modal (No Photo Requirement) */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 overflow-y-auto bg-black/80 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4">
           <div className="bg-[#0c121e] border border-slate-800/80 rounded-2xl sm:rounded-3xl max-w-lg w-full p-5 sm:p-6 shadow-2xl space-y-5 sm:space-y-6">
@@ -286,21 +289,10 @@ export const AdminCategories = () => {
               <div>
                 <label className="block font-semibold text-slate-300 mb-1">Description</label>
                 <textarea
-                  rows="2"
+                  rows="3"
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                   placeholder="Cozy french terry and fleece streetwear pieces..."
-                  className="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-emerald-500"
-                />
-              </div>
-
-              <div>
-                <label className="block font-semibold text-slate-300 mb-1">Cover Image URL</label>
-                <input
-                  type="url"
-                  value={formData.image}
-                  onChange={(e) => setFormData({ ...formData, image: e.target.value })}
-                  placeholder="https://images.unsplash.com/photo-..."
                   className="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-emerald-500"
                 />
               </div>
@@ -318,7 +310,7 @@ export const AdminCategories = () => {
                   disabled={isSaving}
                   className="px-6 py-2.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold rounded-xl shadow-lg transition-all"
                 >
-                  {isSaving ? 'Saving to Firestore...' : (isEditing ? 'Save Changes' : 'Create Category')}
+                  {isSaving ? 'Saving...' : (isEditing ? 'Save Changes' : 'Create Category')}
                 </button>
               </div>
             </form>
