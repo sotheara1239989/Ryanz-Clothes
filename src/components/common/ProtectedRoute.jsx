@@ -5,7 +5,7 @@ import { ShieldAlert, LogIn, ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 export const ProtectedRoute = ({ children, adminOnly = false }) => {
-  const { currentUser, isAdmin, loading, toggleDemoAdminRole } = useAuth();
+  const { currentUser, isAdmin, loading } = useAuth();
   const location = useLocation();
 
   if (loading) {
@@ -26,28 +26,18 @@ export const ProtectedRoute = ({ children, adminOnly = false }) => {
           </div>
           <h2 className="text-2xl font-bold text-slate-900 mb-2">Admin Access Required</h2>
           <p className="text-sm text-slate-500 mb-6 leading-relaxed">
-            The Admin Dashboard is restricted to store administrators. You can sign in with an admin account or enable developer admin access below.
+            The Admin Console is restricted to authorized store administrators. Please sign in with an authorized admin account to continue.
           </p>
 
           <div className="space-y-3">
-            <button
-              onClick={toggleDemoAdminRole}
-              className="w-full py-3 bg-slate-900 hover:bg-black text-white text-sm font-semibold rounded-xl shadow transition-all flex items-center justify-center gap-2"
+            <Link
+              to="/login"
+              state={{ from: location }}
+              className="w-full py-3 bg-slate-900 hover:bg-black text-white text-sm font-semibold rounded-xl transition-all flex items-center justify-center gap-2 shadow"
             >
-              <span>Enable Admin Access (Developer Mode)</span>
-              <ArrowRight className="w-4 h-4" />
-            </button>
-
-            {!currentUser && (
-              <Link
-                to="/login"
-                state={{ from: location }}
-                className="w-full py-3 bg-slate-100 hover:bg-slate-200 text-slate-800 text-sm font-semibold rounded-xl transition-all flex items-center justify-center gap-2"
-              >
-                <LogIn className="w-4 h-4" />
-                Sign In with Admin Account
-              </Link>
-            )}
+              <LogIn className="w-4 h-4" />
+              <span>Sign In to Admin Account</span>
+            </Link>
 
             <Link
               to="/"

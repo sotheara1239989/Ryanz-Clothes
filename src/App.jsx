@@ -26,7 +26,6 @@ import AdminCategories from './pages/admin/AdminCategories';
 import AdminOrders from './pages/admin/AdminOrders';
 import AdminUsers from './pages/admin/AdminUsers';
 import AdminReviews from './pages/admin/AdminReviews';
-import AdminFirebaseSetup from './pages/admin/AdminFirebaseSetup';
 import AdminCJDropshipping from './pages/admin/AdminCJDropshipping';
 
 import ErrorBoundary from './components/common/ErrorBoundary';
@@ -99,7 +98,6 @@ export function App() {
                 <Route path="reviews" element={<AdminReviews />} />
                 <Route path="cjdropshipping" element={<AdminCJDropshipping />} />
                 <Route path="cj-dropshipping" element={<AdminCJDropshipping />} />
-                <Route path="firebase-setup" element={<AdminFirebaseSetup />} />
               </Route>
 
               {/* 404 Fallback */}

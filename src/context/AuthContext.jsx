@@ -90,11 +90,6 @@ export const AuthProvider = ({ children }) => {
     return updated;
   };
 
-  // Helper method for admin preview / initialization
-  const toggleDemoAdminRole = () => {
-    setIsAdmin(prev => !prev);
-  };
-
   const value = {
     currentUser,
     userProfile,
@@ -104,8 +99,7 @@ export const AuthProvider = ({ children }) => {
     register,
     loginWithGoogle,
     logout,
-    updateProfileData,
-    toggleDemoAdminRole
+    updateProfileData
   };
 
   return (

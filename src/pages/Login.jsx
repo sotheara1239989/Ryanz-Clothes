@@ -10,7 +10,7 @@ export const Login = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const { login, loginWithGoogle, toggleDemoAdminRole } = useAuth();
+  const { login, loginWithGoogle } = useAuth();
   const { showToast } = useToast();
   const navigate = useNavigate();
   const location = useLocation();
@@ -46,12 +46,6 @@ export const Login = () => {
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleDemoAdminAccess = () => {
-    toggleDemoAdminRole();
-    showToast("Admin access mode enabled!", "success");
-    navigate('/admin');
   };
 
   return (
@@ -142,15 +136,6 @@ export const Login = () => {
               <path fill="#34A853" d="M12 23.5c3.2 0 6-1.1 8-3l-3.7-2.9c-1.1.7-2.5 1.2-4.3 1.2-3 0-5.5-2.4-6.4-5.2L1.9 16.5C3.7 20.2 7.5 23.5 12 23.5z" />
             </svg>
             <span>Continue with Google</span>
-          </button>
-
-          <button
-            onClick={handleDemoAdminAccess}
-            type="button"
-            className="w-full py-2.5 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-emerald-800 text-xs font-semibold rounded-xl transition-all flex items-center justify-center gap-1.5"
-          >
-            <ShieldCheck className="w-4 h-4 text-emerald-600" />
-            <span>Instant Admin Access (Developer Mode)</span>
           </button>
         </div>
 

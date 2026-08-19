@@ -17,7 +17,7 @@ import { useCart } from '../../context/CartContext';
 import { listenToCategories } from '../../services/categoryService';
 
 export const Navbar = () => {
-  const { currentUser, userProfile, isAdmin, logout, toggleDemoAdminRole } = useAuth();
+  const { currentUser, userProfile, isAdmin, logout } = useAuth();
   const { totalItems } = useCart();
   const navigate = useNavigate();
 
@@ -50,7 +50,7 @@ export const Navbar = () => {
       <div className="bg-slate-950 text-white text-[11px] font-medium py-1.5 px-4 text-center tracking-wider flex items-center justify-center gap-3">
         <span>COMPLIMENTARY WORLDWIDE EXPRESS SHIPPING ON ORDERS OVER $100</span>
         <span className="hidden md:inline text-slate-400">|</span>
-        <span className="hidden md:inline text-slate-300">FIRESTORE-POWERED REAL-TIME STORE</span>
+        <span className="hidden md:inline text-slate-300">PREMIUM STREETWEAR APPAREL</span>
       </div>
 
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -175,15 +175,17 @@ export const Navbar = () => {
               <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 pointer-events-none" />
             </form>
 
-            {/* Admin Portal Shortcut Button */}
-            <Link
-              to="/admin"
-              className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-900 hover:bg-black text-white text-xs font-semibold rounded-lg shadow-sm transition-all"
-              title="Manage Products, Orders & Categories in Firestore"
-            >
-              <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-              <span>Admin Panel</span>
-            </Link>
+            {/* Admin Portal Shortcut Button (Admins only) */}
+            {isAdmin && (
+              <Link
+                to="/admin"
+                className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-900 hover:bg-black text-white text-xs font-semibold rounded-lg shadow-sm transition-all"
+                title="Store Management"
+              >
+                <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+                <span>Admin Panel</span>
+              </Link>
+            )}
 
             {/* Shopping Cart Icon with dynamic counter */}
             <Link
@@ -342,13 +344,15 @@ export const Navbar = () => {
               </div>
 
               <div className="pt-2 border-t border-gray-100 flex gap-2">
-                <Link
-                  to="/admin"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="flex-1 text-center py-2 bg-slate-900 text-white text-xs font-semibold rounded-lg"
-                >
-                  Admin Panel
-                </Link>
+                {isAdmin && (
+                  <Link
+                    to="/admin"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="flex-1 text-center py-2 bg-slate-900 text-white text-xs font-semibold rounded-lg"
+                  >
+                    Admin Panel
+                  </Link>
+                )}
                 {currentUser ? (
                   <button
                     onClick={() => {
