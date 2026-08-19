@@ -96,7 +96,8 @@ export const Home = () => {
 
               <p className="text-base sm:text-lg text-slate-400 max-w-xl leading-relaxed">
                 Elevate your everyday rotation with heavyweight organic cottons,
-                tailored dropped shoulders, and architectural streetwear silhouettes.
+                tailored dropped shoulders, and architectural streetwear
+                silhouettes.
               </p>
 
               <div className="pt-2 flex flex-wrap items-center gap-4">
@@ -144,7 +145,7 @@ export const Home = () => {
             <div className="lg:col-span-5 relative">
               <div className="relative mx-auto max-w-sm rounded-3xl overflow-hidden shadow-2xl border border-slate-800 bg-slate-900">
                 <img
-                  src="https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=800&auto=format&fit=crop&q=80"
+                  src="https://img.freepik.com/premium-photo/summer-collection-men-clothes-set-with-checkered-shirt-jeans-shoes-belt-isolated-white-background_142957-1103.jpg"
                   alt="Ryanz Clothes Hero"
                   className="w-full h-[450px] object-cover object-center"
                 />
@@ -173,7 +174,6 @@ export const Home = () => {
 
       {/* Main Content Sections */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-20 flex-1">
-
         {/* Featured Products Section (Firestore Query: featured == true) */}
         <section className="space-y-6">
           <div className="flex items-center justify-between">
