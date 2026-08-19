@@ -1,20 +1,20 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { 
-  ArrowRight, 
-  Sparkles, 
-  Flame, 
-  Tag, 
-  Layers, 
-  PlusCircle, 
-  ShieldCheck, 
-  Clock 
-} from 'lucide-react';
-import { listenToProducts } from '../services/productService';
-import { listenToCategories } from '../services/categoryService';
-import ProductCard from '../components/common/ProductCard';
-import LoadingSpinner from '../components/common/LoadingSpinner';
-import EmptyState from '../components/common/EmptyState';
+import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import {
+  ArrowRight,
+  Sparkles,
+  Flame,
+  Tag,
+  Layers,
+  PlusCircle,
+  ShieldCheck,
+  Clock,
+} from "lucide-react";
+import { listenToProducts } from "../services/productService";
+import { listenToCategories } from "../services/categoryService";
+import ProductCard from "../components/common/ProductCard";
+import LoadingSpinner from "../components/common/LoadingSpinner";
+import EmptyState from "../components/common/EmptyState";
 
 export const Home = () => {
   const [products, setProducts] = useState([]);
@@ -27,24 +27,26 @@ export const Home = () => {
     // Real-time listener for products from Firestore
     const unsubProducts = listenToProducts(
       (allProducts) => {
-        setProducts(allProducts.filter(p => p.isActive !== false));
+        setProducts(allProducts.filter((p) => p.isActive !== false));
         setLoading(false);
       },
       (err) => {
         console.error("Firestore products error:", err);
-        setError("Could not connect to Firestore. Please check Firebase configuration.");
+        setError(
+          "Could not connect to Firestore. Please check Firebase configuration.",
+        );
         setLoading(false);
-      }
+      },
     );
 
     // Real-time listener for categories from Firestore
     const unsubCategories = listenToCategories(
       (allCategories) => {
-        setCategories(allCategories.filter(c => c.isActive !== false));
+        setCategories(allCategories.filter((c) => c.isActive !== false));
       },
       (err) => {
         console.error("Firestore categories error:", err);
-      }
+      },
     );
 
     return () => {
@@ -54,12 +56,19 @@ export const Home = () => {
   }, []);
 
   // Filter dynamic collections from Firestore data
-  const featuredProducts = products.filter(p => p.featured === true).slice(0, 4);
+  const featuredProducts = products
+    .filter((p) => p.featured === true)
+    .slice(0, 4);
   const newArrivals = products
-    .filter(p => p.isNewArrival === true || p.createdAt)
+    .filter((p) => p.isNewArrival === true || p.createdAt)
     .slice(0, 4);
   const saleProducts = products
-    .filter(p => p.discountPrice && Number(p.discountPrice) > 0 && Number(p.discountPrice) < Number(p.price))
+    .filter(
+      (p) =>
+        p.discountPrice &&
+        Number(p.discountPrice) > 0 &&
+        Number(p.discountPrice) < Number(p.price),
+    )
     .slice(0, 4);
 
   return (
@@ -72,7 +81,6 @@ export const Home = () => {
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-            
             <div className="lg:col-span-7 space-y-6">
               <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-900 border border-slate-800 text-xs font-semibold text-slate-300">
                 <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
@@ -87,7 +95,9 @@ export const Home = () => {
               </h1>
 
               <p className="text-base sm:text-lg text-slate-400 max-w-xl leading-relaxed">
-                Elevate your everyday rotation with heavyweight organic cottons, tailored dropped shoulders, and architectural silhouettes managed in real time.
+                Elevate your everyday rotation with heavyweight organic cottons,
+                tailored dropped shoulders, and architectural silhouettes
+                managed in real time.
               </p>
 
               <div className="pt-2 flex flex-wrap items-center gap-4">
@@ -111,15 +121,21 @@ export const Home = () => {
               {/* Quick dynamic metrics */}
               <div className="pt-8 border-t border-slate-900 grid grid-cols-3 gap-6 max-w-md">
                 <div>
-                  <div className="text-2xl font-bold text-white">{products.length}</div>
+                  <div className="text-2xl font-bold text-white">
+                    {products.length}
+                  </div>
                   <div className="text-xs text-slate-500">Live Products</div>
                 </div>
                 <div>
-                  <div className="text-2xl font-bold text-white">{categories.length}</div>
+                  <div className="text-2xl font-bold text-white">
+                    {categories.length}
+                  </div>
                   <div className="text-xs text-slate-500">Live Categories</div>
                 </div>
                 <div>
-                  <div className="text-2xl font-bold text-emerald-400">100%</div>
+                  <div className="text-2xl font-bold text-emerald-400">
+                    100%
+                  </div>
                   <div className="text-xs text-slate-500">Firestore Driven</div>
                 </div>
               </div>
@@ -136,32 +152,41 @@ export const Home = () => {
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent" />
                 <div className="absolute bottom-6 left-6 right-6 p-4 rounded-2xl bg-slate-900/90 backdrop-blur-md border border-slate-800 text-white flex items-center justify-between">
                   <div>
-                    <p className="text-xs text-slate-400 uppercase tracking-wider font-semibold">New Season Drop</p>
-                    <h3 className="text-sm font-bold text-white">Ryanz Heavy Oversized Series</h3>
+                    <p className="text-xs text-slate-400 uppercase tracking-wider font-semibold">
+                      New Season Drop
+                    </p>
+                    <h3 className="text-sm font-bold text-white">
+                      Ryanz Heavy Oversized Series
+                    </h3>
                   </div>
-                  <Link to="/shop" className="p-2 bg-white text-black rounded-xl hover:scale-105 transition-transform">
+                  <Link
+                    to="/shop"
+                    className="p-2 bg-white text-black rounded-xl hover:scale-105 transition-transform"
+                  >
                     <ArrowRight className="w-4 h-4" />
                   </Link>
                 </div>
               </div>
             </div>
-
           </div>
         </div>
       </section>
 
       {/* Main Content Sections */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-20 flex-1">
-
         {/* Database Zero State Warning / Quick Start helper */}
         {!loading && products.length === 0 && (
           <div className="bg-amber-50 border border-amber-200 rounded-3xl p-8 text-center max-w-2xl mx-auto">
             <div className="w-12 h-12 bg-amber-100 rounded-2xl flex items-center justify-center text-amber-700 mx-auto mb-3">
               <Layers className="w-6 h-6" />
             </div>
-            <h3 className="text-lg font-bold text-amber-950 mb-1">Firestore Database is Clean & Ready</h3>
+            <h3 className="text-lg font-bold text-amber-950 mb-1">
+              Firestore Database is Clean & Ready
+            </h3>
             <p className="text-xs text-amber-800 mb-6 leading-relaxed">
-              No hardcoded products are active. All items are dynamically sourced from Firestore. You can import products from CJ Dropshipping or create them in Admin.
+              No hardcoded products are active. All items are dynamically
+              sourced from Firestore. You can import products from CJ
+              Dropshipping or create them in Admin.
             </p>
             <div className="flex flex-wrap items-center justify-center gap-3">
               <Link
@@ -182,6 +207,7 @@ export const Home = () => {
         )}
 
         {/* Dynamic Categories Carousel / Grid */}
+        {/* 
         {categories.length > 0 && (
           <section className="space-y-6">
             <div className="flex items-center justify-between">
@@ -224,7 +250,7 @@ export const Home = () => {
               ))}
             </div>
           </section>
-        )}
+        )} */}
 
         {/* Featured Products Section (Firestore Query: featured == true) */}
         <section className="space-y-6">
@@ -234,8 +260,12 @@ export const Home = () => {
                 <Sparkles className="w-5 h-5" />
               </div>
               <div>
-                <span className="text-xs font-bold uppercase tracking-wider text-amber-600">Hand-Picked Drops</span>
-                <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900">Featured Products</h2>
+                <span className="text-xs font-bold uppercase tracking-wider text-amber-600">
+                  Hand-Picked Drops
+                </span>
+                <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900">
+                  Featured Products
+                </h2>
               </div>
             </div>
             <Link
@@ -273,8 +303,12 @@ export const Home = () => {
                 <Clock className="w-5 h-5" />
               </div>
               <div>
-                <span className="text-xs font-bold uppercase tracking-wider text-blue-600">Fresh Additions</span>
-                <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900">New Arrivals</h2>
+                <span className="text-xs font-bold uppercase tracking-wider text-blue-600">
+                  Fresh Additions
+                </span>
+                <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900">
+                  New Arrivals
+                </h2>
               </div>
             </div>
             <Link
@@ -313,8 +347,12 @@ export const Home = () => {
                   <Flame className="w-5 h-5" />
                 </div>
                 <div>
-                  <span className="text-xs font-bold uppercase tracking-wider text-rose-600">Limited Offers</span>
-                  <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900">Special Sale & Discounts</h2>
+                  <span className="text-xs font-bold uppercase tracking-wider text-rose-600">
+                    Limited Offers
+                  </span>
+                  <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900">
+                    Special Sale & Discounts
+                  </h2>
                 </div>
               </div>
               <Link
@@ -333,7 +371,6 @@ export const Home = () => {
             </div>
           </section>
         )}
-
       </div>
     </div>
   );

@@ -507,12 +507,12 @@ export const ProductDetails = () => {
               : category?.name || "Streetwear"}
           </Link>
           <span>/</span>
-          <span className="text-slate-900 font-semibold truncate max-w-xs">
+          <span className="text-slate-900 font-semibold truncate max-w-[130px] sm:max-w-xs">
             {typeof name === "string" ? name : "Product"}
           </span>
         </div>
 
-        <div className="bg-white rounded-3xl p-6 sm:p-10 border border-gray-100 shadow-sm grid grid-cols-1 lg:grid-cols-12 gap-12">
+        <div className="bg-white rounded-3xl p-4 sm:p-8 lg:p-10 border border-gray-100 shadow-sm grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
           <div className="lg:col-span-6 space-y-4">
             <div className="relative aspect-[3/4] w-full rounded-2xl overflow-hidden bg-gray-100 shadow-inner">
               <img
@@ -818,8 +818,8 @@ export const ProductDetails = () => {
                 )}
               </div>
 
-              <div className="pt-4 flex flex-col sm:flex-row items-center gap-4">
-                <div className="flex items-center border border-slate-200 rounded-2xl p-1 bg-slate-50">
+              <div className="pt-4 flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4">
+                <div className="flex items-center justify-between sm:justify-center border border-slate-200 rounded-2xl p-1 bg-slate-50">
                   <button
                     onClick={() => setQuantity(Math.max(1, quantity - 1))}
                     disabled={isOutOfStock || quantity <= 1}
@@ -851,7 +851,7 @@ export const ProductDetails = () => {
                 <button
                   onClick={handleAddToCart}
                   disabled={isOutOfStock}
-                  className="flex-1 w-full py-4 bg-slate-950 hover:bg-black disabled:bg-slate-300 text-white text-sm font-bold rounded-2xl shadow-xl transition-all hover:scale-[1.01] active:scale-95 flex items-center justify-center gap-2"
+                  className="flex-1 w-full py-3.5 sm:py-4 bg-slate-950 hover:bg-black disabled:bg-slate-300 text-white text-sm font-bold rounded-2xl shadow-xl transition-all hover:scale-[1.01] active:scale-95 flex items-center justify-center gap-2"
                 >
                   <ShoppingBag className="w-4 h-4" />
                   <span>
@@ -861,10 +861,10 @@ export const ProductDetails = () => {
               </div>
             </div>
 
-            <div className="border-t border-gray-100 pt-6 grid grid-cols-3 gap-4 text-center">
+            <div className="border-t border-gray-100 pt-6 grid grid-cols-3 gap-2 sm:gap-4 text-center">
               <div className="flex flex-col items-center gap-1">
-                <Truck className="w-5 h-5 text-slate-700" />
-                <span className="text-[11px] font-semibold text-slate-800">
+                <Truck className="w-4 h-4 sm:w-5 sm:h-5 text-slate-700" />
+                <span className="text-[10px] sm:text-[11px] font-semibold text-slate-800">
                   Express Delivery
                 </span>
               </div>

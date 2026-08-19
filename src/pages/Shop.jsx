@@ -504,13 +504,13 @@ export const Shop = () => {
             {loading ? (
               <LoadingSpinner message="Syncing dynamic product feed with Firestore..." />
             ) : filteredProducts.length > 0 ? (
-              <div className="grid grid-cols-2 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
+              <div className="grid grid-cols-2 sm:grid-cols-2 xl:grid-cols-3 gap-3.5 sm:gap-6">
                 {filteredProducts.map((product) => (
                   <ProductCard key={product.id} product={product} />
                 ))}
               </div>
             ) : (
-              <div className="bg-white rounded-3xl p-12 border border-gray-100 shadow-sm text-center">
+              <div className="bg-white rounded-3xl p-8 sm:p-12 border border-gray-100 shadow-sm text-center">
                 <EmptyState
                   title="No matching products found"
                   description="Try adjusting your filters, price range, or category selection to find what you are looking for."
@@ -523,6 +523,148 @@ export const Shop = () => {
           </main>
         </div>
       </div>
+
+      {/* Mobile Filter Sliding Drawer Modal */}
+      {mobileFilterOpen && (
+        <div className="fixed inset-0 z-50 lg:hidden flex">
+          {/* Backdrop */}
+          <div 
+            onClick={() => setMobileFilterOpen(false)} 
+            className="fixed inset-0 bg-slate-950/60 backdrop-blur-xs transition-opacity" 
+          />
+
+          {/* Drawer Content */}
+          <div className="relative ml-auto w-full max-w-xs sm:max-w-sm bg-white h-full shadow-2xl flex flex-col z-50 animate-in slide-in-from-right duration-300">
+            {/* Header */}
+            <div className="p-4 border-b border-gray-100 flex items-center justify-between">
+              <div className="flex items-center gap-2 font-bold text-slate-900 text-sm">
+                <Filter className="w-4 h-4" />
+                <span>Filters & Refinements</span>
+              </div>
+              <button
+                onClick={() => setMobileFilterOpen(false)}
+                className="p-1.5 rounded-lg text-slate-400 hover:text-slate-900 hover:bg-slate-100"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Body */}
+            <div className="p-5 overflow-y-auto flex-1 space-y-6 text-xs">
+              {/* Dynamic Categories */}
+              <div>
+                <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">
+                  Categories
+                </h4>
+                <div className="space-y-1.5">
+                  <button
+                    onClick={() => {
+                      handleCategorySelect('all');
+                      setMobileFilterOpen(false);
+                    }}
+                    className={`w-full text-left px-3 py-2 rounded-xl font-medium transition-colors flex items-center justify-between ${
+                      selectedCategory === 'all'
+                        ? 'bg-slate-900 text-white font-semibold'
+                        : 'text-slate-600 hover:bg-slate-50'
+                    }`}
+                  >
+                    <span>All Collections</span>
+                    <span className="text-[10px] opacity-70">({products.length})</span>
+                  </button>
+
+                  {categories.map((cat) => {
+                    const catSlug = cat.slug || cat.name;
+                    const count = products.filter(p => (p.category || '').toLowerCase() === catSlug.toLowerCase()).length;
+                    const isSelected = selectedCategory.toLowerCase() === catSlug.toLowerCase();
+
+                    return (
+                      <button
+                        key={cat.id}
+                        onClick={() => {
+                          handleCategorySelect(catSlug);
+                          setMobileFilterOpen(false);
+                        }}
+                        className={`w-full text-left px-3 py-2 rounded-xl font-medium transition-colors flex items-center justify-between ${
+                          isSelected
+                            ? 'bg-slate-900 text-white font-semibold'
+                            : 'text-slate-600 hover:bg-slate-50'
+                        }`}
+                      >
+                        <span className="truncate">{cat.name}</span>
+                        <span className="text-[10px] opacity-70">({count})</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Sizes Filter */}
+              <div>
+                <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">
+                  Sizes
+                </h4>
+                <div className="flex flex-wrap gap-2">
+                  {availableSizes.map((sz) => {
+                    const isSelected = selectedSizes.includes(sz);
+                    return (
+                      <button
+                        key={sz}
+                        onClick={() => toggleSize(sz)}
+                        className={`w-10 h-10 rounded-xl font-bold transition-all border ${
+                          isSelected
+                            ? 'bg-slate-950 border-slate-950 text-white shadow-sm'
+                            : 'bg-white border-slate-200 text-slate-700 hover:border-slate-300'
+                        }`}
+                      >
+                        {sz}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* In-Stock Toggle */}
+              <div className="pt-4 border-t border-gray-100 flex items-center justify-between">
+                <div>
+                  <h4 className="text-xs font-semibold text-slate-900">In Stock Only</h4>
+                  <p className="text-[10px] text-slate-400">Hide sold out apparel</p>
+                </div>
+                <button
+                  onClick={() => setInStockOnly(!inStockOnly)}
+                  className={`w-10 h-6 rounded-full transition-colors relative p-1 ${
+                    inStockOnly ? 'bg-slate-950' : 'bg-slate-200'
+                  }`}
+                >
+                  <div
+                    className={`w-4 h-4 rounded-full bg-white transition-transform ${
+                      inStockOnly ? 'translate-x-4' : 'translate-x-0'
+                    }`}
+                  />
+                </button>
+              </div>
+            </div>
+
+            {/* Footer Actions */}
+            <div className="p-4 border-t border-gray-100 bg-gray-50 flex gap-2">
+              <button
+                onClick={() => {
+                  handleResetFilters();
+                  setMobileFilterOpen(false);
+                }}
+                className="py-2.5 px-4 bg-white border border-slate-200 text-slate-700 font-semibold rounded-xl text-xs"
+              >
+                Reset
+              </button>
+              <button
+                onClick={() => setMobileFilterOpen(false)}
+                className="flex-1 py-2.5 bg-slate-950 text-white font-bold rounded-xl text-xs shadow-md"
+              >
+                View ({filteredProducts.length}) Results
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
