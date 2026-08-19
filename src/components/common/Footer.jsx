@@ -71,10 +71,12 @@ export const Footer = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 grid grid-cols-1 md:grid-cols-12 gap-8 lg:gap-12">
         {/* Brand Column */}
         <div className="md:col-span-5 space-y-4">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-white text-slate-950 rounded-lg flex items-center justify-center font-extrabold text-sm">
-              R
-            </div>
+          <div className="flex items-center gap-2.5">
+            <img 
+              src="/logo.png" 
+              alt="Ryanz Clothes" 
+              className="w-9 h-9 rounded-xl object-cover shadow-md" 
+            />
             <span className="text-xl font-extrabold tracking-tighter text-white">
               RYANZ<span className="text-slate-400 font-light ml-1">CLOTHES</span>
             </span>

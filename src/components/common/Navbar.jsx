@@ -68,9 +68,11 @@ export const Navbar = () => {
           {/* Brand Logo */}
           <div className="flex-shrink-0 flex items-center">
             <Link to="/" className="flex items-center gap-2 group">
-              <div className="w-8 h-8 bg-slate-950 text-white rounded-lg flex items-center justify-center font-extrabold text-sm tracking-tighter group-hover:scale-105 transition-transform">
-                R
-              </div>
+              <img 
+                src="/favicon.png" 
+                alt="Ryanz Clothes" 
+                className="w-8 h-8 rounded-lg shadow-sm group-hover:scale-105 transition-transform object-cover" 
+              />
               <span className="text-xl font-extrabold tracking-tighter text-slate-950 font-sans">
                 RYANZ<span className="text-slate-500 font-light ml-1">CLOTHES</span>
               </span>

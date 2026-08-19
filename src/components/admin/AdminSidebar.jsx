@@ -44,9 +44,11 @@ export const AdminSidebar = ({ isOpen, onClose }) => {
           {/* Header */}
           <div className="h-20 flex items-center justify-between px-6 border-b border-slate-800/80">
             <Link to="/admin" className="flex items-center gap-3 group">
-              <div className="w-9 h-9 bg-gradient-to-br from-emerald-400 to-teal-600 text-slate-950 font-black rounded-xl flex items-center justify-center text-sm shadow-md shadow-emerald-500/20 group-hover:scale-105 transition-transform">
-                R
-              </div>
+              <img 
+                src="/favicon.png" 
+                alt="Ryanz Clothes" 
+                className="w-9 h-9 rounded-xl shadow-md group-hover:scale-105 transition-transform object-cover" 
+              />
               <div>
                 <span className="font-extrabold text-sm tracking-tight text-white block">
                   RYANZ ADMIN
