@@ -120,7 +120,16 @@ export const Shop = () => {
     const set = new Set(['XS', 'S', 'M', 'L', 'XL', 'XXL']);
     products.forEach(p => {
       if (Array.isArray(p.sizes)) {
-        p.sizes.forEach(s => set.add(s));
+        p.sizes.forEach(s => {
+          if (s && typeof s === 'string') set.add(s.trim());
+        });
+      }
+      if (Array.isArray(p.variants)) {
+        p.variants.forEach(v => {
+          if (v && v.size && typeof v.size === 'string' && v.size !== 'Default' && v.size !== 'Standard') {
+            set.add(v.size.trim());
+          }
+        });
       }
     });
     return Array.from(set);
@@ -164,8 +173,10 @@ export const Shop = () => {
 
       // Selected Sizes
       if (selectedSizes.length > 0) {
-        const prodSizes = product.sizes || [];
-        const hasMatchingSize = selectedSizes.some(s => prodSizes.includes(s));
+        const prodSizes = Array.isArray(product.sizes) ? product.sizes : [];
+        const varSizes = Array.isArray(product.variants) ? product.variants.map(v => v.size).filter(Boolean) : [];
+        const allSizes = [...prodSizes, ...varSizes].map(s => String(s).toUpperCase());
+        const hasMatchingSize = selectedSizes.some(s => allSizes.includes(String(s).toUpperCase()));
         if (!hasMatchingSize) return false;
       }
 

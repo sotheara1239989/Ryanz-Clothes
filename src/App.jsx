@@ -85,7 +85,9 @@ export function App() {
                 path="/admin"
                 element={
                   <ProtectedRoute adminOnly={true}>
-                    <AdminLayout />
+                    <ErrorBoundary>
+                      <AdminLayout />
+                    </ErrorBoundary>
                   </ProtectedRoute>
                 }
               >
@@ -96,6 +98,7 @@ export function App() {
                 <Route path="users" element={<AdminUsers />} />
                 <Route path="reviews" element={<AdminReviews />} />
                 <Route path="cjdropshipping" element={<AdminCJDropshipping />} />
+                <Route path="cj-dropshipping" element={<AdminCJDropshipping />} />
                 <Route path="firebase-setup" element={<AdminFirebaseSetup />} />
               </Route>
 

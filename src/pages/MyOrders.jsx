@@ -134,6 +134,36 @@ export const MyOrders = () => {
                   </div>
                 </div>
 
+                {/* Live Shipment Tracking Banner */}
+                {order.trackingNumber && (
+                  <div className="p-4 bg-emerald-50/80 rounded-2xl border border-emerald-200/80 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-8 h-8 rounded-xl bg-emerald-600 text-white flex items-center justify-center shrink-0 shadow-xs">
+                        <Truck className="w-4 h-4" />
+                      </div>
+                      <div>
+                        <div className="text-xs font-bold text-slate-900 flex items-center gap-2">
+                          <span>Carrier: {order.trackingCarrier || 'USPS / CJ Packet'}</span>
+                          <span className="font-mono text-emerald-800 bg-emerald-100/80 px-2 py-0.5 rounded text-[11px]">
+                            {order.trackingNumber}
+                          </span>
+                        </div>
+                        <p className="text-[11px] text-slate-600">Your package has been dispatched from warehouse.</p>
+                      </div>
+                    </div>
+
+                    <a
+                      href={order.trackingUrl || `https://www.17track.net/en/track?nums=${order.trackingNumber}`}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl shadow-xs transition-colors inline-flex items-center justify-center gap-1.5 shrink-0"
+                    >
+                      <span>Track Live Package</span>
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </a>
+                  </div>
+                )}
+
                 {/* Items Snapshot */}
                 <div className="space-y-3">
                   <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400">

@@ -26,8 +26,12 @@ import { uploadProductImage } from '../../services/storageService';
 import { useToast } from '../../context/ToastContext';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
 
-const COMMON_SIZES = ['XS', 'S', 'M', 'L', 'XL', 'XXL', '30', '32', '34', '36', 'One Size'];
-const COMMON_COLORS = ['Black', 'White', 'Heather Grey', 'Charcoal', 'Olive', 'Navy', 'Brown', 'Beige', 'Washed Indigo'];
+const COMMON_SIZES = ['XS', 'S', 'M', 'L', 'XL', 'XXL', '3XL', '28', '30', '32', '34', '36', '38', 'One Size'];
+const COMMON_COLORS = [
+  'Black', 'White', 'Pink', 'Sky Blue', 'Blue', 'Navy', 'Rose Red', 'Red',
+  'Green', 'Olive', 'Heather Grey', 'Charcoal', 'Brown', 'Beige', 'Khaki',
+  'Yellow', 'Purple', 'Washed Indigo', 'Floral', 'Multicolor'
+];
 
 export const AdminProducts = () => {
   const [products, setProducts] = useState([]);
@@ -129,6 +133,13 @@ export const AdminProducts = () => {
       images: Array.isArray(product.images) && product.images.length > 0 
         ? product.images.map(normalizeImageUrl)
         : ['https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=800&auto=format&fit=crop&q=80'],
+      variants: Array.isArray(product.variants) ? product.variants : [],
+      cjpId: product.cjpId || null,
+      cjpSku: product.cjpSku || null,
+      supplierCost: product.supplierCost || null,
+      weight: product.weight || null,
+      rating: product.rating || 5,
+      numReviews: product.numReviews || 0,
       featured: Boolean(product.featured),
       isNewArrival: Boolean(product.isNewArrival),
       isActive: product.isActive !== undefined ? Boolean(product.isActive) : true
@@ -595,7 +606,7 @@ export const AdminProducts = () => {
               <div className="space-y-2 pt-2 border-t border-slate-800">
                 <label className="block font-semibold text-slate-300">Available Sizes</label>
                 <div className="flex flex-wrap gap-2">
-                  {COMMON_SIZES.map((size) => {
+                  {Array.from(new Set([...(formData.sizes || []), ...COMMON_SIZES])).map((size) => {
                     const isChecked = formData.sizes.includes(size);
                     return (
                       <button
@@ -604,7 +615,7 @@ export const AdminProducts = () => {
                         onClick={() => toggleSize(size)}
                         className={`px-3 py-1.5 rounded-lg font-bold border transition-all ${
                           isChecked
-                            ? 'bg-emerald-500 border-emerald-500 text-slate-950'
+                            ? 'bg-emerald-500 border-emerald-500 text-slate-950 shadow-sm'
                             : 'bg-slate-900 border-slate-800 text-slate-400 hover:border-slate-700'
                         }`}
                       >
@@ -625,7 +636,7 @@ export const AdminProducts = () => {
                   <button
                     type="button"
                     onClick={handleAddCustomSize}
-                    className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-white rounded-lg"
+                    className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-white rounded-lg font-semibold"
                   >
                     Add Size
                   </button>
@@ -636,7 +647,7 @@ export const AdminProducts = () => {
               <div className="space-y-2 pt-2 border-t border-slate-800">
                 <label className="block font-semibold text-slate-300">Available Colors</label>
                 <div className="flex flex-wrap gap-2">
-                  {COMMON_COLORS.map((col) => {
+                  {Array.from(new Set([...(formData.colors || []), ...COMMON_COLORS])).map((col) => {
                     const isChecked = formData.colors.includes(col);
                     return (
                       <button
@@ -645,7 +656,7 @@ export const AdminProducts = () => {
                         onClick={() => toggleColor(col)}
                         className={`px-3 py-1.5 rounded-lg font-semibold border transition-all ${
                           isChecked
-                            ? 'bg-emerald-500 border-emerald-500 text-slate-950'
+                            ? 'bg-emerald-500 border-emerald-500 text-slate-950 shadow-sm'
                             : 'bg-slate-900 border-slate-800 text-slate-400 hover:border-slate-700'
                         }`}
                       >

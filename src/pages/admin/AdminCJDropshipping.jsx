@@ -32,7 +32,9 @@ import {
   importCjProductToFirestore, 
   importBatchCjProductsToFirestore,
   normalizeImageUrl,
-  getCachedProductImages 
+  getCachedProductImages,
+  calculateCjUsShippingFee,
+  fetchDynamicCjFreight
 } from '../../services/cjDropshippingService';
 import { 
   syncAllFirestoreProductsWithCj, 
@@ -125,11 +127,17 @@ export const AdminCJDropshipping = () => {
   const handleSearch = async (keyword) => {
     setLoadingProducts(true);
     try {
-      const res = await searchCjProducts({ keyword: keyword || searchKeyword });
+      const term = (keyword !== undefined ? keyword : searchKeyword).trim();
+      const res = await searchCjProducts({ keyword: term });
+      if (res.source === 'no_auth') {
+        showToast("Please enter and verify your CJ Dropshipping API Key in Settings.", "error");
+      } else if (res.products && res.products.length > 0) {
+        showToast(`Found ${res.products.length} live CJ products for "${term}"!`, "success");
+      }
       setCjProducts(res.products || []);
     } catch (err) {
       console.error("CJ Search failed:", err);
-      showToast("Failed to search CJ products.", "error");
+      showToast(err.message || "Failed to search CJ products.", "error");
     } finally {
       setLoadingProducts(false);
     }
@@ -754,13 +762,16 @@ export const AdminCJDropshipping = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {cjProducts.map((prod) => {
             const cost = parseFloat(prod.sellPrice) || 20;
-            const retail = Math.round((cost * markupMultiplier) * 100) / 100;
-            const profit = Math.round((retail - cost) * 100) / 100;
+            const shipping = calculateCjUsShippingFee(prod);
+            const totalCost = Math.round((cost + shipping) * 100) / 100;
+            const retail = Math.round((totalCost * markupMultiplier) * 100) / 100;
+            const profit = Math.round((retail - totalCost) * 100) / 100;
             const existingInStore = liveStoreProducts.find(
               p => (p.cjpId && String(p.cjpId).toLowerCase() === String(prod.pid || '').toLowerCase()) || 
                    (p.cjpSku && prod.productSku && String(p.cjpSku).toLowerCase() === String(prod.productSku).toLowerCase()) ||
                    (p.name && prod.productNameEn && String(p.name).toLowerCase() === String(prod.productNameEn).toLowerCase())
             );
+            const isSelected = selectedPids.includes(prod.pid);
 
             return (
               <div
@@ -822,11 +833,15 @@ export const AdminCJDropshipping = () => {
                     </p>
                   </div>
 
-                  {/* Pricing Matrix */}
-                  <div className="p-3 bg-slate-900/80 rounded-2xl border border-slate-800/80 grid grid-cols-2 gap-2 text-xs">
+                  {/* Pricing Matrix with US Delivery */}
+                  <div className="p-3 bg-slate-900/80 rounded-2xl border border-slate-800/80 grid grid-cols-3 gap-2 text-xs text-center">
                     <div>
-                      <span className="text-[10px] text-slate-500 block uppercase">Supplier Cost</span>
+                      <span className="text-[10px] text-slate-500 block uppercase">Product</span>
                       <span className="font-bold text-slate-300">${cost.toFixed(2)}</span>
+                    </div>
+                    <div>
+                      <span className="text-[10px] text-blue-400 block uppercase">US Delivery</span>
+                      <span className="font-bold text-blue-300">${shipping.toFixed(2)}</span>
                     </div>
                     <div>
                       <span className="text-[10px] text-emerald-400 block uppercase">Store Retail</span>

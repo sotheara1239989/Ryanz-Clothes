@@ -17,7 +17,7 @@ import {
 } from "lucide-react";
 import { listenToProduct } from "../services/productService";
 import { listenToProductReviews, addReview } from "../services/reviewService";
-import { normalizeImageUrl } from "../services/cjDropshippingService";
+import { normalizeImageUrl, KNOWN_COLORS } from "../services/cjDropshippingService";
 import { useCart } from "../context/CartContext";
 import { useAuth } from "../context/AuthContext";
 import { useToast } from "../context/ToastContext";
@@ -194,6 +194,7 @@ export const ProductDetails = () => {
       const imgLower = imgNorm.toLowerCase();
       const imgFilename = imgNorm.split("/").pop()?.split("?")[0] || "";
 
+      // 1. Direct match in imagesByColor map
       for (const [col, imgSet] of imagesByColor.entries()) {
         for (const vImg of imgSet) {
           if (vImg === imgNorm) return col;
@@ -211,28 +212,49 @@ export const ProductDetails = () => {
         }
       }
 
+      // 2. Direct match in product.variants
+      if (Array.isArray(product?.variants)) {
+        const match = product.variants.find((v) => {
+          if (!v.image) return false;
+          const vNorm = normalizeImageUrl(v.image);
+          const vFile = vNorm.split("/").pop()?.split("?")[0];
+          return (
+            vNorm === imgNorm ||
+            (imgFilename && imgFilename.length > 4 && vNorm.includes(imgFilename)) ||
+            (vFile && vFile.length > 4 && imgNorm.includes(vFile))
+          );
+        });
+        if (match?.color && match.color !== "Default" && match.color !== "Standard") {
+          return match.color;
+        }
+      }
+
+      // 3. Keyword matching against availableColors
       for (const col of availableColors) {
-        if (col && col !== "Default") {
+        if (col && col !== "Default" && col !== "Standard") {
+          const colWords = col.toLowerCase().split(/\s+/);
           const colSlug = col.toLowerCase().replace(/\s+/g, "-");
           const colClean = col.toLowerCase().replace(/\s+/g, "");
-          if (imgLower.includes(colSlug) || imgLower.includes(colClean)) {
+          if (
+            imgLower.includes(colSlug) || 
+            imgLower.includes(colClean) ||
+            colWords.some(w => w.length > 2 && imgLower.includes(w))
+          ) {
             return col;
           }
         }
       }
 
-      if (Array.isArray(product?.variants)) {
-        const match = product.variants.find((v) => {
-          if (!v.image) return false;
-          const vNorm = normalizeImageUrl(v.image);
-          return (
-            vNorm === imgNorm ||
-            (imgFilename &&
-              imgFilename.length > 4 &&
-              vNorm.includes(imgFilename))
+      // 4. Fallback: Check KNOWN_COLORS in image URL
+      for (const kc of (KNOWN_COLORS || [])) {
+        const kcClean = kc.replace(/\s+/g, "");
+        const kcSlug = kc.replace(/\s+/g, "-");
+        if (imgLower.includes(kcClean) || imgLower.includes(kcSlug)) {
+          const matched = availableColors.find(
+            c => c.toLowerCase().includes(kc) || kc.includes(c.toLowerCase())
           );
-        });
-        if (match?.color && match.color !== "Default") return match.color;
+          if (matched) return matched;
+        }
       }
 
       return null;
@@ -256,6 +278,7 @@ export const ProductDetails = () => {
     }
   }, [effectiveStock, quantity]);
 
+  // 1. Listen to Firestore Product & Reviews (Only re-runs if product ID changes)
   useEffect(() => {
     if (!id) return;
     setLoading(true);
@@ -265,32 +288,6 @@ export const ProductDetails = () => {
       (docData) => {
         if (docData) {
           setProduct(docData);
-
-          const vars = Array.isArray(docData.variants) ? docData.variants : [];
-          const colorsArr = Array.isArray(docData.colors)
-            ? docData.colors.filter((c) => c && c !== "Default" && c !== "Standard")
-            : [];
-          const sizesArr = Array.isArray(docData.sizes)
-            ? docData.sizes.filter((s) => s)
-            : [];
-
-          if (colorsArr.length > 0 && !selectedColor) {
-            setSelectedColor(String(colorsArr[0]));
-          } else if (
-            vars.length > 0 &&
-            vars[0].color &&
-            vars[0].color !== "Default" &&
-            vars[0].color !== "Standard" &&
-            !selectedColor
-          ) {
-            setSelectedColor(String(vars[0].color));
-          }
-
-          if (sizesArr.length > 0 && !selectedSize) {
-            setSelectedSize(String(sizesArr[0]));
-          } else if (vars.length > 0 && vars[0].size && !selectedSize) {
-            setSelectedSize(String(vars[0].size));
-          }
         } else {
           setError("Product was not found in Firestore.");
         }
@@ -317,7 +314,27 @@ export const ProductDetails = () => {
       unsubProduct();
       unsubReviews();
     };
-  }, [id, selectedColor, selectedSize]);
+  }, [id]);
+
+  // 2. Automatic & Resilient Variant Defaults Selection
+  useEffect(() => {
+    if (!product) return;
+
+    // Set default Color if not selected or invalid
+    if (availableColors.length > 0) {
+      if (!selectedColor || !availableColors.some((c) => safeStrMatch(c, selectedColor))) {
+        setSelectedColor(availableColors[0]);
+      }
+    }
+
+    // Set default Size if not selected or invalid for current color
+    const validSizes = sizesForActiveColor.length > 0 ? sizesForActiveColor : availableSizes;
+    if (validSizes.length > 0) {
+      if (!selectedSize || !validSizes.some((s) => safeStrMatch(s, selectedSize))) {
+        setSelectedSize(validSizes[0]);
+      }
+    }
+  }, [product, availableColors, sizesForActiveColor, availableSizes]);
 
   // === 5. EARLY RETURNS (Must be after ALL hooks) ===
   if (loading) {
@@ -442,21 +459,21 @@ export const ProductDetails = () => {
       return `${m[2]}cm`;
     }
     str = str.replace(/^(height|width|size|color)\s*[:=]\s*/i, "");
-    if (str.length > 20) {
-      str = str.split(/[-_\s]+/).pop() || str;
-    }
-    return str;
+    str = str.replace(/-/g, " ");
+    return str.trim();
   };
 
   const handleThumbnailClick = (img, matchedColor, idx) => {
     setSelectedImageIndex(idx);
 
-    if (matchedColor) {
-      setSelectedColor(matchedColor);
+    const resolvedColor = matchedColor || findColorForImage(img, idx);
+
+    if (resolvedColor) {
+      setSelectedColor(resolvedColor);
 
       if (Array.isArray(product?.variants) && product.variants.length > 0) {
         const sizesInThisCol = product.variants
-          .filter((v) => safeStrMatch(v.color, matchedColor))
+          .filter((v) => safeStrMatch(v.color, resolvedColor))
           .map((v) => String(v.size || ""));
         if (
           sizesInThisCol.length > 0 &&

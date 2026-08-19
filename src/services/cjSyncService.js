@@ -12,7 +12,8 @@ import {
   fetchCjProductDetails, 
   transformCjToFirestoreProduct, 
   getValidAccessToken, 
-  getCjCredentials 
+  getCjCredentials,
+  cjFetch
 } from './cjDropshippingService';
 import { updateProduct, getProducts } from './productService';
 import { updateOrderStatus } from './orderService';
@@ -316,7 +317,7 @@ export const syncOrderToCjFulfillment = async (orderId) => {
       products: cjLineItems
     };
 
-    const response = await fetch(`${CJ_API_BASE}/shopping/order/createOrder`, {
+    const response = await cjFetch('/shopping/order/createOrder', {
       method: 'POST',
       headers: {
         'CJ-Access-Token': accessToken,
@@ -383,7 +384,7 @@ export const syncCjOrderTracking = async (orderId) => {
     const accessToken = await getValidAccessToken();
     if (!accessToken) throw new Error("CJ Access token required.");
 
-    const response = await fetch(`${CJ_API_BASE}/shopping/order/getOrderDetail?orderId=${encodeURIComponent(cjOrderId)}`, {
+    const response = await cjFetch(`/shopping/order/getOrderDetail?orderId=${encodeURIComponent(cjOrderId)}`, {
       method: 'GET',
       headers: {
         'CJ-Access-Token': accessToken,
