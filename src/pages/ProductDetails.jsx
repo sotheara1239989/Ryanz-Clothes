@@ -333,19 +333,34 @@ export const ProductDetails = () => {
                     Color: <span className="text-slate-600 font-normal">{selectedColor}</span>
                   </span>
                   <div className="flex flex-wrap gap-2">
-                    {colors.map((col) => (
-                      <button
-                        key={col}
-                        onClick={() => setSelectedColor(col)}
-                        className={`px-4 py-2 rounded-xl text-xs font-medium border transition-all ${
-                          selectedColor === col
-                            ? 'bg-slate-950 border-slate-950 text-white font-semibold'
-                            : 'bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100'
-                        }`}
-                      >
-                        {col}
-                      </button>
-                    ))}
+                    {colors.map((col) => {
+                      const matchedVariant = Array.isArray(product.variants) 
+                        ? product.variants.find(v => v.color?.toLowerCase() === col?.toLowerCase() && v.image)
+                        : null;
+
+                      return (
+                        <button
+                          key={col}
+                          onClick={() => {
+                            setSelectedColor(col);
+                            if (matchedVariant?.image) {
+                              const imgIdx = productImages.indexOf(matchedVariant.image);
+                              if (imgIdx !== -1) setSelectedImageIndex(imgIdx);
+                            }
+                          }}
+                          className={`px-4 py-2 rounded-xl text-xs font-medium border transition-all flex items-center gap-1.5 ${
+                            selectedColor === col
+                              ? 'bg-slate-950 border-slate-950 text-white font-semibold shadow-sm'
+                              : 'bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100'
+                          }`}
+                        >
+                          {matchedVariant?.image && (
+                            <img src={matchedVariant.image} alt={col} className="w-3.5 h-3.5 rounded-full object-cover" />
+                          )}
+                          <span>{col}</span>
+                        </button>
+                      );
+                    })}
                   </div>
                 </div>
               )}

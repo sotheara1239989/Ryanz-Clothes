@@ -133,7 +133,84 @@ export const searchCjProducts = async (params = {}) => {
 };
 
 /**
+ * Fetch detailed product info from CJ API by PID
+ */
+export const fetchCjProductDetails = async (pid) => {
+  const { accessToken } = getCjCredentials();
+  if (!accessToken || !pid) return null;
+
+  try {
+    const response = await fetch(`${CJ_API_BASE}/product/query?pid=${pid}`, {
+      method: 'GET',
+      headers: {
+        'CJ-Access-Token': accessToken,
+        'Content-Type': 'application/json'
+      }
+    });
+    const data = await response.json();
+    if (data.result && data.data) {
+      return data.data;
+    }
+  } catch (err) {
+    console.warn(`Could not fetch extra details for CJ product ${pid}:`, err);
+  }
+  return null;
+};
+
+/**
+ * Extract all image URLs from product, variants, and description HTML
+ */
+const extractAllImages = (cjProduct) => {
+  const imageSet = new Set();
+
+  const addValidImg = (url) => {
+    if (typeof url === 'string' && url.trim().startsWith('http')) {
+      imageSet.add(url.trim());
+    }
+  };
+
+  // 1. Main image
+  addValidImg(cjProduct.productImage);
+  addValidImg(cjProduct.bigImage);
+  addValidImg(cjProduct.smallImage);
+
+  // 2. Gallery images array or string
+  if (Array.isArray(cjProduct.productImageSet)) {
+    cjProduct.productImageSet.forEach(img => addValidImg(img));
+  } else if (typeof cjProduct.productImageSet === 'string') {
+    try {
+      const parsed = JSON.parse(cjProduct.productImageSet);
+      if (Array.isArray(parsed)) parsed.forEach(img => addValidImg(img));
+    } catch {
+      cjProduct.productImageSet.split(',').forEach(img => addValidImg(img));
+    }
+  }
+
+  // 3. Variant images
+  if (Array.isArray(cjProduct.variants)) {
+    cjProduct.variants.forEach(v => {
+      addValidImg(v.variantImage);
+      addValidImg(v.variantImg);
+      addValidImg(v.image);
+      addValidImg(v.imgUrl);
+    });
+  }
+
+  // 4. Embedded images in description HTML
+  if (typeof cjProduct.description === 'string' && cjProduct.description.includes('<img')) {
+    const regex = /<img[^>]+src=["'](https?:\/\/[^"'>]+)["']/gi;
+    let match;
+    while ((match = regex.exec(cjProduct.description)) !== null) {
+      addValidImg(match[1]);
+    }
+  }
+
+  return Array.from(imageSet);
+};
+
+/**
  * Transform a CJ Dropshipping product into Ryanz Clothes Firestore document format
+ * Captures all images, full variant matrix (sizes, colors, SKUs, individual stock), supplier costs, and markup
  */
 export const transformCjToFirestoreProduct = (cjProduct, options = {}) => {
   const {
@@ -145,7 +222,7 @@ export const transformCjToFirestoreProduct = (cjProduct, options = {}) => {
     isNewArrival = true
   } = options;
 
-  const costPrice = parseFloat(cjProduct.sellPrice) || 20;
+  const costPrice = parseFloat(cjProduct.sellPrice || cjProduct.variantSellPrice || 20) || 20;
   const retailPrice = Math.round((costPrice * markupMultiplier) * 100) / 100;
   
   let discountPrice = null;
@@ -153,57 +230,104 @@ export const transformCjToFirestoreProduct = (cjProduct, options = {}) => {
     discountPrice = Math.round((retailPrice * (1 - discountPercent / 100)) * 100) / 100;
   }
 
-  // Extract unique sizes from CJ variants
+  // 1. All Images
+  const allImages = extractAllImages(cjProduct);
+  const images = allImages.length > 0 ? allImages : ['https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=800&auto=format&fit=crop&q=80'];
+
+  // 2. Comprehensive Variant Matrix
   const sizeSet = new Set();
   const colorSet = new Set();
+  const variantsList = [];
   let totalStock = 0;
 
   if (Array.isArray(cjProduct.variants) && cjProduct.variants.length > 0) {
-    cjProduct.variants.forEach(v => {
-      if (v.variantSize) sizeSet.add(v.variantSize);
-      if (v.variantColor) colorSet.add(v.variantColor);
-      if (v.variantStock) totalStock += Number(v.variantStock);
+    cjProduct.variants.forEach((v, idx) => {
+      let size = v.variantSize || v.size || '';
+      let color = v.variantColor || v.color || v.variantColorEn || '';
+
+      // If size and color aren't explicitly split, parse from variantName or variantKey
+      if (!size && !color && (v.variantNameEn || v.variantKey)) {
+        const namePart = (v.variantNameEn || v.variantKey).split('-');
+        if (namePart.length >= 2) {
+          color = namePart[0].trim();
+          size = namePart[1].trim();
+        } else if (namePart.length === 1) {
+          size = namePart[0].trim();
+        }
+      }
+
+      if (size) sizeSet.add(size);
+      if (color) colorSet.add(color);
+
+      const variantCost = parseFloat(v.variantSellPrice || v.sellPrice || costPrice) || costPrice;
+      const variantRetail = Math.round((variantCost * markupMultiplier) * 100) / 100;
+      const variantStock = parseInt(v.variantStock || v.stock || 50, 10);
+      totalStock += variantStock;
+
+      variantsList.push({
+        id: `var_${idx + 1}`,
+        sku: v.variantSku || v.sku || `${cjProduct.productSku || 'CJ'}-${idx + 1}`,
+        size: size || 'One Size',
+        color: color || 'Default',
+        supplierPrice: variantCost,
+        price: variantRetail,
+        stock: variantStock,
+        image: v.variantImage || v.variantImg || v.image || images[0]
+      });
     });
   }
 
+  // Fallbacks if no variant objects found
   const sizes = sizeSet.size > 0 ? Array.from(sizeSet) : ['S', 'M', 'L', 'XL'];
-  const colors = colorSet.size > 0 ? Array.from(colorSet) : ['Black', 'Washed Black'];
-  const stock = totalStock > 0 ? Math.min(totalStock, 150) : 50;
+  const colors = colorSet.size > 0 ? Array.from(colorSet) : ['Black'];
+  const stock = totalStock > 0 ? totalStock : 100;
 
-  const images = [];
-  if (cjProduct.productImage) images.push(cjProduct.productImage);
-  if (Array.isArray(cjProduct.productImageSet)) {
-    cjProduct.productImageSet.forEach(img => {
-      if (img && !images.includes(img)) images.push(img);
-    });
+  // Clean description HTML tags if messy or preserve formatted text
+  let cleanDesc = cjProduct.description || '';
+  if (cleanDesc.length > 2000) {
+    cleanDesc = cleanDesc.substring(0, 2000);
   }
 
   return {
-    name: cjProduct.productNameEn || 'CJ Dropshipping Apparel',
-    description: cjProduct.description || `${cjProduct.productNameEn}. Imported directly from dropshipping supplier with verified garment quality.`,
+    name: cjProduct.productNameEn || cjProduct.productName || 'CJ Dropshipping Apparel',
+    description: cleanDesc || `${cjProduct.productNameEn}. Imported directly from dropshipping supplier with verified garment quality.`,
     price: retailPrice,
     discountPrice: discountPrice,
     category: overrideCategory || cjProduct.categoryName || 't-shirts',
     sizes: sizes,
     colors: colors,
     stock: stock,
-    images: images.length > 0 ? images : ['https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=800&auto=format&fit=crop&q=80'],
+    images: images,
+    variants: variantsList,
     featured: Boolean(featured),
     isNewArrival: Boolean(isNewArrival),
     isActive: true,
     rating: cjProduct.supplierRating || 4.9,
-    numReviews: Math.floor(Math.random() * 18) + 5,
+    numReviews: Math.floor(Math.random() * 20) + 6,
     cjpId: cjProduct.pid || null,
+    cjpSku: cjProduct.productSku || null,
+    weight: cjProduct.productWeight || cjProduct.packingWeight || null,
     supplierCost: costPrice
   };
 };
 
 /**
  * Import a single CJ product into Cloud Firestore
+ * Fetches full details & all variants/images if not already loaded
  */
 export const importCjProductToFirestore = async (cjProduct, options = {}) => {
   try {
-    const firestoreData = transformCjToFirestoreProduct(cjProduct, options);
+    let fullProduct = { ...cjProduct };
+
+    // If variants or high-res images are missing, attempt detail query
+    if (cjProduct.pid && (!cjProduct.variants || cjProduct.variants.length === 0 || !cjProduct.productImageSet)) {
+      const detailed = await fetchCjProductDetails(cjProduct.pid);
+      if (detailed) {
+        fullProduct = { ...fullProduct, ...detailed };
+      }
+    }
+
+    const firestoreData = transformCjToFirestoreProduct(fullProduct, options);
     const result = await addProduct(firestoreData);
     return result;
   } catch (error) {
