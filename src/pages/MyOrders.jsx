@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { listenToUserOrders } from '../services/orderService';
+import { normalizeImageUrl } from '../services/cjDropshippingService';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 import EmptyState from '../components/common/EmptyState';
 
@@ -142,8 +143,9 @@ export const MyOrders = () => {
                     {order.items?.map((item, idx) => (
                       <div key={idx} className="flex items-center gap-3 p-3 rounded-2xl bg-slate-50 border border-slate-100">
                         <img
-                          src={item.image || 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=800&auto=format&fit=crop&q=80'}
+                          src={normalizeImageUrl(item.image)}
                           alt={item.productName}
+                          referrerPolicy="no-referrer"
                           className="w-14 h-16 object-cover rounded-xl bg-gray-200 shrink-0"
                         />
                         <div className="flex-1 min-w-0">

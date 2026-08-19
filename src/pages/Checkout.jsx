@@ -14,6 +14,7 @@ import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import { createOrder } from '../services/orderService';
+import { normalizeImageUrl } from '../services/cjDropshippingService';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 
 export const Checkout = () => {
@@ -343,8 +344,9 @@ export const Checkout = () => {
                 {cartItems.map((item, idx) => (
                   <div key={idx} className="flex items-center gap-3 py-1">
                     <img
-                      src={item.image || 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=800&auto=format&fit=crop&q=80'}
+                      src={normalizeImageUrl(item.image)}
                       alt={item.name}
+                      referrerPolicy="no-referrer"
                       className="w-12 h-14 object-cover rounded-lg bg-gray-100 shrink-0"
                     />
                     <div className="flex-1 min-w-0">

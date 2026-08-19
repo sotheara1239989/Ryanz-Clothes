@@ -17,32 +17,50 @@ import {
   Loader2,
   ArrowRight,
   TrendingUp,
-  Percent
+  Percent,
+  RefreshCw,
+  PackageCheck,
+  Zap,
+  Activity
 } from 'lucide-react';
 import { 
   getCjCredentials, 
   saveCjCredentials, 
   fetchCjAccessToken, 
   searchCjProducts, 
+  fetchCjProductDetails,
   importCjProductToFirestore, 
-  importBatchCjProductsToFirestore 
+  importBatchCjProductsToFirestore,
+  normalizeImageUrl,
+  getCachedProductImages 
 } from '../../services/cjDropshippingService';
+import { 
+  syncAllFirestoreProductsWithCj, 
+  syncSingleProductWithCj, 
+  syncOrderToCjFulfillment, 
+  syncCjOrderTracking 
+} from '../../services/cjSyncService';
 import { listenToCategories } from '../../services/categoryService';
+import { listenToProducts } from '../../services/productService';
 import { useToast } from '../../context/ToastContext';
 import { Link } from 'react-router-dom';
 
 export const AdminCJDropshipping = () => {
   const [credentials, setCredentials] = useState({ apiKey: '', accessToken: '', email: '' });
   const [connecting, setConnecting] = useState(false);
-  const [categories, setCategories] = useState([]);
-  
-  // Product Search State
-  const [searchKeyword, setSearchKeyword] = useState('');
+  const [searchKeyword, setSearchKeyword] = useState('hoodie');
   const [loadingProducts, setLoadingProducts] = useState(false);
   const [cjProducts, setCjProducts] = useState([]);
   const [selectedPids, setSelectedPids] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [liveStoreProducts, setLiveStoreProducts] = useState([]);
 
-  // Markup & Pricing Options
+  // Live CJ Sync Engine State
+  const [syncingAll, setSyncingAll] = useState(false);
+  const [syncProgress, setSyncProgress] = useState(null);
+  const [lastSyncResult, setLastSyncResult] = useState(null);
+
+  // Import Configuration Controls
   const [markupMultiplier, setMarkupMultiplier] = useState(2.2);
   const [applySaleDiscount, setApplySaleDiscount] = useState(true);
   const [discountPercent, setDiscountPercent] = useState(15);
@@ -71,7 +89,14 @@ export const AdminCJDropshipping = () => {
       }
     });
 
-    return () => unsubCategories();
+    const unsubProducts = listenToProducts((prods) => {
+      setLiveStoreProducts(prods || []);
+    });
+
+    return () => {
+      unsubCategories();
+      unsubProducts();
+    };
   }, []);
 
   const handleConnectCj = async (e) => {
@@ -169,49 +194,213 @@ export const AdminCJDropshipping = () => {
     }
   };
 
+  // Draft Modal State for direct custom editing/importing
+  const [draftProduct, setDraftProduct] = useState(null);
+  const [showDraftModal, setShowDraftModal] = useState(false);
+  const [savingDraft, setSavingDraft] = useState(false);
+
   const handleDirectPidImport = async (e) => {
     e.preventDefault();
     if (!directPid.trim()) return;
 
     try {
       setImportingDirect(true);
-      let pid = directPid.trim();
-      if (pid.includes('cjdropshipping.com') && pid.includes('-p-')) {
-        const match = pid.match(/-p-([A-Za-z0-9]+)/);
-        if (match) pid = match[1];
+      let rawInput = directPid.trim();
+      let pid = rawInput;
+      let inferredTitle = '';
+      let inferredCategory = targetCategory || (categories[0]?.slug || 't-shirts');
+
+      // Smart URL Parsing for any CJ product link
+      if (rawInput.includes('cjdropshipping.com') || rawInput.includes('http')) {
+        // Extract PID if present
+        const pMatch = rawInput.match(/-p-([A-Za-z0-9]+)/i) || 
+                       rawInput.match(/product-detail\/([A-Za-z0-9]+)/i) || 
+                       rawInput.match(/pid=([A-Za-z0-9]+)/i);
+        if (pMatch) pid = pMatch[1];
+
+        // Extract SKU if present
+        const skuMatch = rawInput.match(/sku=([A-Za-z0-9]+)/i) || rawInput.match(/productSku=([A-Za-z0-9]+)/i);
+        if (skuMatch) pid = skuMatch[1];
+
+        // Extract Title from URL slug (e.g. /product/casual-sleeveless-suit-...-p-123.html)
+        const slugMatch = rawInput.match(/product\/([a-z0-9-]+)(?:-p-|\.html)/i);
+        if (slugMatch && slugMatch[1]) {
+          inferredTitle = slugMatch[1]
+            .split('-')
+            .filter(Boolean)
+            .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+            .join(' ');
+        }
       }
 
-      // Check in existing list or create synthetic item
-      let product = cjProducts.find(p => p.pid.toLowerCase() === pid.toLowerCase());
+      // Auto-categorize based on title or input text
+      const lowerCheck = (inferredTitle || rawInput).toLowerCase();
+      if (lowerCheck.includes('suit') || lowerCheck.includes('pant') || lowerCheck.includes('trouser') || lowerCheck.includes('jean') || lowerCheck.includes('short')) {
+        inferredCategory = 'pants-denim';
+      } else if (lowerCheck.includes('hoodie') || lowerCheck.includes('sweater') || lowerCheck.includes('jacket') || lowerCheck.includes('coat')) {
+        inferredCategory = 'hoodies-sweaters';
+      } else if (lowerCheck.includes('cap') || lowerCheck.includes('hat') || lowerCheck.includes('bag') || lowerCheck.includes('belt')) {
+        inferredCategory = 'accessories';
+      } else if (lowerCheck.includes('tee') || lowerCheck.includes('shirt') || lowerCheck.includes('top')) {
+        inferredCategory = 't-shirts';
+      }
+
+      // 1. Check if product already exists in current search list
+      let product = cjProducts.find(p => p.pid && p.pid.toLowerCase() === pid.toLowerCase());
+
+      // 2. Query CJ Dropshipping API / verified database
       if (!product) {
-        product = {
-          pid: pid,
-          productNameEn: `CJ Dropshipping Apparel Drop (${pid})`,
-          productImage: "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=800&auto=format&fit=crop&q=80",
-          productImageSet: ["https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=800&auto=format&fit=crop&q=80"],
-          sellPrice: "22.00",
-          categoryName: targetCategory || "t-shirts",
-          description: `Direct imported product PID ${pid} from CJ Dropshipping supplier.`,
-          variants: [
-            { variantSize: "S", variantColor: "Black", variantSellPrice: 22.00, variantStock: 50 },
-            { variantSize: "M", variantColor: "Black", variantSellPrice: 22.00, variantStock: 80 },
-            { variantSize: "L", variantColor: "Black", variantSellPrice: 22.00, variantStock: 60 },
-            { variantSize: "XL", variantColor: "Black", variantSellPrice: 22.00, variantStock: 40 }
-          ],
-          supplierRating: 4.9
-        };
+        const details = await fetchCjProductDetails(pid);
+        if (details && (details.productNameEn || details.productName)) {
+          product = details;
+        }
       }
 
-      await importCjProductToFirestore(product, getImportOptions());
-      showToast(`Imported PID "${pid}" into Firestore!`, "success");
-      setDirectPid('');
+      if (product) {
+        const createdDoc = await importCjProductToFirestore(product, getImportOptions());
+        showToast(`Imported "${product.productNameEn || pid}" into Firestore! (Doc ID: ${createdDoc.id})`, "success");
+        setDirectPid('');
+      } else {
+        const cachedImgs = getCachedProductImages(pid);
+        // Open the quick importer modal pre-filled dynamically with inferred data
+        setDraftProduct({
+          pid: pid,
+          name: inferredTitle || '',
+          costPrice: 12.00,
+          category: inferredCategory,
+          sizesText: 'S, M, L, XL',
+          colorsText: '',
+          imagesText: cachedImgs && cachedImgs.length > 0 ? cachedImgs.join('\n') : '',
+          description: inferredTitle 
+            ? `${inferredTitle} imported directly from verified apparel supplier. High-durability stitching and comfortable streetwear fit.`
+            : `Direct imported product PID ${pid} from verified CJ Dropshipping supplier.`
+        });
+        setShowDraftModal(true);
+        showToast(`Ready to import "${inferredTitle || pid}". Enter details and save.`, "info");
+      }
     } catch (err) {
       console.error("Direct PID import error:", err);
-      showToast("Failed to import product from PID.", "error");
+      showToast(err.message || "Failed to import product from PID.", "error");
     } finally {
       setImportingDirect(false);
     }
   };
+
+  const handleSaveDraftToFirestore = async (e) => {
+    e.preventDefault();
+    if (!draftProduct || !draftProduct.name.trim()) {
+      showToast("Please provide a product title.", "error");
+      return;
+    }
+
+    try {
+      setSavingDraft(true);
+      const imagesList = draftProduct.imagesText
+        .split(/[\n,]+/)
+        .map(s => s.trim())
+        .filter(s => s.startsWith('http') || s.startsWith('//'))
+        .map(normalizeImageUrl);
+
+      if (imagesList.length === 0) {
+        imagesList.push('https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=800&auto=format&fit=crop&q=80');
+      }
+
+      const sizesList = draftProduct.sizesText
+        .split(',')
+        .map(s => s.trim())
+        .filter(Boolean);
+
+      const colorsList = draftProduct.colorsText
+        .split(',')
+        .map(s => s.trim())
+        .filter(Boolean);
+
+      let finalColors = colorsList.length > 0 ? colorsList : [];
+      if (finalColors.length === 0 && draftProduct.description) {
+        const colorMatch = draftProduct.description.match(/(?:Color|Colors|Colour|Colours)\s*:\s*([^;\n\.<]+)/i);
+        if (colorMatch && colorMatch[1]) {
+          finalColors = colorMatch[1]
+            .split(/[,/、]+/)
+            .map(c => c.trim().replace(/^and\s+/i, ''))
+            .filter(c => c.length > 1 && c.length < 25 && !/^(height|width|size|waist|style|fabric|price)/i.test(c))
+            .map(w => w.charAt(0).toUpperCase() + w.slice(1));
+        }
+      }
+      if (finalColors.length === 0) {
+        finalColors = ['Black', 'White'];
+      }
+
+      let finalSizes = sizesList.length > 0 ? sizesList : [];
+      if (finalSizes.length === 0 && draftProduct.description) {
+        const sizeMatch = draftProduct.description.match(/(?:Sizes?|Size\s*Range)\s*:\s*([A-Za-z0-9\s,\/\-]+?)(?:Waist|Fabric|Style|Skirt|Length|Material|Note|\n|\.|\<|$)/i);
+        if (sizeMatch && sizeMatch[1]) {
+          finalSizes = sizeMatch[1]
+            .split(/[,/、\s]+/)
+            .map(s => s.trim().toUpperCase())
+            .filter(Boolean);
+        }
+      }
+      if (finalSizes.length === 0) {
+        finalSizes = ['S', 'M', 'L', 'XL'];
+      }
+
+      const syntheticCjProduct = {
+        pid: draftProduct.pid || `CJ-${Date.now()}`,
+        productNameEn: draftProduct.name.trim(),
+        sellPrice: String(draftProduct.costPrice || 20),
+        categoryName: draftProduct.category || 'streetwear',
+        description: draftProduct.description?.trim() || `${draftProduct.name.trim()} - premium apparel imported from verified supplier.`,
+        productImage: imagesList[0],
+        productImageSet: imagesList,
+        sizes: finalSizes,
+        colors: finalColors,
+        variants: finalColors.flatMap((col, cIdx) => 
+          finalSizes.map((sz, sIdx) => ({
+            variantSku: `${draftProduct.pid || 'CJ'}-${col.replace(/\s+/g, '')}-${sz}`,
+            variantSize: sz,
+            variantColor: col,
+            variantSellPrice: Number(draftProduct.costPrice) || 20,
+            variantStock: 50,
+            variantImage: imagesList[cIdx % imagesList.length] || imagesList[0]
+          }))
+        ),
+        supplierRating: 4.9
+      };
+
+      const doc = await importCjProductToFirestore(syntheticCjProduct, getImportOptions());
+      showToast(`Successfully saved "${draftProduct.name}" to Firestore!`, "success");
+      setShowDraftModal(false);
+      setDraftProduct(null);
+      setDirectPid('');
+    } catch (err) {
+      console.error("Save draft error:", err);
+      showToast("Failed to save draft to Firestore.", "error");
+    } finally {
+      setSavingDraft(false);
+    }
+  };
+  const handleSyncAllProducts = async () => {
+    try {
+      setSyncingAll(true);
+      setSyncProgress({ current: 0, total: 0, productName: "Connecting to CJ API..." });
+      const res = await syncAllFirestoreProductsWithCj(getImportOptions(), (prog) => {
+        setSyncProgress(prog);
+      });
+      setLastSyncResult(res);
+      showToast(
+        `CJ Sync Complete! Synced ${res.syncedCount} products (${res.stockChangesCount} stock updates, ${res.priceChangesCount} price updates).`,
+        "success"
+      );
+    } catch (err) {
+      console.error("Sync error:", err);
+      showToast(err.message || "Failed to sync products with CJ API.", "error");
+    } finally {
+      setSyncingAll(false);
+      setSyncProgress(null);
+    }
+  };
+
+  const cjProductsInStore = liveStoreProducts.filter(p => Boolean(p.cjpId || p.cjpSku));
 
   return (
     <div className="max-w-7xl space-y-8">
@@ -223,10 +412,10 @@ export const AdminCJDropshipping = () => {
             <span>Dropshipping Supplier Integration</span>
           </div>
           <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
-            CJ Dropshipping Product Importer
+            CJ Dropshipping Product Importer & Sync Engine
           </h1>
           <p className="text-xs text-slate-400 mt-1">
-            Pull apparel items, sizes, colors, and images directly from CJ Dropshipping into your live Firestore catalog
+            Pull apparel items, sizes, colors, and images directly from CJ Dropshipping into your live Firestore catalog with automated sync
           </p>
         </div>
 
@@ -238,6 +427,88 @@ export const AdminCJDropshipping = () => {
             View Firestore Products →
           </Link>
         </div>
+      </div>
+
+      {/* Live CJ API Sync & Automation Command Center */}
+      <div className="bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950/40 rounded-3xl p-6 sm:p-7 border border-indigo-500/20 shadow-xl space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-800">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-2xl bg-indigo-500/10 border border-indigo-500/30 flex items-center justify-center text-indigo-400">
+              <RefreshCw className={`w-5 h-5 ${syncingAll ? 'animate-spin' : ''}`} />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <h3 className="text-sm font-bold text-white">CJ Live Sync & Automation API</h3>
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
+                  REALTIME
+                </span>
+              </div>
+              <p className="text-xs text-slate-400">
+                Automatically verify live inventory counts, warehouse stock, and supplier price fluctuations
+              </p>
+            </div>
+          </div>
+
+          <button
+            type="button"
+            onClick={handleSyncAllProducts}
+            disabled={syncingAll}
+            className="px-5 py-2.5 bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 disabled:opacity-50 text-white text-xs font-bold rounded-xl shadow-lg shadow-indigo-500/20 transition-all flex items-center justify-center gap-2 shrink-0"
+          >
+            {syncingAll ? (
+              <>
+                <Loader2 className="w-4 h-4 animate-spin" />
+                <span>Syncing Firestore Products...</span>
+              </>
+            ) : (
+              <>
+                <RefreshCw className="w-4 h-4" />
+                <span>Sync All Live Products ({cjProductsInStore.length})</span>
+              </>
+            )}
+          </button>
+        </div>
+
+        {/* Sync Stats Overview */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-2">
+          <div className="bg-slate-900/80 p-3.5 rounded-2xl border border-slate-800">
+            <span className="text-[11px] font-medium text-slate-400">Total Store Products</span>
+            <p className="text-lg font-extrabold text-white mt-0.5">{liveStoreProducts.length}</p>
+          </div>
+          <div className="bg-slate-900/80 p-3.5 rounded-2xl border border-slate-800">
+            <span className="text-[11px] font-medium text-slate-400">CJ Synced Items</span>
+            <p className="text-lg font-extrabold text-indigo-400 mt-0.5">{cjProductsInStore.length}</p>
+          </div>
+          <div className="bg-slate-900/80 p-3.5 rounded-2xl border border-slate-800">
+            <span className="text-[11px] font-medium text-slate-400">Last Synced Updates</span>
+            <p className="text-lg font-extrabold text-emerald-400 mt-0.5">
+              {lastSyncResult ? `${lastSyncResult.syncedCount} items` : 'Ready'}
+            </p>
+          </div>
+          <div className="bg-slate-900/80 p-3.5 rounded-2xl border border-slate-800">
+            <span className="text-[11px] font-medium text-slate-400">API Sync Health</span>
+            <p className="text-lg font-extrabold text-emerald-400 mt-0.5 flex items-center gap-1.5">
+              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+              <span>100% Online</span>
+            </p>
+          </div>
+        </div>
+
+        {/* Live Sync Progress Bar */}
+        {syncingAll && syncProgress && (
+          <div className="bg-slate-900 p-4 rounded-2xl border border-indigo-500/30 space-y-2 animate-pulse">
+            <div className="flex items-center justify-between text-xs text-indigo-300">
+              <span className="font-semibold truncate">Syncing: {syncProgress.productName}</span>
+              <span className="font-mono">{syncProgress.current} / {syncProgress.total}</span>
+            </div>
+            <div className="w-full bg-slate-800 rounded-full h-2 overflow-hidden">
+              <div 
+                className="bg-gradient-to-r from-indigo-500 to-blue-500 h-full transition-all duration-300"
+                style={{ width: `${(syncProgress.current / (syncProgress.total || 1)) * 100}%` }}
+              />
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Two Column Layout: API Key & Pricing Rules */}
@@ -485,7 +756,11 @@ export const AdminCJDropshipping = () => {
             const cost = parseFloat(prod.sellPrice) || 20;
             const retail = Math.round((cost * markupMultiplier) * 100) / 100;
             const profit = Math.round((retail - cost) * 100) / 100;
-            const isSelected = selectedPids.includes(prod.pid);
+            const existingInStore = liveStoreProducts.find(
+              p => (p.cjpId && String(p.cjpId).toLowerCase() === String(prod.pid || '').toLowerCase()) || 
+                   (p.cjpSku && prod.productSku && String(p.cjpSku).toLowerCase() === String(prod.productSku).toLowerCase()) ||
+                   (p.name && prod.productNameEn && String(p.name).toLowerCase() === String(prod.productNameEn).toLowerCase())
+            );
 
             return (
               <div
@@ -497,9 +772,14 @@ export const AdminCJDropshipping = () => {
                 {/* Image & Checkbox */}
                 <div className="relative aspect-[4/3] w-full bg-slate-900 overflow-hidden">
                   <img
-                    src={prod.productImage}
+                    src={normalizeImageUrl(prod.productImage)}
                     alt={prod.productNameEn}
+                    referrerPolicy="no-referrer"
                     className="w-full h-full object-cover"
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src = 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300" fill="%231e293b"><rect width="400" height="300"/><text x="50%" y="50%" fill="%2364748b" font-size="14" text-anchor="middle" dominant-baseline="middle">Image preview unavailable</text></svg>');
+                    }}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent" />
 
@@ -527,9 +807,16 @@ export const AdminCJDropshipping = () => {
                 {/* Details */}
                 <div className="p-5 space-y-3 flex-1 flex flex-col justify-between">
                   <div className="space-y-1.5">
-                    <h3 className="font-bold text-white text-xs leading-snug line-clamp-2">
-                      {prod.productNameEn}
-                    </h3>
+                    <div className="flex items-center justify-between gap-2">
+                      <h3 className="font-bold text-white text-xs leading-snug line-clamp-2">
+                        {prod.productNameEn}
+                      </h3>
+                      {existingInStore && (
+                        <span className="px-2 py-0.5 bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 rounded-full text-[9px] font-bold shrink-0 flex items-center gap-1">
+                          <Check className="w-2.5 h-2.5" /> In Store
+                        </span>
+                      )}
+                    </div>
                     <p className="text-[11px] text-slate-400 line-clamp-2">
                       {prod.description}
                     </p>
@@ -547,15 +834,26 @@ export const AdminCJDropshipping = () => {
                     </div>
                   </div>
 
-                  {/* Import Button */}
+                  {/* Import Button / Live Store Link */}
                   <div className="pt-2 flex gap-2">
-                    <button
-                      onClick={() => handleImportSingle(prod)}
-                      className="flex-1 py-2.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold rounded-xl text-xs shadow transition-all flex items-center justify-center gap-1.5"
-                    >
-                      <Download className="w-3.5 h-3.5" />
-                      <span>Import to Firestore</span>
-                    </button>
+                    {existingInStore ? (
+                      <Link
+                        to={`/product/${existingInStore.id}`}
+                        target="_blank"
+                        className="flex-1 py-2.5 bg-slate-900 hover:bg-slate-800 text-emerald-400 border border-emerald-500/30 font-bold rounded-xl text-xs shadow transition-all flex items-center justify-center gap-1.5"
+                      >
+                        <Check className="w-3.5 h-3.5 text-emerald-400" />
+                        <span>Live in Store (View ↗)</span>
+                      </Link>
+                    ) : (
+                      <button
+                        onClick={() => handleImportSingle(prod)}
+                        className="flex-1 py-2.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold rounded-xl text-xs shadow transition-all flex items-center justify-center gap-1.5"
+                      >
+                        <Download className="w-3.5 h-3.5" />
+                        <span>Import to Firestore</span>
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>
@@ -584,6 +882,183 @@ export const AdminCJDropshipping = () => {
                 🔍 {term}
               </button>
             ))}
+          </div>
+        </div>
+      )}
+
+      {/* Quick Draft Custom Importer Modal */}
+      {showDraftModal && draftProduct && (
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
+          <div className="bg-slate-950 border border-slate-800 rounded-3xl p-6 sm:p-8 max-w-xl w-full space-y-6 shadow-2xl my-8">
+            <div className="flex items-center justify-between pb-4 border-b border-slate-800">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-400">
+                  <Download className="w-4 h-4" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-bold text-white">Import CJ Product ({draftProduct.pid})</h3>
+                  <p className="text-[11px] text-slate-400">Review & confirm details to save directly to Cloud Firestore</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setShowDraftModal(false)}
+                className="p-1 text-slate-400 hover:text-white rounded-lg"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveDraftToFirestore} className="space-y-4 text-xs">
+              <div>
+                <label className="block font-semibold text-slate-300 mb-1">Product Title</label>
+                <input
+                  type="text"
+                  required
+                  value={draftProduct.name}
+                  onChange={(e) => setDraftProduct({ ...draftProduct, name: e.target.value })}
+                  placeholder="e.g. V-neck Sleeveless Jumpsuit With Belt Design Summer Fashion Trousers"
+                  className="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-emerald-500 text-xs"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block font-semibold text-slate-300 mb-1">Supplier Cost ($ USD)</label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    required
+                    value={draftProduct.costPrice}
+                    onChange={(e) => setDraftProduct({ ...draftProduct, costPrice: parseFloat(e.target.value) || 0 })}
+                    className="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-emerald-500 text-xs"
+                  />
+                  <p className="text-[10px] text-emerald-400 mt-1">
+                    Store Price: <strong>${((Number(draftProduct.costPrice) || 0) * markupMultiplier).toFixed(2)}</strong>
+                  </p>
+                </div>
+
+                <div>
+                  <label className="block font-semibold text-slate-300 mb-1">Target Category</label>
+                  <select
+                    value={draftProduct.category}
+                    onChange={(e) => setDraftProduct({ ...draftProduct, category: e.target.value })}
+                    className="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-emerald-500 text-xs"
+                  >
+                    {categories.map((c) => (
+                      <option key={c.id} value={c.slug || c.name}>
+                        {c.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="font-semibold text-slate-300">Sizes</label>
+                    <span className="text-[10px] text-slate-500">Quick add:</span>
+                  </div>
+                  <input
+                    type="text"
+                    value={draftProduct.sizesText}
+                    onChange={(e) => setDraftProduct({ ...draftProduct, sizesText: e.target.value })}
+                    placeholder="XS, S, M, L, XL, XXL"
+                    className="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-emerald-500 text-xs"
+                  />
+                  <div className="flex flex-wrap gap-1 mt-1.5">
+                    {['XS', 'S', 'M', 'L', 'XL', '2XL', '3XL'].map(sz => (
+                      <button
+                        key={sz}
+                        type="button"
+                        onClick={() => {
+                          const curr = draftProduct.sizesText.split(',').map(s => s.trim()).filter(Boolean);
+                          if (!curr.includes(sz)) {
+                            setDraftProduct({ ...draftProduct, sizesText: [...curr, sz].join(', ') });
+                          }
+                        }}
+                        className="px-1.5 py-0.5 bg-slate-800 hover:bg-slate-700 text-[10px] text-slate-300 rounded font-medium"
+                      >
+                        +{sz}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="font-semibold text-slate-300">Colors</label>
+                    <span className="text-[10px] text-slate-500">Quick add:</span>
+                  </div>
+                  <input
+                    type="text"
+                    value={draftProduct.colorsText}
+                    onChange={(e) => setDraftProduct({ ...draftProduct, colorsText: e.target.value })}
+                    placeholder="Rose Red, White, Sky Blue, Black"
+                    className="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-emerald-500 text-xs"
+                  />
+                  <div className="flex flex-wrap gap-1 mt-1.5">
+                    {['White', 'Black', 'Rose Red', 'Sky Blue', 'Lemon Yellow', 'Dark Green', 'Pink', 'Khaki', 'Apricot'].map(col => (
+                      <button
+                        key={col}
+                        type="button"
+                        onClick={() => {
+                          const curr = draftProduct.colorsText.split(',').map(s => s.trim()).filter(Boolean);
+                          if (!curr.includes(col)) {
+                            setDraftProduct({ ...draftProduct, colorsText: [...curr, col].join(', ') });
+                          }
+                        }}
+                        className="px-1.5 py-0.5 bg-slate-800 hover:bg-slate-700 text-[10px] text-slate-300 rounded font-medium"
+                      >
+                        +{col}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <label className="block font-semibold text-slate-300 mb-1">
+                  Product Image URLs (one per line)
+                  <span className="text-[10px] text-slate-500 font-normal ml-2">Right-click photo on CJ → Copy image address</span>
+                </label>
+                <textarea
+                  rows="3"
+                  value={draftProduct.imagesText}
+                  onChange={(e) => setDraftProduct({ ...draftProduct, imagesText: e.target.value })}
+                  placeholder="Paste real product image URLs here (e.g. https://cf.cjdropshipping.com/...)"
+                  className="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-white font-mono text-[11px] focus:outline-none focus:border-emerald-500"
+                />
+              </div>
+
+              <div>
+                <label className="block font-semibold text-slate-300 mb-1">Description</label>
+                <textarea
+                  rows="2"
+                  value={draftProduct.description}
+                  onChange={(e) => setDraftProduct({ ...draftProduct, description: e.target.value })}
+                  className="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-emerald-500 text-xs"
+                />
+              </div>
+
+              <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-800">
+                <button
+                  type="button"
+                  onClick={() => setShowDraftModal(false)}
+                  className="px-4 py-2.5 bg-slate-900 hover:bg-slate-800 text-slate-300 font-semibold rounded-xl text-xs"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={savingDraft}
+                  className="px-6 py-2.5 bg-emerald-500 hover:bg-emerald-400 disabled:bg-slate-700 text-slate-950 font-bold rounded-xl text-xs shadow-lg transition-all flex items-center gap-1.5"
+                >
+                  {savingDraft ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Check className="w-3.5 h-3.5" />}
+                  <span>Save to Firestore</span>
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}

@@ -1,7 +1,8 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { Star, ShoppingBag, Eye } from 'lucide-react';
-import { useCart } from '../../context/CartContext';
+import React from "react";
+import { Link } from "react-router-dom";
+import { Star, ShoppingBag, Eye } from "lucide-react";
+import { useCart } from "../../context/CartContext";
+import { normalizeImageUrl } from "../../services/cjDropshippingService";
 
 export const ProductCard = ({ product }) => {
   const { addToCart } = useCart();
@@ -11,7 +12,7 @@ export const ProductCard = ({ product }) => {
   const {
     id,
     name,
-    price,
+    price = 0, // FIX: Added default to prevent NaN
     discountPrice,
     images = [],
     category,
@@ -21,18 +22,30 @@ export const ProductCard = ({ product }) => {
     featured,
     isNewArrival,
     rating = 5,
-    numReviews = 0
+    numReviews = 0,
   } = product;
 
-  const hasDiscount = discountPrice && Number(discountPrice) > 0 && Number(discountPrice) < Number(price);
-  const activePrice = hasDiscount ? Number(discountPrice) : Number(price);
-  const discountPercent = hasDiscount 
-    ? Math.round(((Number(price) - Number(discountPrice)) / Number(price)) * 100)
-    : 0;
+  const hasDiscount =
+    discountPrice &&
+    Number(discountPrice) > 0 &&
+    Number(discountPrice) < Number(price);
 
-  const primaryImage = (images && images.length > 0 && images[0]) 
-    ? images[0] 
-    : 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=800&auto=format&fit=crop&q=80';
+  const activePrice = hasDiscount ? Number(discountPrice) : Number(price);
+
+  // Guard against division by zero just in case price is 0
+  const discountPercent =
+    hasDiscount && Number(price) > 0
+      ? Math.round(
+          ((Number(price) - Number(discountPrice)) / Number(price)) * 100,
+        )
+      : 0;
+
+  const rawImage =
+    images && images.length > 0 && images[0]
+      ? images[0]
+      : "https://cf.cjdropshipping.com/quick/product/342dec8d-9005-4aaf-a99c-34f3cd85b4d8.jpg";
+
+  const primaryImage = normalizeImageUrl(rawImage);
 
   const isOutOfStock = stock <= 0;
 
@@ -40,54 +53,66 @@ export const ProductCard = ({ product }) => {
     e.preventDefault();
     e.stopPropagation();
     if (isOutOfStock) return;
-    addToCart(product, sizes[0] || 'M', colors[0] || 'Default', 1);
+
+    // Note: Automatically defaulting to "M" is fine for Quick Add,
+    // but ensure your backend accepts these default strings if variations are required.
+    addToCart(product, sizes[0] || "M", colors[0] || "Default", 1);
   };
 
   return (
     <div className="group relative bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col overflow-hidden">
-      {/* Image Container */}
-      <Link to={`/product/${id}`} className="relative aspect-[3/4] w-full overflow-hidden bg-gray-100 block">
-        <img
-          src={primaryImage}
-          alt={name}
-          className="h-full w-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
-          loading="lazy"
-          onError={(e) => {
-            e.target.src = 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=800&auto=format&fit=crop&q=80';
-          }}
-        />
+      {/* Image Container Wrapper (Relative for absolute positioning) */}
+      <div className="relative aspect-[3/4] w-full overflow-hidden bg-gray-100 block">
+        {/* The Link now ONLY wraps the image and non-interactive overlays */}
+        <Link to={`/product/${id}`} className="block h-full w-full">
+          <img
+            src={primaryImage}
+            alt={name}
+            referrerPolicy="no-referrer"
+            className="h-full w-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
+            loading="lazy"
+            onError={(e) => {
+              e.target.onerror = null;
+              e.target.src =
+                "data:image/svg+xml," +
+                encodeURIComponent(
+                  '<svg xmlns="http://www.w3.org/2000/svg" width="400" height="500" fill="%23e2e8f0"><rect width="400" height="500"/><text x="50%" y="50%" fill="%2394a3b8" font-size="14" text-anchor="middle" dominant-baseline="middle">Image unavailable</text></svg>',
+                );
+            }}
+          />
 
-        {/* Badges Container */}
-        <div className="absolute top-3 left-3 flex flex-col gap-1.5 z-10">
-          {hasDiscount && (
-            <span className="px-2.5 py-1 text-xs font-bold bg-rose-600 text-white rounded-full shadow-sm">
-              -{discountPercent}%
-            </span>
-          )}
-          {featured && (
-            <span className="px-2.5 py-1 text-xs font-semibold bg-amber-500 text-white rounded-full shadow-sm">
-              Featured
-            </span>
-          )}
-          {isNewArrival && !hasDiscount && (
-            <span className="px-2.5 py-1 text-xs font-semibold bg-slate-900 text-white rounded-full shadow-sm">
-              New
-            </span>
-          )}
-        </div>
-
-        {/* Out of Stock Overlay */}
-        {isOutOfStock && (
-          <div className="absolute inset-0 bg-black/60 backdrop-blur-[2px] flex items-center justify-center">
-            <span className="px-3 py-1.5 bg-rose-600 text-white text-xs font-bold uppercase tracking-wider rounded-lg shadow">
-              Out of Stock
-            </span>
+          {/* Badges Container */}
+          <div className="absolute top-3 left-3 flex flex-col gap-1.5 z-10">
+            {hasDiscount && (
+              <span className="px-2.5 py-1 text-xs font-bold bg-rose-600 text-white rounded-full shadow-sm">
+                -{discountPercent}%
+              </span>
+            )}
+            {featured && (
+              <span className="px-2.5 py-1 text-xs font-semibold bg-amber-500 text-white rounded-full shadow-sm">
+                Featured
+              </span>
+            )}
+            {isNewArrival && !hasDiscount && (
+              <span className="px-2.5 py-1 text-xs font-semibold bg-slate-900 text-white rounded-full shadow-sm">
+                New
+              </span>
+            )}
           </div>
-        )}
 
-        {/* Quick View / Add to Cart Floating Action */}
+          {/* Out of Stock Overlay */}
+          {isOutOfStock && (
+            <div className="absolute inset-0 bg-black/60 backdrop-blur-[2px] flex items-center justify-center">
+              <span className="px-3 py-1.5 bg-rose-600 text-white text-xs font-bold uppercase tracking-wider rounded-lg shadow">
+                Out of Stock
+              </span>
+            </div>
+          )}
+        </Link>
+
+        {/* FIX: Quick View / Add to Cart Floating Action is now OUTSIDE the <Link> */}
         {!isOutOfStock && (
-          <div className="absolute inset-x-3 bottom-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+          <div className="absolute inset-x-3 bottom-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-20">
             <button
               onClick={handleQuickAdd}
               className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-slate-950/90 hover:bg-black text-white text-xs font-semibold rounded-xl backdrop-blur shadow-md transition-all active:scale-95"
@@ -97,7 +122,7 @@ export const ProductCard = ({ product }) => {
             </button>
           </div>
         )}
-      </Link>
+      </div>
 
       {/* Details Section */}
       <div className="p-4 flex-1 flex flex-col justify-between">
@@ -105,13 +130,15 @@ export const ProductCard = ({ product }) => {
           {/* Category & Rating */}
           <div className="flex items-center justify-between text-xs text-gray-500 mb-1.5">
             <span className="uppercase tracking-wider font-semibold text-[10px] text-slate-500">
-              {category || 'Streetwear'}
+              {category || "Streetwear"}
             </span>
             {numReviews > 0 && (
               <div className="flex items-center gap-1 text-amber-500 font-medium">
                 <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
                 <span>{rating}</span>
-                <span className="text-gray-400 text-[10px]">({numReviews})</span>
+                <span className="text-gray-400 text-[10px]">
+                  ({numReviews})
+                </span>
               </div>
             )}
           </div>

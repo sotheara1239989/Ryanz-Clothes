@@ -24,14 +24,19 @@ export const CartProvider = ({ children }) => {
     }
   }, [cartItems]);
 
-  const addToCart = (product, selectedSize, selectedColor, quantity = 1) => {
+  const addToCart = (product, selectedSize, selectedColor, quantity = 1, variant = null) => {
     if (!product || !product.id) return;
 
-    const size = selectedSize || (product.sizes && product.sizes[0]) || 'M';
-    const color = selectedColor || (product.colors && product.colors[0]) || 'Black';
-    const activePrice = product.discountPrice && Number(product.discountPrice) > 0 
-      ? Number(product.discountPrice) 
-      : Number(product.price);
+    const size = selectedSize || variant?.size || (product.sizes && product.sizes[0]) || 'M';
+    const color = selectedColor || variant?.color || (product.colors && product.colors[0]) || 'Default';
+    const variantPrice = variant?.price ? Number(variant.price) : null;
+    const basePrice = Number(product.price) || 0;
+    const hasDiscount = Boolean(product.discountPrice && Number(product.discountPrice) > 0 && Number(product.discountPrice) < basePrice);
+    const activePrice = variantPrice || (hasDiscount ? Number(product.discountPrice) : basePrice);
+
+    const itemImage = variant?.image || (Array.isArray(product.images) && product.images[0]) || '';
+    const itemStock = variant?.stock !== undefined ? variant.stock : (product.stock !== undefined ? product.stock : 99);
+    const itemSku = variant?.sku || product.cjpSku || '';
 
     setCartItems((prev) => {
       const existingIndex = prev.findIndex(
@@ -43,29 +48,31 @@ export const CartProvider = ({ children }) => {
         const newQty = updated[existingIndex].quantity + quantity;
         
         // Stock check
-        if (product.stock && newQty > product.stock) {
-          showToast(`Only ${product.stock} items available in stock.`, 'error');
-          updated[existingIndex].quantity = product.stock;
+        if (itemStock && newQty > itemStock) {
+          showToast(`Only ${itemStock} items available in stock.`, 'error');
+          updated[existingIndex].quantity = itemStock;
         } else {
           updated[existingIndex].quantity = newQty;
           showToast(`Updated "${product.name}" quantity in cart.`, 'success');
         }
         return updated;
       } else {
-        showToast(`Added "${product.name}" to cart!`, 'success');
+        showToast(`Added "${product.name}" (${color} / ${size}) to cart!`, 'success');
         return [
           ...prev,
           {
             productId: product.id,
             name: product.name,
-            price: Number(product.price),
+            price: basePrice,
             discountPrice: product.discountPrice ? Number(product.discountPrice) : null,
             activePrice: activePrice,
-            image: (product.images && product.images[0]) || '',
+            image: itemImage,
             selectedSize: size,
             selectedColor: color,
             quantity: quantity,
-            stock: product.stock !== undefined ? product.stock : 99
+            stock: itemStock,
+            sku: itemSku,
+            variantId: variant?.id || null
           }
         ];
       }

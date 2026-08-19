@@ -29,13 +29,17 @@ import AdminReviews from './pages/admin/AdminReviews';
 import AdminFirebaseSetup from './pages/admin/AdminFirebaseSetup';
 import AdminCJDropshipping from './pages/admin/AdminCJDropshipping';
 
+import ErrorBoundary from './components/common/ErrorBoundary';
+
 // Customer Storefront Layout Wrapper
 const StorefrontLayout = () => {
   return (
     <div className="flex flex-col min-h-screen">
       <Navbar />
       <div className="flex-1">
-        <Outlet />
+        <ErrorBoundary>
+          <Outlet />
+        </ErrorBoundary>
       </div>
       <Footer />
     </div>

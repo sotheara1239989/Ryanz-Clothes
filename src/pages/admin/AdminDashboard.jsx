@@ -20,6 +20,7 @@ import { useToast } from '../../context/ToastContext';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
 
 import { isFirebaseConfigured } from '../../firebase/config';
+import { normalizeImageUrl } from '../../services/cjDropshippingService';
 
 export const AdminDashboard = () => {
   const [products, setProducts] = useState([]);
@@ -281,9 +282,14 @@ export const AdminDashboard = () => {
                 >
                   <div className="flex items-center gap-3 min-w-0">
                     <img
-                      src={(prod.images && prod.images[0]) || 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=800&auto=format&fit=crop&q=80'}
+                      src={normalizeImageUrl((prod.images && prod.images[0]))}
                       alt={prod.name}
+                      referrerPolicy="no-referrer"
                       className="w-10 h-12 object-cover rounded-lg bg-slate-800 shrink-0"
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src = 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="40" height="48" fill="%231e293b"><rect width="40" height="48"/><text x="50%" y="50%" fill="%2364748b" font-size="8" text-anchor="middle" dominant-baseline="middle">N/A</text></svg>');
+                      }}
                     />
                     <div className="min-w-0">
                       <h4 className="text-xs font-bold text-white truncate">{prod.name}</h4>

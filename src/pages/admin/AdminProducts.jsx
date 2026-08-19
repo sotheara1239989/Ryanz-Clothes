@@ -21,6 +21,7 @@ import {
   deleteProduct 
 } from '../../services/productService';
 import { listenToCategories } from '../../services/categoryService';
+import { normalizeImageUrl } from '../../services/cjDropshippingService';
 import { uploadProductImage } from '../../services/storageService';
 import { useToast } from '../../context/ToastContext';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
@@ -126,7 +127,7 @@ export const AdminProducts = () => {
       colors: Array.isArray(product.colors) ? product.colors : ['Black'],
       stock: product.stock !== undefined ? product.stock : 20,
       images: Array.isArray(product.images) && product.images.length > 0 
-        ? product.images 
+        ? product.images.map(normalizeImageUrl)
         : ['https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=800&auto=format&fit=crop&q=80'],
       featured: Boolean(product.featured),
       isNewArrival: Boolean(product.isNewArrival),
@@ -366,9 +367,14 @@ export const AdminProducts = () => {
                       <td className="py-4 px-6">
                         <div className="flex items-center gap-3">
                           <img
-                            src={(product.images && product.images[0]) || 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=800&auto=format&fit=crop&q=80'}
+                            src={normalizeImageUrl((product.images && product.images[0]))}
                             alt={product.name}
+                            referrerPolicy="no-referrer"
                             className="w-12 h-14 object-cover rounded-xl bg-slate-800 shrink-0"
+                            onError={(e) => {
+                              e.target.onerror = null;
+                              e.target.src = 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="48" height="56" fill="%231e293b"><rect width="48" height="56"/><text x="50%" y="50%" fill="%2364748b" font-size="8" text-anchor="middle" dominant-baseline="middle">N/A</text></svg>');
+                            }}
                           />
                           <div className="min-w-0">
                             <div className="font-bold text-white text-xs truncate max-w-xs">{product.name}</div>
@@ -711,18 +717,31 @@ export const AdminProducts = () => {
 
                 {/* Preview Thumbnails */}
                 <div className="flex flex-wrap gap-3 pt-2">
-                  {formData.images.map((img, idx) => (
-                    <div key={idx} className="relative group w-20 h-24 rounded-xl overflow-hidden bg-slate-900 border border-slate-800">
-                      <img src={img} alt="preview" className="w-full h-full object-cover" />
-                      <button
-                        type="button"
-                        onClick={() => handleRemoveImage(idx)}
-                        className="absolute top-1 right-1 p-1 bg-rose-600/90 text-white rounded-md opacity-0 group-hover:opacity-100 transition-opacity"
-                      >
-                        <X className="w-3 h-3" />
-                      </button>
-                    </div>
-                  ))}
+                  {formData.images.map((img, idx) => {
+                    const normalized = normalizeImageUrl(img);
+                    return (
+                      <div key={idx} className="relative group w-20 h-24 rounded-xl overflow-hidden bg-slate-900 border border-slate-800">
+                        <img 
+                          src={normalized} 
+                          alt="preview" 
+                          referrerPolicy="no-referrer"
+                          className="w-full h-full object-cover" 
+                          onError={(e) => {
+                            e.target.onerror = null;
+                            e.target.src = 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="80" height="96" fill="%231e293b"><rect width="80" height="96"/><text x="50%" y="50%" fill="%2364748b" font-size="10" text-anchor="middle" dominant-baseline="middle">Failed</text></svg>');
+                          }}
+                        />
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveImage(idx)}
+                          className="absolute top-1 right-1 p-1 bg-rose-600/90 hover:bg-rose-600 text-white rounded-md opacity-0 group-hover:opacity-100 transition-opacity shadow"
+                          title="Remove image"
+                        >
+                          <X className="w-3 h-3" />
+                        </button>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
 

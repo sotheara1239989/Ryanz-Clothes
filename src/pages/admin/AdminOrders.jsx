@@ -11,9 +11,15 @@ import {
   ChevronDown,
   Eye,
   X,
-  CreditCard
+  CreditCard,
+  Send,
+  RefreshCw,
+  ExternalLink,
+  Loader2
 } from 'lucide-react';
 import { listenToAllOrders, updateOrderStatus } from '../../services/orderService';
+import { normalizeImageUrl } from '../../services/cjDropshippingService';
+import { syncOrderToCjFulfillment, syncCjOrderTracking } from '../../services/cjSyncService';
 import { useToast } from '../../context/ToastContext';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
 
@@ -23,6 +29,8 @@ export const AdminOrders = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [selectedOrderDetails, setSelectedOrderDetails] = useState(null);
+  const [fulfillingId, setFulfillingId] = useState(null);
+  const [trackingSyncId, setTrackingSyncId] = useState(null);
 
   const { showToast } = useToast();
 
@@ -52,6 +60,52 @@ export const AdminOrders = () => {
     } catch (err) {
       console.error("Error updating order status:", err);
       showToast("Failed to update order status.", "error");
+    }
+  };
+
+  const handleFulfillWithCj = async (orderId) => {
+    try {
+      setFulfillingId(orderId);
+      const res = await syncOrderToCjFulfillment(orderId);
+      showToast(res.message || "Order submitted to CJ Dropshipping for fulfillment!", "success");
+      if (selectedOrderDetails && selectedOrderDetails.id === orderId) {
+        setSelectedOrderDetails(prev => ({
+          ...prev,
+          cjOrderId: res.cjOrderId,
+          cjFulfillmentStatus: 'submitted_to_cj',
+          status: 'processing'
+        }));
+      }
+    } catch (err) {
+      console.error("CJ Fulfillment Error:", err);
+      showToast(err.message || "Failed to submit order to CJ.", "error");
+    } finally {
+      setFulfillingId(null);
+    }
+  };
+
+  const handleSyncTracking = async (orderId) => {
+    try {
+      setTrackingSyncId(orderId);
+      const res = await syncCjOrderTracking(orderId);
+      if (res.success && res.trackingNumber) {
+        showToast(`Tracking updated: ${res.trackingNumber} (${res.carrier})`, "success");
+        if (selectedOrderDetails && selectedOrderDetails.id === orderId) {
+          setSelectedOrderDetails(prev => ({
+            ...prev,
+            trackingNumber: res.trackingNumber,
+            trackingCarrier: res.carrier,
+            status: res.status
+          }));
+        }
+      } else {
+        showToast(res.message || "No tracking available from CJ yet.", "info");
+      }
+    } catch (err) {
+      console.error("Tracking Sync Error:", err);
+      showToast(err.message || "Failed to sync tracking.", "error");
+    } finally {
+      setTrackingSyncId(null);
     }
   };
 
@@ -162,9 +216,14 @@ export const AdminOrders = () => {
                             {order.items?.slice(0, 3).map((it, idx) => (
                               <img
                                 key={idx}
-                                src={it.image || 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=800&auto=format&fit=crop&q=80'}
+                                src={normalizeImageUrl(it.image)}
                                 alt="item"
-                                className="w-6 h-6 rounded-full border border-slate-900 object-cover"
+                                referrerPolicy="no-referrer"
+                                className="w-6 h-6 rounded-full border border-slate-900 object-cover bg-slate-800"
+                                onError={(e) => {
+                                  e.target.onerror = null;
+                                  e.target.style.display = 'none';
+                                }}
                               />
                             ))}
                           </div>
@@ -275,8 +334,9 @@ export const AdminOrders = () => {
                 {selectedOrderDetails.items?.map((item, idx) => (
                   <div key={idx} className="flex items-center gap-3 p-3 rounded-xl bg-slate-900 border border-slate-800 text-xs">
                     <img
-                      src={item.image || 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=800&auto=format&fit=crop&q=80'}
+                      src={normalizeImageUrl(item.image)}
                       alt={item.productName}
+                      referrerPolicy="no-referrer"
                       className="w-12 h-14 object-cover rounded-lg bg-slate-800 shrink-0"
                     />
                     <div className="flex-1 min-w-0">
@@ -295,6 +355,91 @@ export const AdminOrders = () => {
                     </div>
                   </div>
                 ))}
+              </div>
+            </div>
+
+            {/* CJ Dropshipping Fulfillment & Live Tracking Actions */}
+            <div className="p-4 bg-slate-900/90 rounded-2xl border border-indigo-500/30 space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Truck className="w-4 h-4 text-indigo-400" />
+                  <h4 className="text-xs font-bold text-white uppercase tracking-wider">
+                    CJ Dropshipping Fulfillment
+                  </h4>
+                </div>
+                {selectedOrderDetails.cjOrderId ? (
+                  <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
+                    CJ Order #{selectedOrderDetails.cjOrderId}
+                  </span>
+                ) : (
+                  <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-slate-800 text-slate-400">
+                    Ready to Fulfill
+                  </span>
+                )}
+              </div>
+
+              {selectedOrderDetails.trackingNumber && (
+                <div className="flex items-center justify-between p-2.5 bg-slate-950 rounded-xl border border-slate-800 text-xs">
+                  <div className="space-y-0.5">
+                    <span className="text-[10px] text-slate-400 block">
+                      Carrier: <strong className="text-slate-200">{selectedOrderDetails.trackingCarrier || 'USPS / CJ Packet'}</strong>
+                    </span>
+                    <span className="font-mono text-emerald-400 font-bold block">
+                      {selectedOrderDetails.trackingNumber}
+                    </span>
+                  </div>
+                  <a
+                    href={selectedOrderDetails.trackingUrl || `https://www.17track.net/en/track?nums=${selectedOrderDetails.trackingNumber}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="px-3 py-1.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold rounded-lg text-xs flex items-center gap-1 shadow transition-all"
+                  >
+                    <span>Track Package</span>
+                    <ExternalLink className="w-3 h-3" />
+                  </a>
+                </div>
+              )}
+
+              <div className="flex flex-wrap items-center gap-2 pt-1">
+                {!selectedOrderDetails.cjOrderId ? (
+                  <button
+                    type="button"
+                    onClick={() => handleFulfillWithCj(selectedOrderDetails.id)}
+                    disabled={fulfillingId === selectedOrderDetails.id}
+                    className="flex-1 px-4 py-2.5 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white font-bold text-xs rounded-xl shadow-lg transition-all flex items-center justify-center gap-2"
+                  >
+                    {fulfillingId === selectedOrderDetails.id ? (
+                      <>
+                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                        <span>Submitting to CJ API...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Send className="w-3.5 h-3.5" />
+                        <span>Fulfill Order with CJ Dropshipping</span>
+                      </>
+                    )}
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => handleSyncTracking(selectedOrderDetails.id)}
+                    disabled={trackingSyncId === selectedOrderDetails.id}
+                    className="flex-1 px-4 py-2 bg-slate-800 hover:bg-slate-700 disabled:opacity-50 text-slate-200 font-bold text-xs rounded-xl border border-slate-700 transition-all flex items-center justify-center gap-2"
+                  >
+                    {trackingSyncId === selectedOrderDetails.id ? (
+                      <>
+                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                        <span>Querying CJ Carrier...</span>
+                      </>
+                    ) : (
+                      <>
+                        <RefreshCw className="w-3.5 h-3.5" />
+                        <span>Sync Live Tracking from CJ</span>
+                      </>
+                    )}
+                  </button>
+                )}
               </div>
             </div>
 

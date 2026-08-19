@@ -11,6 +11,7 @@ import {
   ArrowLeft 
 } from 'lucide-react';
 import { useCart } from '../context/CartContext';
+import { normalizeImageUrl } from '../services/cjDropshippingService';
 import EmptyState from '../components/common/EmptyState';
 
 export const Cart = () => {
@@ -106,8 +107,9 @@ export const Cart = () => {
                     className="w-20 h-24 sm:w-24 sm:h-28 rounded-xl overflow-hidden bg-gray-100 shrink-0 block"
                   >
                     <img
-                      src={item.image || 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=800&auto=format&fit=crop&q=80'}
+                      src={normalizeImageUrl(item.image)}
                       alt={item.name}
+                      referrerPolicy="no-referrer"
                       className="w-full h-full object-cover"
                     />
                   </Link>

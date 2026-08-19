@@ -152,18 +152,35 @@ export const getProductById = async (productId) => {
  */
 export const addProduct = async (productData) => {
   try {
+    const rawSizes = Array.isArray(productData.sizes) ? productData.sizes : ['S', 'M', 'L', 'XL'];
+    const cleanSizes = rawSizes
+      .map(s => typeof s === 'object' && s !== null ? (s.size || s.name || JSON.stringify(s)) : String(s || ''))
+      .map(s => s.trim())
+      .filter(Boolean);
+
+    const rawColors = Array.isArray(productData.colors) ? productData.colors : ['Black'];
+    const cleanColors = rawColors
+      .map(c => typeof c === 'object' && c !== null ? (c.color || c.name || JSON.stringify(c)) : String(c || ''))
+      .map(c => c.trim())
+      .filter(Boolean);
+
     const cleanData = {
       name: productData.name || '',
       description: productData.description || '',
       price: Number(productData.price) || 0,
       discountPrice: productData.discountPrice ? Number(productData.discountPrice) : null,
       category: productData.category || '',
-      sizes: Array.isArray(productData.sizes) ? productData.sizes : ['S', 'M', 'L', 'XL'],
-      colors: Array.isArray(productData.colors) ? productData.colors : ['Black'],
+      sizes: cleanSizes.length > 0 ? cleanSizes : ['S', 'M', 'L', 'XL'],
+      colors: cleanColors.length > 0 ? cleanColors : ['Black'],
       stock: Number(productData.stock) || 0,
       images: Array.isArray(productData.images) && productData.images.length > 0 
         ? productData.images 
         : ['https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=800&auto=format&fit=crop&q=80'],
+      variants: Array.isArray(productData.variants) ? productData.variants : [],
+      cjpId: productData.cjpId || null,
+      cjpSku: productData.cjpSku || null,
+      weight: productData.weight || null,
+      supplierCost: productData.supplierCost ? Number(productData.supplierCost) : null,
       featured: Boolean(productData.featured),
       isNewArrival: Boolean(productData.isNewArrival),
       isActive: productData.isActive !== undefined ? Boolean(productData.isActive) : true,
@@ -198,6 +215,20 @@ export const updateProduct = async (productId, productData) => {
       updateData.discountPrice = updateData.discountPrice ? Number(updateData.discountPrice) : null;
     }
     if (updateData.stock !== undefined) updateData.stock = Number(updateData.stock);
+
+    if (Array.isArray(updateData.sizes)) {
+      updateData.sizes = updateData.sizes
+        .map(s => typeof s === 'object' && s !== null ? (s.size || s.name || JSON.stringify(s)) : String(s || ''))
+        .map(s => s.trim())
+        .filter(Boolean);
+    }
+
+    if (Array.isArray(updateData.colors)) {
+      updateData.colors = updateData.colors
+        .map(c => typeof c === 'object' && c !== null ? (c.color || c.name || JSON.stringify(c)) : String(c || ''))
+        .map(c => c.trim())
+        .filter(Boolean);
+    }
 
     await updateDoc(docRef, updateData);
     return { id: productId, ...updateData };
