@@ -70,152 +70,22 @@ export const fetchCjAccessToken = async (apiKey) => {
 };
 
 /**
- * Authentic CJ Dropshipping Streetwear Sample Feed
- * Used when testing without CORS or before registering API credentials
- */
-export const MOCK_CJ_STREETWEAR_PRODUCTS = [
-  {
-    pid: "CJ-AP-89101",
-    productNameEn: "Heavyweight 380 GSM Vintage Acid Washed Unisex Hoodie",
-    productSku: "CJHD-380-VNTG",
-    productImage: "https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=800&auto=format&fit=crop&q=80",
-    productImageSet: [
-      "https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=800&auto=format&fit=crop&q=80",
-      "https://images.unsplash.com/photo-1509967419530-da38b4704bc6?w=800&auto=format&fit=crop&q=80"
-    ],
-    sellPrice: "24.50",
-    categoryName: "hoodies-sweats",
-    description: "Custom-milled 380 GSM heavyweight French terry fabric. Double lined hood, dropped shoulder streetwear fit with ribbed cuffs and hem. High resistance to pilling and color fade.",
-    variants: [
-      { variantSize: "S", variantColor: "Acid Black", variantSellPrice: 24.50, variantStock: 120 },
-      { variantSize: "M", variantColor: "Acid Black", variantSellPrice: 24.50, variantStock: 150 },
-      { variantSize: "L", variantColor: "Acid Black", variantSellPrice: 24.50, variantStock: 95 },
-      { variantSize: "XL", variantColor: "Acid Black", variantSellPrice: 24.50, variantStock: 80 },
-      { variantSize: "M", variantColor: "Vintage Charcoal", variantSellPrice: 24.50, variantStock: 65 }
-    ],
-    supplierRating: 4.9,
-    warehouseLocation: "US / CN"
-  },
-  {
-    pid: "CJ-AP-92304",
-    productNameEn: "Oversized 260 GSM Boxy Graphic Tee Streetwear Retro",
-    productSku: "CJTS-260-BXY",
-    productImage: "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=800&auto=format&fit=crop&q=80",
-    productImageSet: [
-      "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=800&auto=format&fit=crop&q=80",
-      "https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?w=800&auto=format&fit=crop&q=80"
-    ],
-    sellPrice: "12.80",
-    categoryName: "t-shirts",
-    description: "100% Combed Compact Cotton 260 GSM. Thick collar ribbing, reinforced neckline stitching, relaxed boxy cut suitable for screen printing and direct to garment dropshipping.",
-    variants: [
-      { variantSize: "S", variantColor: "Washed Black", variantSellPrice: 12.80, variantStock: 240 },
-      { variantSize: "M", variantColor: "Washed Black", variantSellPrice: 12.80, variantStock: 300 },
-      { variantSize: "L", variantColor: "Washed Black", variantSellPrice: 12.80, variantStock: 190 },
-      { variantSize: "XL", variantColor: "Washed Black", variantSellPrice: 12.80, variantStock: 140 },
-      { variantSize: "L", variantColor: "Raw White", variantSellPrice: 12.80, variantStock: 85 }
-    ],
-    supplierRating: 4.8,
-    warehouseLocation: "US / CN"
-  },
-  {
-    pid: "CJ-AP-77402",
-    productNameEn: "Multi-Pocket Tactical Cargo Trousers Waterproof Ripstop",
-    productSku: "CJPT-CARGO-TAC",
-    productImage: "https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?w=800&auto=format&fit=crop&q=80",
-    productImageSet: [
-      "https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?w=800&auto=format&fit=crop&q=80",
-      "https://images.unsplash.com/photo-1542272604-780c96856592?w=800&auto=format&fit=crop&q=80"
-    ],
-    sellPrice: "28.90",
-    categoryName: "pants-denim",
-    description: "Durable polyester-cotton blend ripstop fabric. 6 functional cargo pockets, YKK zipper fly, adjustable velcro cuff straps, water-repellent coating.",
-    variants: [
-      { variantSize: "30", variantColor: "Tactical Black", variantSellPrice: 28.90, variantStock: 75 },
-      { variantSize: "32", variantColor: "Tactical Black", variantSellPrice: 28.90, variantStock: 110 },
-      { variantSize: "34", variantColor: "Tactical Black", variantSellPrice: 28.90, variantStock: 90 },
-      { variantSize: "32", variantColor: "Olive Drab", variantSellPrice: 28.90, variantStock: 60 }
-    ],
-    supplierRating: 4.7,
-    warehouseLocation: "CN / EU"
-  },
-  {
-    pid: "CJ-AP-63910",
-    productNameEn: "Minimalist Matte Black Padded MA-1 Flight Bomber Jacket",
-    productSku: "CJJK-MA1-BMBR",
-    productImage: "https://images.unsplash.com/photo-1544022613-e87ce7526edb?w=800&auto=format&fit=crop&q=80",
-    productImageSet: [
-      "https://images.unsplash.com/photo-1544022613-e87ce7526edb?w=800&auto=format&fit=crop&q=80",
-      "https://images.unsplash.com/photo-1487222477894-8943e31ef7b2?w=800&auto=format&fit=crop&q=80"
-    ],
-    sellPrice: "42.00",
-    categoryName: "jackets-outerwear",
-    description: "Water-resistant satin twill outer shell with thermal polyester padding. Utility arm zip compartment, heavy gauge brass front zipper, signature orange emergency lining.",
-    variants: [
-      { variantSize: "M", variantColor: "Matte Black", variantSellPrice: 42.00, variantStock: 45 },
-      { variantSize: "L", variantColor: "Matte Black", variantSellPrice: 42.00, variantStock: 50 },
-      { variantSize: "XL", variantColor: "Matte Black", variantSellPrice: 42.00, variantStock: 35 },
-      { variantSize: "L", variantColor: "Sage Green", variantSellPrice: 42.00, variantStock: 25 }
-    ],
-    supplierRating: 5.0,
-    warehouseLocation: "US / CN"
-  },
-  {
-    pid: "CJ-AP-51208",
-    productNameEn: "Vintage Japanese Selvedge Relaxed Fit Denim Jeans",
-    productSku: "CJDN-SLVDG-14OZ",
-    productImage: "https://images.unsplash.com/photo-1541099649105-f69ad21f3246?w=800&auto=format&fit=crop&q=80",
-    productImageSet: [
-      "https://images.unsplash.com/photo-1541099649105-f69ad21f3246?w=800&auto=format&fit=crop&q=80",
-      "https://images.unsplash.com/photo-1542272604-780c96856592?w=800&auto=format&fit=crop&q=80"
-    ],
-    sellPrice: "36.50",
-    categoryName: "pants-denim",
-    description: "14.5oz raw indigo red-line selvedge denim. Button fly, copper rivets, custom leather patch, classic straight leg cut with room across thigh and seat.",
-    variants: [
-      { variantSize: "30", variantColor: "Raw Indigo", variantSellPrice: 36.50, variantStock: 40 },
-      { variantSize: "32", variantColor: "Raw Indigo", variantSellPrice: 36.50, variantStock: 80 },
-      { variantSize: "34", variantColor: "Raw Indigo", variantSellPrice: 36.50, variantStock: 65 },
-      { variantSize: "36", variantColor: "Raw Indigo", variantSellPrice: 36.50, variantStock: 30 }
-    ],
-    supplierRating: 4.9,
-    warehouseLocation: "CN"
-  },
-  {
-    pid: "CJ-AP-48903",
-    productNameEn: "Distressed Unstructured Low-Profile Baseball Dad Cap",
-    productSku: "CJCP-DAD-WSHD",
-    productImage: "https://images.unsplash.com/photo-1588850561407-ed78c282e89b?w=800&auto=format&fit=crop&q=80",
-    productImageSet: [
-      "https://images.unsplash.com/photo-1588850561407-ed78c282e89b?w=800&auto=format&fit=crop&q=80"
-    ],
-    sellPrice: "7.20",
-    categoryName: "accessories",
-    description: "100% Washed cotton twill. 6-panel unstructured crown, pre-curved visor, antique brass tri-glide buckle closure with matching grommet tuck-in.",
-    variants: [
-      { variantSize: "One Size", variantColor: "Washed Black", variantSellPrice: 7.20, variantStock: 350 },
-      { variantSize: "One Size", variantColor: "Khaki Stone", variantSellPrice: 7.20, variantStock: 200 },
-      { variantSize: "One Size", variantColor: "Faded Forest", variantSellPrice: 7.20, variantStock: 180 }
-    ],
-    supplierRating: 4.8,
-    warehouseLocation: "US / CN"
-  }
-];
-
-/**
- * Search CJ Dropshipping products
- * Supports live API query when access token is provided with automatic proxy / fallback to CJ catalog
+ * Search CJ Dropshipping products via live API
  */
 export const searchCjProducts = async (params = {}) => {
   const { keyword = '', page = 1, size = 20, categoryId = '' } = params;
   const { accessToken } = getCjCredentials();
+
+  if (!keyword.trim() && !categoryId) {
+    return { source: 'empty', total: 0, products: [] };
+  }
 
   if (accessToken) {
     try {
       const queryParams = new URLSearchParams({
         page: String(page),
         size: String(size),
-        ...(keyword ? { keyWord: keyword } : {}),
+        ...(keyword ? { keyWord: keyword.trim() } : {}),
         ...(categoryId ? { categoryId } : {})
       });
 
@@ -246,27 +116,19 @@ export const searchCjProducts = async (params = {}) => {
             warehouseLocation: "Verified CJ Warehouse"
           }))
         };
+      } else {
+        throw new Error(data.message || "No products returned from CJ API");
       }
     } catch (apiErr) {
-      console.warn("CJ API request failed, switching to CJ direct catalog feed:", apiErr);
+      console.error("CJ API request failed:", apiErr);
+      throw apiErr;
     }
   }
 
-  // Live filtered streetwear catalog feed
-  let list = [...MOCK_CJ_STREETWEAR_PRODUCTS];
-  if (keyword.trim()) {
-    const k = keyword.toLowerCase();
-    list = list.filter(p => 
-      p.productNameEn.toLowerCase().includes(k) ||
-      p.categoryName.toLowerCase().includes(k) ||
-      p.description.toLowerCase().includes(k)
-    );
-  }
-
   return {
-    source: 'catalog_feed',
-    total: list.length,
-    products: list
+    source: 'no_auth',
+    total: 0,
+    products: []
   };
 };
 

@@ -71,9 +71,6 @@ export const AdminCJDropshipping = () => {
       }
     });
 
-    // Initial search load
-    handleSearch('');
-
     return () => unsubCategories();
   }, []);
 
@@ -566,8 +563,28 @@ export const AdminCJDropshipping = () => {
           })}
         </div>
       ) : (
-        <div className="bg-slate-950 rounded-3xl p-12 border border-slate-800 text-center text-slate-400 text-xs">
-          No CJ Dropshipping products found matching your search.
+        <div className="bg-slate-950 rounded-3xl p-12 border border-slate-800 text-center max-w-2xl mx-auto space-y-4">
+          <div className="w-12 h-12 bg-blue-500/10 rounded-2xl flex items-center justify-center text-blue-400 mx-auto">
+            <Search className="w-6 h-6" />
+          </div>
+          <h3 className="text-sm font-bold text-white">Live CJ Dropshipping Search</h3>
+          <p className="text-xs text-slate-400 max-w-md mx-auto leading-relaxed">
+            {searchKeyword ? `No products returned for "${searchKeyword}". Check your API key or try another search term.` : 'Enter a search term above or enter a CJ Product ID / URL to pull real items from CJ Dropshipping.'}
+          </p>
+          <div className="flex flex-wrap items-center justify-center gap-2 pt-2">
+            {['Heavyweight Hoodie', 'Oversized T-Shirt', 'Cargo Pants', 'Bomber Jacket', 'Baseball Cap'].map((term) => (
+              <button
+                key={term}
+                onClick={() => {
+                  setSearchKeyword(term);
+                  handleSearch(term);
+                }}
+                className="px-3 py-1.5 bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 text-[11px] font-medium rounded-lg transition-colors"
+              >
+                🔍 {term}
+              </button>
+            ))}
+          </div>
         </div>
       )}
 
