@@ -27,7 +27,11 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
-*.log
+# Firebase CLI & Logs
+.firebase/
+firebase-debug.log*
+firestore-debug.log*
+ui-debug.log*
 
 # Editor & OS files
 .vscode/*
