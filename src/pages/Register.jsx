@@ -26,7 +26,7 @@ export const Register = () => {
       setError(null);
       setLoading(true);
       await register(email, password, name);
-      showToast("Account created successfully and synced with Firestore!", "success");
+      showToast("Account created successfully! Welcome to Ryanz Clothes.", "success");
       navigate('/');
     } catch (err) {
       console.error("Registration failed:", err);
@@ -41,7 +41,7 @@ export const Register = () => {
       setError(null);
       setLoading(true);
       await loginWithGoogle();
-      showToast("Google account registered & synced with Firestore!", "success");
+      showToast("Signed in with Google successfully!", "success");
       navigate('/');
     } catch (err) {
       console.error("Google sign up failed:", err);

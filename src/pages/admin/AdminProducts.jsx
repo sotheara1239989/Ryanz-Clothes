@@ -298,21 +298,21 @@ export const AdminProducts = () => {
   });
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 max-w-7xl mx-auto">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
-            Products Management
+            Products Catalog
           </h1>
           <p className="text-xs text-slate-400 mt-1">
-            Create, update, and manage dynamic items stored in Firestore <code className="text-emerald-400 font-mono">products/</code>
+            Create, edit, and manage all active apparel products, variants, and stock
           </p>
         </div>
 
         <button
           onClick={handleOpenCreateModal}
-          className="px-5 py-2.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-bold rounded-xl shadow-lg transition-all flex items-center gap-2 self-start sm:self-auto"
+          className="px-5 py-2.5 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 text-xs font-black rounded-xl shadow-lg shadow-emerald-950/40 transition-all hover:scale-[1.02] flex items-center gap-2 self-start sm:self-auto"
         >
           <Plus className="w-4 h-4" />
           <span>Add New Product</span>
@@ -320,24 +320,24 @@ export const AdminProducts = () => {
       </div>
 
       {/* Search & Filter Toolbar */}
-      <div className="bg-slate-950 p-4 rounded-2xl border border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div className="bg-[#0c121e] p-4 rounded-2xl border border-slate-800/80 shadow-lg flex flex-col sm:flex-row items-center justify-between gap-4">
         <div className="relative w-full sm:w-80">
           <input
             type="text"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="Search products by name or category..."
-            className="w-full pl-9 pr-4 py-2 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500"
+            className="w-full pl-9 pr-4 py-2 bg-slate-900/90 border border-slate-700/80 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 transition-colors"
           />
           <Search className="w-4 h-4 text-slate-500 absolute left-3 top-2.5 pointer-events-none" />
         </div>
 
         <div className="flex items-center gap-3 w-full sm:w-auto">
-          <span className="text-xs text-slate-400">Category:</span>
+          <span className="text-xs font-bold text-slate-400">Category:</span>
           <select
             value={selectedCategoryFilter}
             onChange={(e) => setSelectedCategoryFilter(e.target.value)}
-            className="bg-slate-900 border border-slate-800 text-xs font-semibold text-slate-200 rounded-xl px-3 py-2 focus:outline-none focus:border-emerald-500"
+            className="bg-slate-900/90 border border-slate-700/80 text-xs font-bold text-slate-200 rounded-xl px-3.5 py-2 focus:outline-none focus:border-emerald-500 cursor-pointer"
           >
             <option value="all">All Categories</option>
             {categories.map((c) => (
@@ -351,12 +351,12 @@ export const AdminProducts = () => {
 
       {/* Products Table */}
       {loading ? (
-        <LoadingSpinner message="Syncing products with Cloud Firestore..." />
+        <LoadingSpinner message="Loading product catalog..." />
       ) : filteredProducts.length > 0 ? (
-        <div className="bg-slate-950 rounded-3xl border border-slate-800 overflow-hidden shadow-xl">
+        <div className="bg-[#0c121e] rounded-2xl sm:rounded-3xl border border-slate-800/80 overflow-hidden shadow-2xl">
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs text-slate-300">
-              <thead className="bg-slate-900/80 text-slate-400 uppercase text-[10px] font-bold tracking-wider border-b border-slate-800">
+            <table className="w-full min-w-[680px] text-left text-xs text-slate-300">
+              <thead className="bg-slate-900/90 text-slate-400 uppercase text-[10px] font-extrabold tracking-wider border-b border-slate-800/80">
                 <tr>
                   <th className="py-4 px-6">Product</th>
                   <th className="py-4 px-6">Category</th>
@@ -496,29 +496,29 @@ export const AdminProducts = () => {
 
       {/* Add / Edit Product Modal Drawer */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 overflow-y-auto bg-black/75 backdrop-blur-xs flex items-center justify-center p-4 sm:p-6">
-          <div className="bg-slate-950 border border-slate-800 rounded-3xl max-w-2xl w-full max-h-[90vh] flex flex-col shadow-2xl animate-in zoom-in-95 duration-200">
+        <div className="fixed inset-0 z-50 overflow-y-auto bg-black/80 backdrop-blur-sm flex items-center justify-center p-3 sm:p-6">
+          <div className="bg-[#0c121e] border border-slate-800/80 rounded-2xl sm:rounded-3xl max-w-2xl w-full max-h-[92vh] flex flex-col shadow-2xl animate-in zoom-in-95 duration-200">
             
             {/* Modal Header */}
-            <div className="p-6 border-b border-slate-800 flex items-center justify-between">
+            <div className="p-4 sm:p-6 border-b border-slate-800/80 flex items-center justify-between">
               <div>
-                <h3 className="text-lg font-bold text-white">
-                  {isEditing ? 'Edit Firestore Product' : 'Create New Firestore Product'}
+                <h3 className="text-base sm:text-lg font-extrabold text-white">
+                  {isEditing ? 'Edit Product Item' : 'Add New Product Item'}
                 </h3>
-                <p className="text-[11px] text-slate-400 mt-0.5">
-                  Synchronizes directly with <code className="text-emerald-400 font-mono">products/{currentProductId || 'new'}</code>
+                <p className="text-[10px] sm:text-[11px] text-slate-400 mt-0.5">
+                  Update apparel details, pricing, variants, and inventory
                 </p>
               </div>
               <button
                 onClick={() => setIsModalOpen(false)}
-                className="p-2 text-slate-400 hover:text-white rounded-xl hover:bg-slate-900"
+                className="p-2 text-slate-400 hover:text-white rounded-xl hover:bg-slate-800/60 transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
             {/* Modal Form */}
-            <form onSubmit={handleSubmit} className="p-6 overflow-y-auto space-y-6 flex-1 text-xs">
+            <form onSubmit={handleSubmit} className="p-4 sm:p-6 overflow-y-auto space-y-5 sm:space-y-6 flex-1 text-xs">
               
               {/* Product Name */}
               <div>

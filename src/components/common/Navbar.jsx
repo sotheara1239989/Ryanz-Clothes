@@ -48,9 +48,9 @@ export const Navbar = () => {
     <header className="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-gray-100 transition-all">
       {/* Top Notification Bar */}
       <div className="bg-slate-950 text-white text-[11px] font-medium py-1.5 px-4 text-center tracking-wider flex items-center justify-center gap-3">
-        <span>COMPLIMENTARY WORLDWIDE EXPRESS SHIPPING ON ORDERS OVER $100</span>
+        <span>COMPLIMENTARY FREE WORLDWIDE EXPRESS SHIPPING ON ALL ORDERS</span>
         <span className="hidden md:inline text-slate-400">|</span>
-        <span className="hidden md:inline text-slate-300">PREMIUM STREETWEAR APPAREL</span>
+        <span className="hidden md:inline text-slate-300">ZERO DELIVERY FEES EVERYWHERE</span>
       </div>
 
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -247,13 +247,15 @@ export const Navbar = () => {
                         My Orders
                       </Link>
 
-                      <Link
-                        to="/admin"
-                        className="flex items-center gap-2.5 px-4 py-2 text-sm text-emerald-700 font-semibold hover:bg-emerald-50 transition-colors"
-                      >
-                        <ShieldCheck className="w-4 h-4 text-emerald-600" />
-                        Admin Dashboard
-                      </Link>
+                      {isAdmin && (
+                        <Link
+                          to="/admin"
+                          className="flex items-center gap-2.5 px-4 py-2 text-sm text-emerald-700 font-semibold hover:bg-emerald-50 transition-colors"
+                        >
+                          <ShieldCheck className="w-4 h-4 text-emerald-600" />
+                          Admin Dashboard
+                        </Link>
+                      )}
 
                       <div className="border-t border-gray-100 my-1" />
 

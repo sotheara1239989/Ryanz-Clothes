@@ -147,21 +147,21 @@ export const AdminCategories = () => {
   };
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 max-w-7xl mx-auto">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
-            Categories Management
+            Collections & Categories
           </h1>
           <p className="text-xs text-slate-400 mt-1">
-            Dynamic collections saved to Firestore <code className="text-emerald-400 font-mono">categories/</code>
+            Organize catalog apparel, streetwear drops, and season collections
           </p>
         </div>
 
         <button
           onClick={handleOpenCreate}
-          className="px-5 py-2.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-bold rounded-xl shadow-lg transition-all flex items-center gap-2 self-start sm:self-auto"
+          className="px-5 py-2.5 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 text-xs font-black rounded-xl shadow-lg shadow-emerald-950/40 transition-all hover:scale-[1.02] flex items-center gap-2 self-start sm:self-auto"
         >
           <Plus className="w-4 h-4" />
           <span>Add New Category</span>
@@ -170,7 +170,7 @@ export const AdminCategories = () => {
 
       {/* Categories Cards Grid */}
       {loading ? (
-        <LoadingSpinner message="Syncing categories with Firestore..." />
+        <LoadingSpinner message="Loading collections..." />
       ) : categories.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {categories.map((cat) => {
@@ -181,26 +181,26 @@ export const AdminCategories = () => {
             return (
               <div
                 key={cat.id}
-                className="bg-slate-950 rounded-3xl border border-slate-800 overflow-hidden shadow-xl flex flex-col justify-between"
+                className="bg-[#0c121e] rounded-3xl border border-slate-800/80 overflow-hidden shadow-xl hover:border-slate-700/80 transition-all flex flex-col justify-between group"
               >
                 <div className="relative aspect-[16/9] w-full overflow-hidden bg-slate-900">
                   <img
                     src={cat.image || 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=800&auto=format&fit=crop&q=80'}
                     alt={cat.name}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#0c121e] via-[#0c121e]/40 to-transparent" />
                   <div className="absolute top-3 right-3 flex gap-1.5">
                     <button
                       onClick={() => handleOpenEdit(cat)}
-                      className="p-2 bg-slate-950/80 hover:bg-slate-900 text-white rounded-xl backdrop-blur transition-colors"
+                      className="p-2 bg-slate-950/80 hover:bg-slate-900 text-white rounded-xl backdrop-blur transition-colors border border-slate-700/60 shadow"
                       title="Edit Category"
                     >
                       <Edit3 className="w-3.5 h-3.5" />
                     </button>
                     <button
                       onClick={() => handleDelete(cat.id, cat.name)}
-                      className="p-2 bg-slate-950/80 hover:bg-rose-950 text-rose-400 rounded-xl backdrop-blur transition-colors"
+                      className="p-2 bg-slate-950/80 hover:bg-rose-950 text-rose-400 rounded-xl backdrop-blur transition-colors border border-slate-700/60 shadow"
                       title="Delete Category"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
@@ -245,15 +245,15 @@ export const AdminCategories = () => {
 
       {/* Add / Edit Category Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 overflow-y-auto bg-black/75 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-slate-950 border border-slate-800 rounded-3xl max-w-lg w-full p-6 shadow-2xl space-y-6">
-            <div className="flex items-center justify-between pb-4 border-b border-slate-800">
-              <h3 className="text-lg font-bold text-white">
-                {isEditing ? 'Edit Category' : 'Create Dynamic Category'}
+        <div className="fixed inset-0 z-50 overflow-y-auto bg-black/80 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4">
+          <div className="bg-[#0c121e] border border-slate-800/80 rounded-2xl sm:rounded-3xl max-w-lg w-full p-5 sm:p-6 shadow-2xl space-y-5 sm:space-y-6">
+            <div className="flex items-center justify-between pb-4 border-b border-slate-800/80">
+              <h3 className="text-base sm:text-lg font-extrabold text-white">
+                {isEditing ? 'Edit Category' : 'Create New Category'}
               </h3>
               <button
                 onClick={() => setIsModalOpen(false)}
-                className="text-slate-400 hover:text-white"
+                className="p-1.5 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800/60 transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>

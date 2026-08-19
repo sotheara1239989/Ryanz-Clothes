@@ -58,7 +58,7 @@ export const Shop = () => {
       },
       (err) => {
         console.error("Shop product stream error:", err);
-        setError("Unable to load store products from Firestore.");
+        setError("Unable to load products. Please check your internet connection.");
         setLoading(false);
       }
     );
@@ -205,7 +205,7 @@ export const Shop = () => {
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
               <div className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">
-                Dynamic Storefront
+                Streetwear Catalog
               </div>
               <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight">
                 {selectedCategory !== 'all' 
@@ -213,7 +213,7 @@ export const Shop = () => {
                   : 'All Apparel & Streetwear'}
               </h1>
               <p className="text-xs text-slate-500 mt-1">
-                Showing {filteredProducts.length} dynamic items synchronized with Firestore
+                Showing {filteredProducts.length} items available in store
               </p>
             </div>
 
@@ -502,7 +502,7 @@ export const Shop = () => {
 
             {/* Products Grid */}
             {loading ? (
-              <LoadingSpinner message="Syncing dynamic product feed with Firestore..." />
+              <LoadingSpinner message="Loading products..." />
             ) : filteredProducts.length > 0 ? (
               <div className="grid grid-cols-2 sm:grid-cols-2 xl:grid-cols-3 gap-3.5 sm:gap-6">
                 {filteredProducts.map((product) => (

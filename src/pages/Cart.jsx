@@ -23,12 +23,8 @@ export const Cart = () => {
     syncWithFirestore();
   }, []);
 
-  const shippingFee = subtotal > 100 ? 0 : 10;
-  const freeShippingThreshold = 100;
-  const remainingForFreeShipping = Math.max(0, freeShippingThreshold - subtotal);
-  const freeShippingProgress = Math.min(100, (subtotal / freeShippingThreshold) * 100);
-
-  const totalAmount = subtotal + (cartItems.length > 0 ? shippingFee : 0);
+  const shippingFee = 0;
+  const totalAmount = subtotal;
 
   if (cartItems.length === 0) {
     return (
@@ -67,25 +63,20 @@ export const Cart = () => {
           </Link>
         </div>
 
-        {/* Free Shipping Progress Bar */}
-        <div className="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm mb-8">
-          <div className="flex items-center justify-between text-xs font-semibold mb-2">
-            <div className="flex items-center gap-2 text-slate-800">
-              <Truck className="w-4 h-4 text-emerald-600" />
-              <span>
-                {remainingForFreeShipping === 0
-                  ? 'You unlocked FREE Express Shipping!'
-                  : `Add $${remainingForFreeShipping.toFixed(2)} more for FREE Shipping`}
-              </span>
+        {/* Free Worldwide Shipping Guaranteed Banner */}
+        <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-4 shadow-xs mb-8 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-emerald-100 flex items-center justify-center text-emerald-700 shrink-0">
+              <Truck className="w-5 h-5" />
             </div>
-            <span className="text-slate-400">{Math.round(freeShippingProgress)}%</span>
+            <div>
+              <h4 className="text-xs font-bold text-emerald-950">100% Free Worldwide Express Delivery</h4>
+              <p className="text-[11px] text-emerald-700">Complimentary delivery automatically applied to every destination.</p>
+            </div>
           </div>
-          <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
-            <div
-              className="h-full bg-emerald-500 transition-all duration-500 rounded-full"
-              style={{ width: `${freeShippingProgress}%` }}
-            />
-          </div>
+          <span className="text-xs font-extrabold uppercase bg-emerald-200/70 text-emerald-800 px-3 py-1 rounded-lg shrink-0 hidden sm:inline-block">
+            FREE $0.00
+          </span>
         </div>
 
         {/* Cart Content Layout */}
@@ -194,10 +185,8 @@ export const Cart = () => {
                 </div>
 
                 <div className="flex justify-between text-slate-600">
-                  <span>Estimated Shipping</span>
-                  <span className="font-semibold text-slate-900">
-                    {shippingFee === 0 ? <span className="text-emerald-600 font-bold">FREE</span> : `$${shippingFee.toFixed(2)}`}
-                  </span>
+                  <span>Worldwide Shipping</span>
+                  <span className="text-emerald-600 font-bold">FREE ($0.00)</span>
                 </div>
 
                 <div className="flex justify-between text-slate-600">
@@ -221,7 +210,7 @@ export const Cart = () => {
 
               <div className="pt-2 flex items-center justify-center gap-2 text-[11px] text-slate-400">
                 <ShieldCheck className="w-4 h-4 text-slate-500" />
-                <span>Live Firestore Price Verification Guaranteed</span>
+                <span>Guaranteed Safe & Secure Checkout</span>
               </div>
             </div>
           </div>

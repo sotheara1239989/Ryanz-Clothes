@@ -411,43 +411,43 @@ export const AdminCJDropshipping = () => {
   const cjProductsInStore = liveStoreProducts.filter(p => Boolean(p.cjpId || p.cjpSku));
 
   return (
-    <div className="max-w-7xl space-y-8">
+    <div className="space-y-8 max-w-7xl mx-auto">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <div className="inline-flex items-center gap-2 px-3 py-1 bg-blue-500/10 border border-blue-500/20 rounded-full text-xs font-semibold text-blue-400 mb-2">
+          <div className="inline-flex items-center gap-2 px-3 py-1 bg-sky-500/10 border border-sky-500/20 rounded-full text-xs font-bold text-sky-400 mb-2">
             <Truck className="w-3.5 h-3.5" />
             <span>Dropshipping Supplier Integration</span>
           </div>
           <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
-            CJ Dropshipping Product Importer & Sync Engine
+            CJ Dropshipping Importer & Live Sync
           </h1>
           <p className="text-xs text-slate-400 mt-1">
-            Pull apparel items, sizes, colors, and images directly from CJ Dropshipping into your live Firestore catalog with automated sync
+            Search apparel items, sizes, colors, and calculate dynamic USA landed pricing with automated inventory sync
           </p>
         </div>
 
         <div className="flex items-center gap-3">
           <Link
             to="/admin/products"
-            className="px-4 py-2.5 bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-300 text-xs font-semibold rounded-xl transition-all"
+            className="px-4 py-2.5 bg-[#0c121e] hover:bg-slate-800 border border-slate-700/80 text-slate-200 text-xs font-bold rounded-xl transition-all shadow-sm"
           >
-            View Firestore Products →
+            View Catalog Products →
           </Link>
         </div>
       </div>
 
       {/* Live CJ API Sync & Automation Command Center */}
-      <div className="bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950/40 rounded-3xl p-6 sm:p-7 border border-indigo-500/20 shadow-xl space-y-4">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-800">
+      <div className="bg-gradient-to-br from-[#0c121e] via-slate-900 to-indigo-950/40 rounded-3xl p-6 sm:p-7 border border-indigo-500/20 shadow-2xl space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-800/80">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-indigo-500/10 border border-indigo-500/30 flex items-center justify-center text-indigo-400">
+            <div className="w-10 h-10 rounded-2xl bg-indigo-500/15 border border-indigo-500/30 flex items-center justify-center text-indigo-400">
               <RefreshCw className={`w-5 h-5 ${syncingAll ? 'animate-spin' : ''}`} />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="text-sm font-bold text-white">CJ Live Sync & Automation API</h3>
-                <span className="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
+                <h3 className="text-sm font-black text-white">CJ Live Sync & Automation Engine</h3>
+                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
                   REALTIME
                 </span>
               </div>
@@ -461,12 +461,12 @@ export const AdminCJDropshipping = () => {
             type="button"
             onClick={handleSyncAllProducts}
             disabled={syncingAll}
-            className="px-5 py-2.5 bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 disabled:opacity-50 text-white text-xs font-bold rounded-xl shadow-lg shadow-indigo-500/20 transition-all flex items-center justify-center gap-2 shrink-0"
+            className="px-5 py-2.5 bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 disabled:opacity-50 text-white text-xs font-black rounded-xl shadow-lg shadow-indigo-500/20 transition-all flex items-center justify-center gap-2 shrink-0"
           >
             {syncingAll ? (
               <>
                 <Loader2 className="w-4 h-4 animate-spin" />
-                <span>Syncing Firestore Products...</span>
+                <span>Syncing Store Catalog...</span>
               </>
             ) : (
               <>

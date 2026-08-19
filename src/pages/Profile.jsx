@@ -194,7 +194,7 @@ export const Profile = () => {
               className="px-8 py-3 bg-slate-950 hover:bg-black disabled:bg-slate-400 text-white text-xs font-bold rounded-xl shadow-lg transition-all flex items-center gap-2"
             >
               <Save className="w-4 h-4" />
-              <span>{saving ? 'Saving to Firestore...' : 'Save Profile Changes'}</span>
+              <span>{saving ? 'Saving Changes...' : 'Save Profile Changes'}</span>
             </button>
           </div>
         </form>

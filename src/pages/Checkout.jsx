@@ -83,7 +83,7 @@ export const Checkout = () => {
       // Clear local cart
       clearCart();
       setOrderComplete(createdOrder);
-      showToast("Order placed successfully in Firestore!", "success");
+      showToast("Order placed successfully! Thank you for your purchase.", "success");
     } catch (error) {
       console.error("Order placement failed:", error);
       showToast(error.message || "Failed to place order. Please try again.", "error");
@@ -93,7 +93,7 @@ export const Checkout = () => {
   };
 
   if (isVerifying) {
-    return <LoadingSpinner fullPage message="Verifying store catalog and live Firestore prices..." />;
+    return <LoadingSpinner fullPage message="Verifying bag items and live prices..." />;
   }
 
   // Order Success Screen
@@ -107,7 +107,7 @@ export const Checkout = () => {
 
           <div>
             <span className="text-xs font-bold uppercase tracking-widest text-emerald-600">
-              Order Confirmed & Stored
+              Order Confirmed
             </span>
             <h1 className="text-3xl font-extrabold text-slate-950 mt-1">Thank You For Your Order!</h1>
             <p className="text-xs text-slate-500 mt-2">
@@ -154,8 +154,8 @@ export const Checkout = () => {
   }
 
   const subtotal = cartItems.reduce((sum, item) => sum + (item.activePrice * item.quantity), 0);
-  const shippingFee = subtotal > 100 ? 0 : 10;
-  const totalAmount = subtotal + shippingFee;
+  const shippingFee = 0;
+  const totalAmount = subtotal;
 
   return (
     <div className="min-h-screen bg-gray-50 py-10">
@@ -172,7 +172,7 @@ export const Checkout = () => {
           <div>
             <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-950">Secure Checkout</h1>
             <p className="text-xs text-slate-500">
-              All prices and products verified with Firestore database
+              Guaranteed 256-bit encrypted checkout & fast order processing
             </p>
           </div>
         </div>
@@ -369,10 +369,8 @@ export const Checkout = () => {
                   <span className="font-semibold text-slate-900">${subtotal.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between text-slate-600">
-                  <span>Shipping</span>
-                  <span className="font-semibold text-slate-900">
-                    {shippingFee === 0 ? <strong className="text-emerald-600">FREE</strong> : `$${shippingFee.toFixed(2)}`}
-                  </span>
+                  <span>Worldwide Shipping</span>
+                  <strong className="text-emerald-600 font-bold">FREE ($0.00)</strong>
                 </div>
                 <div className="pt-3 border-t border-gray-100 flex justify-between text-base font-extrabold text-slate-950">
                   <span>Total Amount</span>
@@ -387,11 +385,11 @@ export const Checkout = () => {
                 className="w-full py-4 bg-slate-950 hover:bg-black disabled:bg-slate-400 text-white text-sm font-bold rounded-2xl shadow-xl transition-all flex items-center justify-center gap-2"
               >
                 <Lock className="w-4 h-4" />
-                <span>{isSubmitting ? 'Recording Order in Firestore...' : `Complete Order ($${totalAmount.toFixed(2)})`}</span>
+                <span>{isSubmitting ? 'Processing Order...' : `Complete Order ($${totalAmount.toFixed(2)})`}</span>
               </button>
 
               <p className="text-[10px] text-slate-400 text-center leading-relaxed">
-                By completing your order, an immutable snapshot document is saved to Firestore under <code className="text-slate-600 font-mono">orders/&#123;orderId&#125;</code>.
+                By placing your order, you agree to Ryanz Clothes terms of service. You will receive an instant order confirmation and tracking ID.
               </p>
             </div>
           </div>

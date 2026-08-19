@@ -289,13 +289,13 @@ export const ProductDetails = () => {
         if (docData) {
           setProduct(docData);
         } else {
-          setError("Product was not found in Firestore.");
+          setError("Product not found.");
         }
         setLoading(false);
       },
       (err) => {
         console.error("Error listening to product:", err);
-        setError("Failed to load product details from Firestore.");
+        setError("Failed to load product details. Please try again.");
         setLoading(false);
       },
     );
@@ -341,7 +341,7 @@ export const ProductDetails = () => {
     return (
       <LoadingSpinner
         fullPage
-        message="Fetching live product from Firestore..."
+        message="Loading product details..."
       />
     );
   }
@@ -353,7 +353,7 @@ export const ProductDetails = () => {
           title="Product Not Found"
           message={
             error ||
-            "The requested item is not currently active in our Firestore catalog."
+            "The requested product could not be found or is no longer available."
           }
           onRetry={() => navigate("/shop")}
         />
@@ -440,7 +440,7 @@ export const ProductDetails = () => {
         comment: reviewComment.trim(),
       });
 
-      showToast("Review submitted successfully! Firestore updated.", "success");
+      showToast("Thank you! Your review has been published.", "success");
       setReviewComment("");
       setReviewRating(5);
     } catch (err) {
@@ -865,7 +865,7 @@ export const ProductDetails = () => {
               <div className="flex flex-col items-center gap-1">
                 <Truck className="w-4 h-4 sm:w-5 sm:h-5 text-slate-700" />
                 <span className="text-[10px] sm:text-[11px] font-semibold text-slate-800">
-                  Express Delivery
+                  Free Worldwide Delivery
                 </span>
               </div>
               <div className="flex flex-col items-center gap-1">
@@ -939,7 +939,7 @@ export const ProductDetails = () => {
                 Customer Reviews
               </h3>
               <p className="text-xs text-slate-500 mt-0.5">
-                Dynamic customer feedback from Firestore ({reviews.length}{" "}
+                Verified customer ratings ({reviews.length}{" "}
                 total)
               </p>
             </div>
@@ -968,7 +968,7 @@ export const ProductDetails = () => {
             className="bg-slate-50 rounded-2xl p-6 border border-slate-200 space-y-4"
           >
             <h4 className="text-sm font-bold text-slate-900">
-              Write a Dynamic Review
+              Write a Review
             </h4>
 
             <div className="flex items-center gap-4">
@@ -1028,7 +1028,7 @@ export const ProductDetails = () => {
               <Send className="w-3.5 h-3.5" />
               <span>
                 {submittingReview
-                  ? "Submitting to Firestore..."
+                  ? "Submitting..."
                   : "Submit Review"}
               </span>
             </button>

@@ -92,7 +92,7 @@ export const MyOrders = () => {
           <div>
             <h1 className="text-3xl font-extrabold text-slate-950 tracking-tight">Order History</h1>
             <p className="text-xs text-slate-500 mt-1">
-              Real-time purchase snapshots synced directly from Firestore
+              Track your past purchases, fulfillment status, and delivery updates
             </p>
           </div>
           <Link
@@ -106,7 +106,7 @@ export const MyOrders = () => {
 
         {/* Orders List */}
         {loading ? (
-          <LoadingSpinner message="Fetching your orders from Firestore..." />
+          <LoadingSpinner message="Fetching your orders..." />
         ) : orders.length > 0 ? (
           <div className="space-y-6">
             {orders.map((order) => (

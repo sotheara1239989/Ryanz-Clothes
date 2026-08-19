@@ -30,8 +30,8 @@ export const Footer = () => {
               <Truck className="w-6 h-6" />
             </div>
             <div>
-              <h4 className="text-white font-semibold text-sm">Express Shipping</h4>
-              <p className="text-xs text-slate-400 mt-0.5">Complimentary for orders above $100</p>
+              <h4 className="text-white font-semibold text-sm">Free Worldwide Delivery</h4>
+              <p className="text-xs text-slate-400 mt-0.5">Always free shipping to everywhere</p>
             </div>
           </div>
 
@@ -57,11 +57,11 @@ export const Footer = () => {
 
           <div className="flex items-start gap-4">
             <div className="w-12 h-12 rounded-xl bg-slate-900 flex items-center justify-center text-slate-100 shrink-0">
-              <Database className="w-6 h-6 text-emerald-400" />
+              <ShieldCheck className="w-6 h-6 text-emerald-400" />
             </div>
             <div>
-              <h4 className="text-white font-semibold text-sm">Real-Time Firestore</h4>
-              <p className="text-xs text-slate-400 mt-0.5">Live store catalog synchronization</p>
+              <h4 className="text-white font-semibold text-sm">Real-Time Inventory</h4>
+              <p className="text-xs text-slate-400 mt-0.5">Live stock & fast order fulfillment</p>
             </div>
           </div>
         </div>
@@ -80,11 +80,11 @@ export const Footer = () => {
             </span>
           </div>
           <p className="text-xs text-slate-400 leading-relaxed max-w-sm">
-            Engineered for modern streetwear enthusiasts. Premium cuts, heavy custom-milled fabrics, and architectural silhouettes managed dynamically via Cloud Firestore.
+            Engineered for modern streetwear enthusiasts. Premium cuts, heavy custom-milled fabrics, and architectural silhouettes designed for everyday rotation.
           </p>
           <div className="pt-2 flex items-center gap-3 text-xs text-slate-400">
             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-            <span>Firestore Architecture Active</span>
+            <span>Verified Official Storefront</span>
           </div>
         </div>
 
@@ -96,7 +96,7 @@ export const Footer = () => {
             <li><Link to="/shop" className="hover:text-white transition-colors">Shop All</Link></li>
             <li><Link to="/shop?filter=new" className="hover:text-white transition-colors">New Arrivals</Link></li>
             <li><Link to="/shop?filter=sale" className="hover:text-white transition-colors text-rose-400">Sale Collection</Link></li>
-            <li><Link to="/admin" className="hover:text-emerald-400 transition-colors font-semibold">Admin Panel</Link></li>
+            <li><Link to="/my-orders" className="hover:text-white transition-colors">Track Orders</Link></li>
           </ul>
         </div>
 
@@ -146,11 +146,10 @@ export const Footer = () => {
 
       {/* Bottom Copyright */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12 pt-6 border-t border-slate-900 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
-        <p>© {new Date().getFullYear()} Ryanz Clothes. Dynamic Firestore Architecture. All rights reserved.</p>
+        <p>© {new Date().getFullYear()} Ryanz Clothes. All rights reserved.</p>
         <div className="flex items-center gap-4">
           <Link to="/shop" className="hover:text-slate-300 transition-colors">Privacy Policy</Link>
           <Link to="/shop" className="hover:text-slate-300 transition-colors">Terms of Service</Link>
-          <Link to="/admin" className="hover:text-emerald-400 transition-colors">Admin Dashboard</Link>
         </div>
       </div>
     </footer>

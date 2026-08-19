@@ -84,7 +84,7 @@ export const Home = () => {
             <div className="lg:col-span-7 space-y-6">
               <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-900 border border-slate-800 text-xs font-semibold text-slate-300">
                 <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                <span>DYNAMIC FIRESTORE ARCHITECTURE</span>
+                <span>NEW SEASON STREETWEAR COLLECTION</span>
               </div>
 
               <h1 className="text-4xl sm:text-6xl font-extrabold tracking-tight text-white leading-[1.1]">
@@ -96,8 +96,7 @@ export const Home = () => {
 
               <p className="text-base sm:text-lg text-slate-400 max-w-xl leading-relaxed">
                 Elevate your everyday rotation with heavyweight organic cottons,
-                tailored dropped shoulders, and architectural silhouettes
-                managed in real time.
+                tailored dropped shoulders, and architectural streetwear silhouettes.
               </p>
 
               <div className="pt-2 flex flex-wrap items-center gap-4">
@@ -110,11 +109,11 @@ export const Home = () => {
                 </Link>
 
                 <Link
-                  to="/admin"
-                  className="px-6 py-4 bg-slate-900 hover:bg-slate-800 border border-slate-800 text-white text-sm font-semibold rounded-2xl transition-all flex items-center gap-2"
+                  to="/shop?filter=sale"
+                  className="px-6 py-4 bg-slate-900 hover:bg-slate-800 border border-slate-800 text-rose-400 text-sm font-semibold rounded-2xl transition-all flex items-center gap-2"
                 >
-                  <ShieldCheck className="w-4 h-4 text-emerald-400" />
-                  <span>Admin Dashboard</span>
+                  <Sparkles className="w-4 h-4 text-rose-400" />
+                  <span>View Special Offers</span>
                 </Link>
               </div>
 
@@ -122,21 +121,21 @@ export const Home = () => {
               <div className="pt-8 border-t border-slate-900 grid grid-cols-3 gap-6 max-w-md">
                 <div>
                   <div className="text-2xl font-bold text-white">
-                    {products.length}
+                    {products.length > 0 ? `${products.length}+` : "100+"}
                   </div>
-                  <div className="text-xs text-slate-500">Live Products</div>
+                  <div className="text-xs text-slate-500">Styles Available</div>
                 </div>
                 <div>
                   <div className="text-2xl font-bold text-white">
-                    {categories.length}
+                    {categories.length > 0 ? categories.length : "8"}
                   </div>
-                  <div className="text-xs text-slate-500">Live Categories</div>
+                  <div className="text-xs text-slate-500">Collections</div>
                 </div>
                 <div>
                   <div className="text-2xl font-bold text-emerald-400">
                     100%
                   </div>
-                  <div className="text-xs text-slate-500">Firestore Driven</div>
+                  <div className="text-xs text-slate-500">Authentic Cotton</div>
                 </div>
               </div>
             </div>
@@ -201,7 +200,7 @@ export const Home = () => {
           </div>
 
           {loading ? (
-            <LoadingSpinner message="Querying featured products from Firestore..." />
+            <LoadingSpinner message="Loading featured collection..." />
           ) : featuredProducts.length > 0 ? (
             <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
               {featuredProducts.map((product) => (
@@ -210,15 +209,15 @@ export const Home = () => {
             </div>
           ) : (
             <EmptyState
-              title="No featured products currently"
-              description="Mark products as 'Featured' in the Admin Dashboard to have them appear here dynamically."
-              actionText="Manage Products in Admin"
-              actionLink="/admin/products"
+              title="New drops coming soon"
+              description="Check back soon for hand-picked drops and limited edition streetwear essentials."
+              actionText="Explore Shop"
+              actionLink="/shop"
             />
           )}
         </section>
 
-        {/* New Arrivals Section (Firestore Query: sorted by createdAt / isNewArrival == true) */}
+        {/* New Arrivals Section */}
         <section className="space-y-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
@@ -244,7 +243,7 @@ export const Home = () => {
           </div>
 
           {loading ? (
-            <LoadingSpinner message="Loading new arrivals from Firestore..." />
+            <LoadingSpinner message="Loading fresh additions..." />
           ) : newArrivals.length > 0 ? (
             <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
               {newArrivals.map((product) => (
@@ -253,10 +252,10 @@ export const Home = () => {
             </div>
           ) : (
             <EmptyState
-              title="No new arrivals found"
-              description="New products created by the admin in Firestore will automatically appear here."
-              actionText="Add Product"
-              actionLink="/admin/products"
+              title="Fresh arrivals dropping soon"
+              description="Stay tuned for our latest seasonal releases and new streetwear cuts."
+              actionText="Browse Catalog"
+              actionLink="/shop"
             />
           )}
         </section>

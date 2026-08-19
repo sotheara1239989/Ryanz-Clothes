@@ -59,7 +59,7 @@ export const AdminReviews = () => {
   });
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 max-w-7xl mx-auto">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
@@ -67,24 +67,24 @@ export const AdminReviews = () => {
             Customer Reviews Moderation
           </h1>
           <p className="text-xs text-slate-400 mt-1">
-            Dynamic customer testimonials stored in Firestore <code className="text-emerald-400 font-mono">reviews/</code>
+            Moderate customer feedback, star ratings, and community reviews
           </p>
         </div>
 
-        <div className="text-xs font-bold bg-slate-950 px-4 py-2 rounded-xl border border-slate-800 text-slate-300">
+        <div className="text-xs font-black bg-[#0c121e] px-4 py-2 rounded-xl border border-slate-800/80 text-slate-300 shadow-sm">
           Total Reviews: <span className="text-emerald-400">{reviews.length}</span>
         </div>
       </div>
 
       {/* Search Toolbar */}
-      <div className="bg-slate-950 p-4 rounded-2xl border border-slate-800">
+      <div className="bg-[#0c121e] p-4 rounded-2xl border border-slate-800/80 shadow-lg">
         <div className="relative w-full sm:w-80">
           <input
             type="text"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="Search by customer, product, or comment..."
-            className="w-full pl-9 pr-4 py-2 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500"
+            className="w-full pl-9 pr-4 py-2 bg-slate-900/90 border border-slate-700/80 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 transition-colors"
           />
           <Search className="w-4 h-4 text-slate-500 absolute left-3 top-2.5 pointer-events-none" />
         </div>
@@ -92,12 +92,12 @@ export const AdminReviews = () => {
 
       {/* Reviews Table */}
       {loading ? (
-        <LoadingSpinner message="Syncing reviews with Firestore..." />
+        <LoadingSpinner message="Loading customer reviews..." />
       ) : filteredReviews.length > 0 ? (
-        <div className="bg-slate-950 rounded-3xl border border-slate-800 overflow-hidden shadow-xl">
+        <div className="bg-[#0c121e] rounded-2xl sm:rounded-3xl border border-slate-800/80 overflow-hidden shadow-2xl">
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs text-slate-300">
-              <thead className="bg-slate-900/80 text-slate-400 uppercase text-[10px] font-bold tracking-wider border-b border-slate-800">
+            <table className="w-full min-w-[640px] text-left text-xs text-slate-300">
+              <thead className="bg-slate-900/90 text-slate-400 uppercase text-[10px] font-extrabold tracking-wider border-b border-slate-800/80">
                 <tr>
                   <th className="py-4 px-6">Product / Reviewer</th>
                   <th className="py-4 px-6">Rating</th>

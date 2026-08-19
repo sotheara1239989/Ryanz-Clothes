@@ -2,8 +2,8 @@ import React from 'react';
 import { AlertTriangle, RefreshCw } from 'lucide-react';
 
 export const ErrorMessage = ({
-  title = "Failed to load store data",
-  message = "An error occurred while connecting to Firebase Firestore. Please try again.",
+  title = "Failed to load content",
+  message = "An error occurred while loading. Please check your internet connection and try again.",
   onRetry
 }) => {
   return (
@@ -20,7 +20,7 @@ export const ErrorMessage = ({
           className="inline-flex items-center gap-2 px-5 py-2.5 bg-slate-900 hover:bg-black text-white text-sm font-semibold rounded-xl shadow transition-colors"
         >
           <RefreshCw className="w-4 h-4" />
-          Retry Connection
+          Try Again
         </button>
       )}
     </div>

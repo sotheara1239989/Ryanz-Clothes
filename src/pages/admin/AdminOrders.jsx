@@ -122,42 +122,42 @@ export const AdminOrders = () => {
   });
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 max-w-7xl mx-auto">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
-            Customer Orders Management
+            Customer Orders
           </h1>
           <p className="text-xs text-slate-400 mt-1">
-            Real-time immutable order snapshots recorded under <code className="text-emerald-400 font-mono">orders/</code>
+            Customer orders stream, live fulfillment triggers, and tracking updates
           </p>
         </div>
 
-        <div className="text-xs font-bold bg-slate-950 px-4 py-2 rounded-xl border border-slate-800 text-slate-300">
+        <div className="text-xs font-black bg-[#0c121e] px-4 py-2 rounded-xl border border-slate-800/80 text-slate-300 shadow-sm">
           Total Orders: <span className="text-emerald-400">{orders.length}</span>
         </div>
       </div>
 
       {/* Search & Filter Toolbar */}
-      <div className="bg-slate-950 p-4 rounded-2xl border border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div className="bg-[#0c121e] p-4 rounded-2xl border border-slate-800/80 shadow-lg flex flex-col sm:flex-row items-center justify-between gap-4">
         <div className="relative w-full sm:w-80">
           <input
             type="text"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="Search by Order ID, customer, email..."
-            className="w-full pl-9 pr-4 py-2 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500"
+            className="w-full pl-9 pr-4 py-2 bg-slate-900/90 border border-slate-700/80 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 transition-colors"
           />
           <Search className="w-4 h-4 text-slate-500 absolute left-3 top-2.5 pointer-events-none" />
         </div>
 
         <div className="flex items-center gap-3 w-full sm:w-auto">
-          <span className="text-xs text-slate-400">Filter Status:</span>
+          <span className="text-xs font-bold text-slate-400">Filter Status:</span>
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="bg-slate-900 border border-slate-800 text-xs font-semibold text-slate-200 rounded-xl px-3 py-2 focus:outline-none focus:border-emerald-500"
+            className="bg-slate-900/90 border border-slate-700/80 text-xs font-bold text-slate-200 rounded-xl px-3.5 py-2 focus:outline-none focus:border-emerald-500 cursor-pointer"
           >
             <option value="all">All Orders</option>
             <option value="pending">Pending</option>
@@ -171,12 +171,12 @@ export const AdminOrders = () => {
 
       {/* Orders Table */}
       {loading ? (
-        <LoadingSpinner message="Syncing live orders with Cloud Firestore..." />
+        <LoadingSpinner message="Loading customer orders..." />
       ) : filteredOrders.length > 0 ? (
-        <div className="bg-slate-950 rounded-3xl border border-slate-800 overflow-hidden shadow-xl">
+        <div className="bg-[#0c121e] rounded-2xl sm:rounded-3xl border border-slate-800/80 overflow-hidden shadow-2xl">
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs text-slate-300">
-              <thead className="bg-slate-900/80 text-slate-400 uppercase text-[10px] font-bold tracking-wider border-b border-slate-800">
+            <table className="w-full min-w-[720px] text-left text-xs text-slate-300">
+              <thead className="bg-slate-900/90 text-slate-400 uppercase text-[10px] font-extrabold tracking-wider border-b border-slate-800/80">
                 <tr>
                   <th className="py-4 px-6">Order ID</th>
                   <th className="py-4 px-6">Customer</th>
@@ -279,22 +279,22 @@ export const AdminOrders = () => {
 
       {/* Order Details Drawer / Modal */}
       {selectedOrderDetails && (
-        <div className="fixed inset-0 z-50 overflow-y-auto bg-black/75 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-slate-950 border border-slate-800 rounded-3xl max-w-2xl w-full p-6 sm:p-8 shadow-2xl space-y-6 animate-in zoom-in-95 duration-200">
+        <div className="fixed inset-0 z-50 overflow-y-auto bg-black/80 backdrop-blur-sm flex items-center justify-center p-3 sm:p-6">
+          <div className="bg-[#0c121e] border border-slate-800/80 rounded-2xl sm:rounded-3xl max-w-2xl w-full p-4 sm:p-7 shadow-2xl space-y-5 sm:space-y-6 max-h-[92vh] overflow-y-auto animate-in zoom-in-95 duration-200">
             
             {/* Header */}
-            <div className="flex items-center justify-between pb-4 border-b border-slate-800">
+            <div className="flex items-center justify-between pb-4 border-b border-slate-800/80">
               <div>
-                <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-400">
-                  Firestore Order Document
+                <span className="text-[10px] font-black uppercase tracking-wider text-emerald-400">
+                  Order Summary
                 </span>
-                <h3 className="text-lg font-bold text-white font-mono">
+                <h3 className="text-base sm:text-lg font-black text-white font-mono">
                   #{selectedOrderDetails.id}
                 </h3>
               </div>
               <button
                 onClick={() => setSelectedOrderDetails(null)}
-                className="text-slate-400 hover:text-white"
+                className="p-1.5 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800/60 transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
