@@ -28,6 +28,7 @@ import AdminUsers from './pages/admin/AdminUsers';
 import AdminReviews from './pages/admin/AdminReviews';
 import AdminSeed from './pages/admin/AdminSeed';
 import AdminFirebaseSetup from './pages/admin/AdminFirebaseSetup';
+import AdminCJDropshipping from './pages/admin/AdminCJDropshipping';
 
 // Customer Storefront Layout Wrapper
 const StorefrontLayout = () => {
@@ -91,6 +92,7 @@ export function App() {
                 <Route path="orders" element={<AdminOrders />} />
                 <Route path="users" element={<AdminUsers />} />
                 <Route path="reviews" element={<AdminReviews />} />
+                <Route path="cjdropshipping" element={<AdminCJDropshipping />} />
                 <Route path="firebase-setup" element={<AdminFirebaseSetup />} />
                 <Route path="seed" element={<AdminSeed />} />
               </Route>
