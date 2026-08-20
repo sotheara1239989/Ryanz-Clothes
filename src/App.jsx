@@ -69,14 +69,9 @@ export function App() {
                     </ProtectedRoute>
                   }
                 />
-                <Route
-                  path="/my-orders"
-                  element={
-                    <ProtectedRoute>
-                      <MyOrders />
-                    </ProtectedRoute>
-                  }
-                />
+                <Route path="/my-orders" element={<MyOrders />} />
+                <Route path="/track-order" element={<MyOrders />} />
+                <Route path="/track-orders" element={<MyOrders />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
               </Route>

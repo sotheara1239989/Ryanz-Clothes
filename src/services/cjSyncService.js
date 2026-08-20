@@ -17,6 +17,7 @@ import {
 } from './cjDropshippingService';
 import { updateProduct, getProducts } from './productService';
 import { updateOrderStatus } from './orderService';
+import { sendOrderStatusUpdateEmail } from './emailService';
 
 const CJ_API_BASE = typeof window !== 'undefined' && window.location?.origin
   ? '/cj-api'
@@ -412,6 +413,17 @@ export const syncCjOrderTracking = async (orderId) => {
       };
 
       await updateDoc(orderRef, updates);
+
+      // Auto-send tracking email to customer
+      try {
+        await sendOrderStatusUpdateEmail({ id: orderId, ...order, ...updates }, orderStatus, {
+          trackingNumber,
+          trackingCarrier: carrier,
+          trackingUrl: updates.trackingUrl
+        });
+      } catch (emailErr) {
+        console.warn("Auto-tracking email notice:", emailErr);
+      }
 
       return {
         success: true,

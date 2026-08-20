@@ -8,7 +8,8 @@ import {
   Lock, 
   ArrowLeft, 
   PackageCheck,
-  AlertCircle
+  AlertCircle,
+  Mail
 } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
@@ -83,6 +84,18 @@ export const Checkout = () => {
       // Clear local cart
       clearCart();
       setOrderComplete(createdOrder);
+
+      // Save recent order ID in localStorage for instant guest sync
+      try {
+        const recent = JSON.parse(localStorage.getItem('ryanz_recent_orders') || '[]');
+        if (!recent.includes(createdOrder.id)) {
+          recent.unshift(createdOrder.id);
+          localStorage.setItem('ryanz_recent_orders', JSON.stringify(recent.slice(0, 25)));
+        }
+      } catch (storageErr) {
+        console.warn("Could not save recent order to localStorage:", storageErr);
+      }
+
       showToast("Order placed successfully! Thank you for your purchase.", "success");
     } catch (error) {
       console.error("Order placement failed:", error);
@@ -115,6 +128,20 @@ export const Checkout = () => {
             </p>
           </div>
 
+          {/* Email Confirmation Notice */}
+          <div className="p-4 bg-emerald-50 rounded-2xl border border-emerald-200 text-left flex items-start gap-3">
+            <div className="w-8 h-8 rounded-xl bg-emerald-600 text-white flex items-center justify-center shrink-0">
+              <Mail className="w-4 h-4" />
+            </div>
+            <div className="space-y-0.5 text-xs">
+              <div className="font-bold text-gray-900">Confirmation Email Dispatched</div>
+              <p className="text-gray-600">
+                A digital receipt and live tracking link have been sent to{' '}
+                <strong className="text-gray-900">{orderComplete.customerEmail || formData.email}</strong>.
+              </p>
+            </div>
+          </div>
+
           <div className="bg-slate-50 rounded-2xl p-4 text-left text-xs text-slate-600 space-y-2 border border-slate-100">
             <div className="flex justify-between font-semibold text-slate-900 border-b border-slate-200 pb-2">
               <span>Items Snapshot:</span>
@@ -132,10 +159,10 @@ export const Checkout = () => {
             </div>
           </div>
 
-          <div className="flex flex-col sm:flex-row gap-3 pt-4">
+          <div className="flex flex-col sm:flex-row gap-3 pt-2">
             <Link
-              to="/my-orders"
-              className="flex-1 py-3.5 bg-slate-900 hover:bg-black text-white text-xs font-semibold rounded-xl shadow transition-all flex items-center justify-center gap-2"
+              to={`/my-orders?id=${orderComplete.id}`}
+              className="flex-1 py-3.5 bg-black hover:bg-gray-800 text-white text-xs font-semibold rounded-xl shadow transition-all flex items-center justify-center gap-2"
             >
               <PackageCheck className="w-4 h-4" />
               <span>Track in My Orders</span>
@@ -143,7 +170,7 @@ export const Checkout = () => {
 
             <Link
               to="/shop"
-              className="flex-1 py-3.5 bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-semibold rounded-xl transition-all flex items-center justify-center"
+              className="flex-1 py-3.5 bg-gray-100 hover:bg-gray-200 text-gray-800 text-xs font-semibold rounded-xl transition-all flex items-center justify-center"
             >
               Continue Shopping
             </Link>

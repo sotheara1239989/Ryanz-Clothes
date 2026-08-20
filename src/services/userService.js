@@ -2,8 +2,11 @@ import {
   collection, 
   doc, 
   getDoc, 
+  getDocs,
   setDoc, 
   updateDoc, 
+  query,
+  where,
   onSnapshot, 
   serverTimestamp 
 } from 'firebase/firestore';
@@ -146,3 +149,87 @@ export const updateUserRole = async (userId, newRole) => {
     throw error;
   }
 };
+
+/**
+ * Automatically save / sync customer record in Firestore users collection when an order is placed
+ */
+export const saveCustomerFromOrder = async ({ email, name, phone, shippingAddress, userId, totalAmount = 0 }) => {
+  if (!email && (!userId || userId === 'guest')) return null;
+  try {
+    const cleanEmail = email ? email.trim().toLowerCase() : '';
+    let targetDocRef = null;
+    let existingData = null;
+
+    // Check if user document already exists by UID
+    if (userId && userId !== 'guest') {
+      targetDocRef = doc(db, USERS_COLLECTION, userId);
+      const snap = await getDoc(targetDocRef);
+      if (snap.exists()) {
+        existingData = snap.data();
+      }
+    }
+
+    // Check if user document exists by email
+    if (!existingData && cleanEmail) {
+      const q = query(collection(db, USERS_COLLECTION), where('email', '==', cleanEmail));
+      const querySnap = await getDocs(q);
+      if (!querySnap.empty) {
+        const firstDoc = querySnap.docs[0];
+        targetDocRef = doc(db, USERS_COLLECTION, firstDoc.id);
+        existingData = firstDoc.data();
+      }
+    }
+
+    // If no existing document, create new document reference
+    if (!targetDocRef) {
+      targetDocRef = doc(collection(db, USERS_COLLECTION));
+    }
+
+    if (!existingData) {
+      // Create new customer record in Firestore users collection
+      const customerRecord = {
+        name: name || (cleanEmail ? cleanEmail.split('@')[0] : 'Ryanz Customer'),
+        email: cleanEmail,
+        phone: phone || '',
+        role: 'customer',
+        authProvider: userId && userId !== 'guest' ? 'registered' : 'order_checkout',
+        shippingAddress: shippingAddress || {
+          street: '',
+          city: '',
+          state: '',
+          zipCode: '',
+          country: 'United States'
+        },
+        orderCount: 1,
+        totalSpent: Number(totalAmount) || 0,
+        lastOrderAt: serverTimestamp(),
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp()
+      };
+      await setDoc(targetDocRef, customerRecord);
+      return { id: targetDocRef.id, ...customerRecord };
+    } else {
+      // Update existing customer record with latest order info
+      const currentOrderCount = Number(existingData.orderCount || 0) + 1;
+      const currentTotalSpent = Number(existingData.totalSpent || 0) + (Number(totalAmount) || 0);
+
+      const updatePayload = {
+        orderCount: currentOrderCount,
+        totalSpent: currentTotalSpent,
+        lastOrderAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
+        ...(name && !existingData.name ? { name } : {}),
+        ...(phone && !existingData.phone ? { phone } : {}),
+        ...(shippingAddress && !existingData.shippingAddress?.street ? { shippingAddress } : {})
+      };
+
+      await updateDoc(targetDocRef, updatePayload);
+      return { id: targetDocRef.id, ...existingData, ...updatePayload };
+    }
+  } catch (error) {
+    console.error("Error saving customer from order:", error);
+    // Non-blocking for order flow
+    return null;
+  }
+};
+

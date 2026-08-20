@@ -101,6 +101,7 @@ export const AdminUsers = () => {
                   <th className="py-4 px-6">Customer</th>
                   <th className="py-4 px-6">Email Address</th>
                   <th className="py-4 px-6">Phone</th>
+                  <th className="py-4 px-6">Orders Placed</th>
                   <th className="py-4 px-6">Registered On</th>
                   <th className="py-4 px-6">Current Role</th>
                   <th className="py-4 px-6 text-right">Role Actions</th>
@@ -119,20 +120,34 @@ export const AdminUsers = () => {
                             {user.name?.charAt(0) || user.email?.charAt(0) || 'U'}
                           </div>
                           <div>
-                            <div className="font-bold text-white text-xs">{user.name || 'Anonymous User'}</div>
-                            <div className="text-[10px] text-slate-500 font-mono">UID: {user.id.slice(0, 8)}...</div>
+                            <div className="font-bold text-white text-xs">{user.name || 'Anonymous Customer'}</div>
+                            <div className="text-[10px] text-slate-500 font-mono">
+                              {user.authProvider === 'order_checkout' ? 'Guest Checkout Customer' : `UID: ${user.id.slice(0, 8)}...`}
+                            </div>
                           </div>
                         </div>
                       </td>
 
                       {/* Email */}
-                      <td className="py-4 px-6 text-slate-300">
+                      <td className="py-4 px-6 text-slate-300 font-medium">
                         {user.email || 'No email provided'}
                       </td>
 
                       {/* Phone */}
                       <td className="py-4 px-6 text-slate-400">
                         {user.phone || '—'}
+                      </td>
+
+                      {/* Orders Count & Spend */}
+                      <td className="py-4 px-6 text-slate-300">
+                        <div className="font-bold text-white text-xs">
+                          {user.orderCount ? `${user.orderCount} Order${user.orderCount > 1 ? 's' : ''}` : '1 Order'}
+                        </div>
+                        {user.totalSpent !== undefined && Number(user.totalSpent) > 0 && (
+                          <div className="text-[10px] text-emerald-400 font-semibold">
+                            ${Number(user.totalSpent).toFixed(2)} spent
+                          </div>
+                        )}
                       </td>
 
                       {/* Created Date */}

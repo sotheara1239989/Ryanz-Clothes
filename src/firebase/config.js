@@ -1,5 +1,5 @@
 import { initializeApp, getApps, getApp, deleteApp } from 'firebase/app';
-import { getFirestore, doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
+import { initializeFirestore, getFirestore, doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { getAuth, GoogleAuthProvider } from 'firebase/auth';
 import { getStorage } from 'firebase/storage';
 
@@ -54,7 +54,18 @@ if (getApps().length > 0) {
   app = initializeApp(effectiveConfig);
 }
 
-export const db = getFirestore(app);
+// Initialize Firestore with robust polling settings to prevent browser blocker dropping
+let firestoreDb;
+try {
+  firestoreDb = initializeFirestore(app, {
+    experimentalForceLongPolling: true,
+    ignoreUndefinedProperties: true
+  });
+} catch (e) {
+  firestoreDb = getFirestore(app);
+}
+
+export const db = firestoreDb;
 export const auth = getAuth(app);
 export const storage = getStorage(app);
 export const googleProvider = new GoogleAuthProvider();

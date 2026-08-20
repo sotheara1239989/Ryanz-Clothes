@@ -13,6 +13,8 @@ import {
 } from 'firebase/firestore';
 import { db } from '../firebase/config';
 import { getProductById } from './productService';
+import { saveCustomerFromOrder } from './userService';
+import { sendOrderConfirmationEmail, sendOrderStatusUpdateEmail } from './emailService';
 
 const ORDERS_COLLECTION = 'orders';
 
@@ -94,7 +96,30 @@ export const createOrder = async (orderData) => {
     };
 
     const docRef = await addDoc(collection(db, ORDERS_COLLECTION), newOrder);
-    return { id: docRef.id, ...newOrder };
+    const createdOrderResult = { id: docRef.id, ...newOrder };
+
+    // Automatically save / sync customer record in Firestore 'users' collection
+    try {
+      await saveCustomerFromOrder({
+        email: customerInfo.email,
+        name: customerInfo.name,
+        phone: customerInfo.phone,
+        shippingAddress: newOrder.shippingAddress,
+        userId: userId,
+        totalAmount: totalAmount
+      });
+    } catch (custErr) {
+      console.warn("Customer sync non-blocking warning:", custErr);
+    }
+
+    // Automatically send order confirmation email to customer
+    try {
+      await sendOrderConfirmationEmail(createdOrderResult);
+    } catch (emailErr) {
+      console.warn("Confirmation email dispatch warning:", emailErr);
+    }
+
+    return createdOrderResult;
   } catch (error) {
     console.error("Error creating order:", error);
     throw error;
@@ -131,51 +156,107 @@ export const listenToAllOrders = (callback, errorCallback) => {
 };
 
 /**
- * Real-time listener for specific user's orders (Customer)
+ * Real-time listener for specific user's orders (queries by userId AND/OR customerEmail)
  */
-export const listenToUserOrders = (userId, callback, errorCallback) => {
-  if (!userId) {
-    callback([]);
+export const listenToUserOrders = (userId, userEmail, callback, errorCallback) => {
+  let email = typeof userEmail === 'string' ? userEmail.trim().toLowerCase() : '';
+  let cb = typeof userEmail === 'function' ? userEmail : callback;
+  let errCb = typeof userEmail === 'function' ? callback : errorCallback;
+
+  if (!userId && !email) {
+    if (cb) cb([]);
     return () => {};
   }
+
   try {
-    const q = query(
-      collection(db, ORDERS_COLLECTION), 
-      where('userId', '==', userId)
-    );
-    return onSnapshot(q, (snapshot) => {
-      const orders = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      }));
+    const ordersMap = new Map();
+
+    const emitOrders = () => {
+      const orders = Array.from(ordersMap.values());
       orders.sort((a, b) => {
         const timeA = a.createdAt?.toMillis ? a.createdAt.toMillis() : (a.createdAt || 0);
         const timeB = b.createdAt?.toMillis ? b.createdAt.toMillis() : (b.createdAt || 0);
         return timeB - timeA;
       });
-      callback(orders);
-    }, (error) => {
-      console.error(`Error in listenToUserOrders (${userId}):`, error);
-      if (errorCallback) errorCallback(error);
-    });
+      if (cb) cb(orders);
+    };
+
+    const unsubscribers = [];
+
+    // 1. Query by userId (if registered user)
+    if (userId && userId !== 'guest') {
+      const qUid = query(
+        collection(db, ORDERS_COLLECTION), 
+        where('userId', '==', userId)
+      );
+      const unsubUid = onSnapshot(qUid, (snapshot) => {
+        snapshot.docs.forEach(doc => {
+          ordersMap.set(doc.id, { id: doc.id, ...doc.data() });
+        });
+        emitOrders();
+      }, (error) => {
+        console.error(`Error in listenToUserOrders UID (${userId}):`, error);
+        if (errCb) errCb(error);
+      });
+      unsubscribers.push(unsubUid);
+    }
+
+    // 2. Query by customerEmail (catches guest orders placed with this email)
+    if (email) {
+      const qEmail = query(
+        collection(db, ORDERS_COLLECTION), 
+        where('customerEmail', '==', email)
+      );
+      const unsubEmail = onSnapshot(qEmail, (snapshot) => {
+        snapshot.docs.forEach(doc => {
+          ordersMap.set(doc.id, { id: doc.id, ...doc.data() });
+        });
+        emitOrders();
+      }, (error) => {
+        console.error(`Error in listenToUserOrders Email (${email}):`, error);
+        if (errCb) errCb(error);
+      });
+      unsubscribers.push(unsubEmail);
+    }
+
+    return () => {
+      unsubscribers.forEach(unsub => unsub());
+    };
   } catch (error) {
     console.error("Error setting up user orders listener:", error);
-    if (errorCallback) errorCallback(error);
+    if (errCb) errCb(error);
     return () => {};
   }
 };
 
 /**
- * Update order status (Admin)
+ * Update order status and notify customer via email (Admin)
  */
-export const updateOrderStatus = async (orderId, status) => {
+export const updateOrderStatus = async (orderId, status, trackingInfo = {}) => {
   try {
     const docRef = doc(db, ORDERS_COLLECTION, orderId);
-    await updateDoc(docRef, {
+    const updatePayload = {
       status,
-      updatedAt: serverTimestamp()
-    });
-    return { id: orderId, status };
+      updatedAt: serverTimestamp(),
+      ...(trackingInfo.trackingNumber ? { trackingNumber: trackingInfo.trackingNumber } : {}),
+      ...(trackingInfo.trackingCarrier ? { trackingCarrier: trackingInfo.trackingCarrier } : {}),
+      ...(trackingInfo.trackingUrl ? { trackingUrl: trackingInfo.trackingUrl } : {})
+    };
+
+    await updateDoc(docRef, updatePayload);
+
+    // Automatically send status update email to customer
+    try {
+      const orderSnap = await getDoc(docRef);
+      if (orderSnap.exists()) {
+        const fullOrder = { id: orderSnap.id, ...orderSnap.data() };
+        await sendOrderStatusUpdateEmail(fullOrder, status, trackingInfo);
+      }
+    } catch (emailErr) {
+      console.warn("Status update email warning:", emailErr);
+    }
+
+    return { id: orderId, status, ...trackingInfo };
   } catch (error) {
     console.error(`Error updating order status (${orderId}):`, error);
     throw error;
