@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ryanz Clothes — Project Presentation</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Calibri:wght@400;700&family=Kantumruy+Pro:wght@400;600;700&family=Segoe+UI:wght@400;600;700&display=swap"
+    rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Segoe UI', Calibri, Arial, sans-serif;
+      background: #E2E8F0;
+      color: #000000;
+      margin: 0;
+      padding: 2rem 0;
+    }
+
+    .slide-page {
+      width: 1152px;
+      height: 648px;
+      background: #FFFFFF;
+      margin: 0 auto 2rem auto;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.12);
+      border: 1px solid #CBD5E1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 2.5rem 3.75rem;
+      box-sizing: border-box;
+      position: relative;
+    }
+
+    .font-khmer {
+      font-family: 'Kantumruy Pro', sans-serif;
+    }
+
+    /* Print styles for export */
+    @media print {
+      @page {
+        size: landscape;
+        margin: 0;
+      }
+
+      body {
+        background: white !important;
+        padding: 0 !important;
+        margin: 0 !important;
+      }
+
+      .no-print {
+        display: none !important;
+      }
+
+      .slide-page {
+        width: 100vw !important;
+        height: 100vh !important;
+        min-height: 100vh !important;
+        max-height: 100vh !important;
+        margin: 0 !important;
+        border: none !important;
+        box-shadow: none !important;
+        page-break-after: always !important;
+        break-after: page !important;
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+        padding: 2.5rem 3.75rem !important;
+        box-sizing: border-box !important;
+      }
+
+      .slide-page:last-child {
+        page-break-after: auto !important;
+        break-after: auto !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Top Bar Controls -->
+  <div class="no-print fixed top-0 left-0 right-0 bg-white border-b border-gray-300 z-50 h-12 flex items-center justify-between px-8 shadow-xs">
+    <div class="flex items-center gap-3">
+      <span class="font-bold text-xs text-gray-800 uppercase tracking-wide">Royal University of Phnom Penh</span>
+      <span class="text-gray-300">|</span>
+      <span class="text-xs text-gray-600 font-medium">Ryanz Clothes Final Presentation</span>
+    </div>
+    <button onclick="window.print()" class="px-4 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded text-xs font-semibold tracking-wide transition-colors shadow-sm">
+      Save as PDF (Ctrl+P)
+    </button>
+  </div>
+  <div class="no-print h-12"></div>
+
+
+  <!-- ===================== SLIDE 1: COVER ===================== -->
+  <div class="slide-page">
+    <!-- RUPP Header -->
+    <div class="flex items-center justify-between border-b border-gray-300 pb-3">
+      <div class="flex items-center gap-3">
+        <img src="https://www.waca.associates/en/wp-content/uploads/2021/03/rupp_logo.png" alt="RUPP Logo" class="h-12 w-auto object-contain">
+        <div>
+          <div class="font-bold text-sm text-gray-900 tracking-wide uppercase leading-tight">
+            ROYAL UNIVERSITY OF PHNOM PENH
+          </div>
+          <div class="font-khmer text-xs text-gray-600 font-semibold leading-tight">
+            សាកលវិទ្យាល័យ ភូមិន្ទភ្នំពេញ
+          </div>
+        </div>
+      </div>
+      <div class="text-xs text-red-600 font-bold">
+        Department of ITE
+      </div>
+    </div>
+
+    <!-- Center Title -->
+    <div class="my-auto py-4">
+      <h1 class="text-4xl sm:text-5xl font-bold text-gray-900 leading-tight">
+        Ryanz Clothes: <span class="text-red-600">Full-Stack E-Commerce System</span>
+      </h1>
+      <p class="text-xl text-gray-600 font-normal mt-3">
+        Automated Dropshipping &amp; Real-Time Cloud Architecture
+      </p>
+    </div>
+
+    <!-- Bottom Attribution Details -->
+    <div class="grid grid-cols-2 gap-8 text-sm text-gray-800 border-t border-gray-300 pt-3">
+      <div>
+        <span class="text-gray-500 font-semibold text-xs block">Developer &amp; Presenter:</span>
+        <strong class="text-base text-gray-900 font-bold block mt-0.5">Morn Sotheara</strong>
+        <span class="text-xs text-gray-600">Department of Information Technology Engineering (ITE)</span>
+      </div>
+      <div>
+        <span class="text-gray-500 font-semibold text-xs block">Project Advisor:</span>
+        <strong class="text-base text-gray-900 font-bold block mt-0.5">Chhim Bunchhun</strong>
+        <span class="text-xs text-gray-600">Royal University of Phnom Penh (RUPP)</span>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ===================== SLIDE 2: CONTENT ===================== -->
+  <div class="slide-page">
+    <!-- RUPP Header -->
+    <div class="flex items-center justify-between border-b border-gray-300 pb-3">
+      <div class="flex items-center gap-3">
+        <img src="https://www.waca.associates/en/wp-content/uploads/2021/03/rupp_logo.png" alt="RUPP Logo" class="h-10 w-auto object-contain">
+        <div>
+          <div class="font-bold text-sm text-gray-900 tracking-wide uppercase leading-tight">
+            ROYAL UNIVERSITY OF PHNOM PENH
+          </div>
+          <div class="font-khmer text-xs text-gray-600 font-semibold leading-tight">
+            សាកលវិទ្យាល័យ ភូមិន្ទភ្នំពេញ
+          </div>
+        </div>
+      </div>
+      <div class="text-xs text-red-600 font-medium">Department of ITE</div>
+    </div>
+
+    <!-- Title & Body -->
+    <div class="my-auto py-2">
+      <h2 class="text-4xl font-bold text-gray-900 mb-6">Content</h2>
+      <ul class="space-y-4 text-2xl text-gray-900 font-normal">
+        <li class="flex items-center gap-3">
+          <span class="text-xl text-red-600 font-bold">&bull;</span>
+          <span>Introduction</span>
+        </li>
+        <li class="flex items-center gap-3">
+          <span class="text-xl text-red-600 font-bold">&bull;</span>
+          <span>Literature review</span>
+        </li>
+        <li class="flex items-center gap-3">
+          <span class="text-xl text-red-600 font-bold">&bull;</span>
+          <span>Methodology</span>
+        </li>
+        <li class="flex items-center gap-3">
+          <span class="text-xl text-red-600 font-bold">&bull;</span>
+          <span>Result</span>
+        </li>
+        <li class="flex items-center gap-3">
+          <span class="text-xl text-red-600 font-bold">&bull;</span>
+          <span>Discussion</span>
+        </li>
+        <li class="flex items-center gap-3">
+          <span class="text-xl text-red-600 font-bold">&bull;</span>
+          <span>Conclusion</span>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Footer -->
+    <div class="flex items-center justify-between text-xs text-gray-400 border-t border-gray-200 pt-2">
+      <span>Ryanz Clothes Presentation</span>
+      <span>Slide 2</span>
+    </div>
+  </div>
+
+
+  <!-- ===================== SLIDE 3: 1. INTRODUCTION ===================== -->
+  <div class="slide-page">
+    <!-- RUPP Header -->
+    <div class="flex items-center justify-between border-b border-gray-300 pb-3">
+      <div class="flex items-center gap-3">
+        <img src="https://www.waca.associates/en/wp-content/uploads/2021/03/rupp_logo.png" alt="RUPP Logo" class="h-10 w-auto object-contain">
+        <div>
+          <div class="font-bold text-sm text-gray-900 tracking-wide uppercase leading-tight">
+            ROYAL UNIVERSITY OF PHNOM PENH
+          </div>
+          <div class="font-khmer text-xs text-gray-600 font-semibold leading-tight">
+            សាកលវិទ្យាល័យ ភូមិន្ទភ្នំពេញ
+          </div>
+        </div>
+      </div>
+      <div class="text-xs text-red-600 font-medium">Department of ITE</div>
+    </div>
+
+    <!-- Title & Body -->
+    <div class="my-auto space-y-4 py-2 text-lg text-gray-900 leading-relaxed">
+      <h2 class="text-4xl font-bold text-gray-900 mb-2">Introduction</h2>
+      <ul class="space-y-4">
+        <li class="flex items-start gap-3">
+          <span class="text-xl font-bold text-red-600">&bull;</span>
+          <div>
+            <strong>Background</strong>
+            <ul class="pl-6 space-y-1 text-base text-gray-800 mt-1">
+              <li>- Rapid increase in <span class="text-red-600 font-semibold">online fashion retail</span> and digital storefronts in Cambodia</li>
+              <li>- Need for cost-effective, automated solutions for clothing entrepreneurs</li>
+            </ul>
+          </div>
+        </li>
+
+        <li class="flex items-start gap-3">
+          <span class="text-xl font-bold text-red-600">&bull;</span>
+          <div>
+            <strong>Problem Statement</strong>
+            <ul class="pl-6 space-y-1 text-base text-gray-800 mt-1">
+              <li>- Unexpected <span class="text-red-600 font-semibold">freight costs at checkout</span> lead to high cart abandonment</li>
+              <li>- <span class="text-red-600 font-semibold">Manual inventory tracking</span> causes errors, delays, and out-of-stock orders</li>
+              <li>- <span class="text-red-600 font-semibold">Lack of real-time notifications</span> leaves customers uncertain about order progress</li>
+            </ul>
+          </div>
+        </li>
+
+        <li class="flex items-start gap-3">
+          <span class="text-xl font-bold text-red-600">&bull;</span>
+          <div>
+            <strong>Project Objective</strong>
+            <ul class="pl-6 space-y-1 text-base text-gray-800 mt-1">
+              <li>- Develop a fast full-stack e-commerce platform with <span class="text-red-600 font-semibold">automated dropshipping</span> and live customer tracking updates</li>
+            </ul>
+          </div>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Footer -->
+    <div class="flex items-center justify-between text-xs text-gray-400 border-t border-gray-200 pt-2">
+      <span>Ryanz Clothes &bull; Introduction</span>
+      <span>Slide 3</span>
+    </div>
+  </div>
+
+
+  <!-- ===================== SLIDE 4: SCOPES ===================== -->
+  <div class="slide-page">
+    <!-- RUPP Header -->
+    <div class="flex items-center justify-between border-b border-gray-300 pb-3">
+      <div class="flex items-center gap-3">
+        <img src="https://www.waca.associates/en/wp-content/uploads/2021/03/rupp_logo.png" alt="RUPP Logo" class="h-10 w-auto object-contain">
+        <div>
+          <div class="font-bold text-sm text-gray-900 tracking-wide uppercase leading-tight">
+            ROYAL UNIVERSITY OF PHNOM PENH
+          </div>
+          <div class="font-khmer text-xs text-gray-600 font-semibold leading-tight">
+            សាកលវិទ្យាល័យ ភូមិន្ទភ្នំពេញ
+          </div>
+        </div>
+      </div>
+      <div class="text-xs text-red-600 font-medium">Department of ITE</div>
+    </div>
+
+    <!-- Title & Body -->
+    <div class="my-auto space-y-5 py-2 text-xl text-gray-900 leading-relaxed">
+      <h2 class="text-4xl font-bold text-gray-900 mb-2">Scopes</h2>
+      <ul class="space-y-4">
+        <li class="flex items-start gap-3">
+          <span class="text-xl font-bold text-red-600">&bull;</span>
+          <div>
+            <span class="font-bold text-gray-900">In case of website</span>
+            <ul class="pl-8 space-y-2 text-lg text-gray-800 mt-2">
+              <li class="flex items-start gap-2">
+                <span>&bull;</span>
+                <span>Show information (<span class="text-red-600">home page, about, contact, services</span>)</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <span>&bull;</span>
+                <div>
+                  <span class="font-semibold">Admin dashboard</span>
+                  <ul class="pl-8 space-y-1 text-base text-gray-700 mt-1">
+                    <li>- Authentication (<span class="text-red-600">login, register, forget password</span>)</li>
+                    <li>- CRUD operation (<span class="text-red-600">service, product ...etc</span>)</li>
+                  </ul>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </li>
+
+        <li class="flex items-start gap-3">
+          <span class="text-xl font-bold text-red-600">&bull;</span>
+          <div>
+            <span class="font-bold text-gray-900">In case of system</span>
+            <ul class="pl-8 space-y-2 text-lg text-gray-800 mt-2">
+              <li class="flex items-start gap-2">
+                <span>&bull;</span>
+                <div>
+                  <span>Dashboard with different access by users</span>
+                  <ul class="pl-8 space-y-1 text-base text-gray-700 mt-1">
+                    <li>- Authentication (<span class="text-red-600">login, register, forget/reset password</span>)</li>
+                    <li>- <span class="text-red-600">CRUD operation</span></li>
+                  </ul>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Footer -->
+    <div class="flex items-center justify-between text-xs text-gray-400 border-t border-gray-200 pt-2">
+      <span>Ryanz Clothes &bull; Scopes</span>
+      <span>Slide 4</span>
+    </div>
+  </div>
+
+
+  <!-- ===================== SLIDE 5: 2. LITERATURE REVIEW ===================== -->
+  <div class="slide-page">
+    <!-- RUPP Header -->
+    <div class="flex items-center justify-between border-b border-gray-300 pb-3">
+      <div class="flex items-center gap-3">
+        <img src="https://www.waca.associates/en/wp-content/uploads/2021/03/rupp_logo.png" alt="RUPP Logo" class="h-10 w-auto object-contain">
+        <div>
+          <div class="font-bold text-sm text-gray-900 tracking-wide uppercase leading-tight">
+            ROYAL UNIVERSITY OF PHNOM PENH
+          </div>
+          <div class="font-khmer text-xs text-gray-600 font-semibold leading-tight">
+            សាកលវិទ្យាល័យ ភូមិន្ទភ្នំពេញ
+          </div>
+        </div>
+      </div>
+      <div class="text-xs text-red-600 font-medium">Department of ITE</div>
+    </div>
+
+    <!-- Title & Body -->
+    <div class="my-auto space-y-4 py-2 text-lg text-gray-900 leading-relaxed">
+      <h2 class="text-4xl font-bold text-gray-900 mb-2">Literature review</h2>
+      <ul class="space-y-4">
+        <li class="flex items-start gap-3">
+          <span class="text-xl font-bold text-red-600">&bull;</span>
+          <div>
+            <strong>Web Architecture: Traditional PHP vs <span class="text-red-600">React SPA</span></strong>
+            <ul class="pl-6 space-y-1 text-base text-gray-800 mt-1">
+              <li>- Traditional PHP applications <span class="text-red-600 font-semibold">require full page reloads</span> for every user action</li>
+              <li>- React Single Page Applications (SPA) render UI dynamically without refreshing, providing faster user experience</li>
+            </ul>
+          </div>
+        </li>
+
+        <li class="flex items-start gap-3">
+          <span class="text-xl font-bold text-red-600">&bull;</span>
+          <div>
+            <strong>Data Sync: HTTP Polling vs <span class="text-red-600">WebSocket Listeners</span></strong>
+            <ul class="pl-6 space-y-1 text-base text-gray-800 mt-1">
+              <li>- Periodic HTTP polling <span class="text-red-600 font-semibold">generates high server load</span> and network traffic</li>
+              <li>- Cloud Firestore provides real-time snapshot listeners that push updates instantly when database changes occur</li>
+            </ul>
+          </div>
+        </li>
+
+        <li class="flex items-start gap-3">
+          <span class="text-xl font-bold text-red-600">&bull;</span>
+          <div>
+            <strong>Fulfillment: Warehouse Inventory vs <span class="text-red-600">API Dropshipping</span></strong>
+            <ul class="pl-6 space-y-1 text-base text-gray-800 mt-1">
+              <li>- Physical stock requires <span class="text-red-600 font-semibold">high capital investment</span> and warehouse management</li>
+              <li>- Direct Open API integration automates catalog import and customer order fulfillment directly through suppliers</li>
+            </ul>
+          </div>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Footer -->
+    <div class="flex items-center justify-between text-xs text-gray-400 border-t border-gray-200 pt-2">
+      <span>Ryanz Clothes &bull; Literature Review</span>
+      <span>Slide 5</span>
+    </div>
+  </div>
+
+
+  <!-- ===================== SLIDE 6: 3. METHODOLOGY (TECH STACK) ===================== -->
+  <div class="slide-page">
+    <!-- RUPP Header -->
+    <div class="flex items-center justify-between border-b border-gray-300 pb-3">
+      <div class="flex items-center gap-3">
+        <img src="https://www.waca.associates/en/wp-content/uploads/2021/03/rupp_logo.png" alt="RUPP Logo" class="h-10 w-auto object-contain">
+        <div>
+          <div class="font-bold text-sm text-gray-900 tracking-wide uppercase leading-tight">
+            ROYAL UNIVERSITY OF PHNOM PENH
+          </div>
+          <div class="font-khmer text-xs text-gray-600 font-semibold leading-tight">
+            សាកលវិទ្យាល័យ ភូមិន្ទភ្នំពេញ
+          </div>
+        </div>
+      </div>
+      <div class="text-xs text-red-600 font-medium">Department of ITE</div>
+    </div>
+
+    <!-- Title & Body -->
+    <div class="my-auto space-y-4 py-2 text-lg text-gray-900 leading-relaxed">
+      <div>
+        <h2 class="text-4xl font-bold text-gray-900">Methodology</h2>
+        <p class="text-base text-gray-600 mt-1">System Architecture &amp; Technology Stack</p>
+      </div>
+
+      <ul class="space-y-3">
+        <li class="flex items-start gap-3">
+          <span class="text-xl font-bold text-red-600">&bull;</span>
+          <div>
+            <strong>Frontend Technologies:</strong>
+            <span class="text-base text-gray-800 block"><span class="text-red-600 font-semibold">React 18 + Vite 6</span> with React Router v7 for client routing, Context API for state (Auth, Cart, Toast), and Tailwind CSS for mobile responsiveness</span>
+          </div>
+        </li>
+
+        <li class="flex items-start gap-3">
+          <span class="text-xl font-bold text-red-600">&bull;</span>
+          <div>
+            <strong>Database &amp; Authentication:</strong>
+            <span class="text-base text-gray-800 block"><span class="text-red-600 font-semibold">Google Cloud Firestore</span> for live NoSQL document storage; <span class="text-red-600 font-semibold">Firebase Authentication</span> for Email/Password and Google OAuth login</span>
+          </div>
+        </li>
+
+        <li class="flex items-start gap-3">
+          <span class="text-xl font-bold text-red-600">&bull;</span>
+          <div>
+            <strong>External APIs:</strong>
+            <span class="text-base text-gray-800 block"><span class="text-red-600 font-semibold">CJ Dropshipping Open API</span> for product catalog search and automated fulfillment; <span class="text-red-600 font-semibold">EmailJS</span> for sending customer HTML emails</span>
+          </div>
+        </li>
+
+        <li class="flex items-start gap-3">
+          <span class="text-xl font-bold text-red-600">&bull;</span>
+          <div>
+            <strong>Hosting &amp; Deployment:</strong>
+            <span class="text-base text-gray-800 block"><span class="text-red-600 font-semibold">Firebase CDN Hosting</span> with global SSL encryption and single-page application rewrite routing</span>
+          </div>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Footer -->
+    <div class="flex items-center justify-between text-xs text-gray-400 border-t border-gray-200 pt-2">
+      <span>Ryanz Clothes &bull; Methodology</span>
+      <span>Slide 6</span>
+    </div>
+  </div>
+
+
+  <!-- ===================== SLIDE 7: 3. METHODOLOGY (DATABASE & RBAC) ===================== -->
+  <div class="slide-page">
+    <!-- RUPP Header -->
+    <div class="flex items-center justify-between border-b border-gray-300 pb-3">
+      <div class="flex items-center gap-3">
+        <img src="https://www.waca.associates/en/wp-content/uploads/2021/03/rupp_logo.png" alt="RUPP Logo" class="h-10 w-auto object-contain">
+        <div>
+          <div class="font-bold text-sm text-gray-900 tracking-wide uppercase leading-tight">
+            ROYAL UNIVERSITY OF PHNOM PENH
+          </div>
+          <div class="font-khmer text-xs text-gray-600 font-semibold leading-tight">
+            សាកលវិទ្យាល័យ ភូមិន្ទភ្នំពេញ
+          </div>
+        </div>
+      </div>
+      <div class="text-xs text-red-600 font-medium">Department of ITE</div>
+    </div>
+
+    <!-- Title & Body -->
+    <div class="my-auto space-y-4 py-2 text-lg text-gray-900 leading-relaxed">
+      <div>
+        <h2 class="text-4xl font-bold text-gray-900">Methodology</h2>
+        <p class="text-base text-gray-600 mt-1">Database Structure &amp; User Access Control</p>
+      </div>
+
+      <ul class="space-y-3">
+        <li class="flex items-start gap-3">
+          <span class="text-xl font-bold text-red-600">&bull;</span>
+          <div>
+            <strong>Database Collections (Cloud Firestore):</strong>
+            <ul class="pl-6 space-y-1 text-base text-gray-800 mt-1">
+              <li>- <code class="text-red-600 font-semibold">products</code>: Title, price, discount, images, sizes, colors, stock status</li>
+              <li>- <code class="text-red-600 font-semibold">categories</code>: Category name, URL slug, active state</li>
+              <li>- <code class="text-red-600 font-semibold">orders</code>: Order items, shipping address, payment status, tracking number</li>
+              <li>- <code class="text-red-600 font-semibold">users</code>: User UID, email address, display name, account role</li>
+              <li>- <code class="text-red-600 font-semibold">reviews</code>: Star ratings, customer comments, approval status</li>
+              <li>- <code class="text-red-600 font-semibold">inquiries</code>: Customer messages submitted via Contact page</li>
+            </ul>
+          </div>
+        </li>
+
+        <li class="flex items-start gap-3">
+          <span class="text-xl font-bold text-red-600">&bull;</span>
+          <div>
+            <strong>Role-Based Access Control (RBAC):</strong>
+            <ul class="pl-6 space-y-1 text-base text-gray-800 mt-1">
+              <li>- <strong class="text-red-600 font-bold">Admin:</strong> Full access to <code>/admin</code> panel to manage catalog CRUD, process orders, and manage users</li>
+              <li>- <strong>Customer:</strong> Access to <code>/profile</code>, view past orders synced by email/UID, and leave reviews</li>
+              <li>- <strong>Guest:</strong> Browse catalog, add to cart, guest checkout, and track orders using order ID</li>
+            </ul>
+          </div>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Footer -->
+    <div class="flex items-center justify-between text-xs text-gray-400 border-t border-gray-200 pt-2">
+      <span>Ryanz Clothes &bull; Methodology</span>
+      <span>Slide 7</span>
+    </div>
+  </div>
+
+
+  <!-- ===================== SLIDE 8: 4. RESULT (OUTPUT: STOREFRONT & CHECKOUT) ===================== -->
+  <div class="slide-page">
+    <!-- RUPP Header -->
+    <div class="flex items-center justify-between border-b border-gray-300 pb-3">
+      <div class="flex items-center gap-3">
+        <img src="https://www.waca.associates/en/wp-content/uploads/2021/03/rupp_logo.png" alt="RUPP Logo" class="h-10 w-auto object-contain">
+        <div>
+          <div class="font-bold text-sm text-gray-900 tracking-wide uppercase leading-tight">
+            ROYAL UNIVERSITY OF PHNOM PENH
+          </div>
+          <div class="font-khmer text-xs text-gray-600 font-semibold leading-tight">
+            សាកលវិទ្យាល័យ ភូមិន្ទភ្នំពេញ
+          </div>
+        </div>
+      </div>
+      <div class="text-xs text-red-600 font-medium">Department of ITE</div>
+    </div>
+
+    <!-- Title & Visual Outputs -->
+    <div class="my-auto py-1 space-y-3">
+      <div>
+        <h2 class="text-3xl font-bold text-gray-900">4. Result: <span class="text-red-600">Storefront Outputs</span></h2>
+        <p class="text-xs text-gray-600 mt-0.5">Live UI outputs of customer shopping, cart calculations, and order tracking</p>
+      </div>
+
+      <div class="grid grid-cols-3 gap-3.5 text-xs">
+        
+        <!-- Output 1: Product Catalog -->
+        <div class="border border-gray-300 p-3 rounded bg-gray-50 flex flex-col justify-between h-56">
+          <div>
+            <div class="flex items-center justify-between border-b border-gray-200 pb-1.5 mb-2">
+              <strong class="text-gray-900 font-bold text-xs">1. Store Catalog &amp; Filter</strong>
+              <span class="text-[10px] text-green-700 font-bold bg-green-100 px-1.5 py-0.5 rounded">Live Output</span>
+            </div>
+            <div class="space-y-1.5 text-[11px] text-gray-700">
+              <div class="flex items-center justify-between bg-white border border-gray-200 p-1.5 rounded">
+                <span>Hoodies &amp; Sweats</span>
+                <span class="text-red-600 font-bold">$53.90</span>
+              </div>
+              <div class="flex items-center justify-between bg-white border border-gray-200 p-1.5 rounded">
+                <span>Boxy Graphic Tee</span>
+                <span class="text-red-600 font-bold">$28.16</span>
+              </div>
+              <div class="flex items-center justify-between bg-white border border-gray-200 p-1.5 rounded">
+                <span>Tactical Cargo Pants</span>
+                <span class="text-red-600 font-bold">$63.58</span>
+              </div>
+            </div>
+          </div>
+          <div class="text-[11px] text-gray-600 bg-white p-1.5 rounded border border-gray-200 mt-2">
+            &bull; Dynamic filter by category, sizes (S-3XL), color swatches, and search query.
+          </div>
+        </div>
+
+        <!-- Output 2: Cart & Zero Shipping -->
+        <div class="border border-gray-300 p-3 rounded bg-gray-50 flex flex-col justify-between h-56">
+          <div>
+            <div class="flex items-center justify-between border-b border-gray-200 pb-1.5 mb-2">
+              <strong class="text-gray-900 font-bold text-xs">2. Checkout &amp; Order Capture</strong>
+              <span class="text-[10px] text-green-700 font-bold bg-green-100 px-1.5 py-0.5 rounded">Live Output</span>
+            </div>
+            <div class="space-y-1 text-[11px] text-gray-700 bg-white p-2 rounded border border-gray-200">
+              <div class="flex justify-between"><span>Subtotal:</span><strong>$82.06</strong></div>
+              <div class="flex justify-between text-green-600 font-bold"><span>Shipping:</span><span>$0.00 (FREE)</span></div>
+              <div class="border-t border-gray-200 pt-1 flex justify-between font-bold text-gray-900"><span>Total:</span><span class="text-red-600">$82.06</span></div>
+            </div>
+          </div>
+          <div class="text-[11px] text-gray-600 bg-white p-1.5 rounded border border-gray-200 mt-2">
+            &bull; Real-time Firestore write creates document with items, delivery address, and customer notes.
+          </div>
+        </div>
+
+        <!-- Output 3: Live Order Tracker -->
+        <div class="border border-gray-300 p-3 rounded bg-gray-50 flex flex-col justify-between h-56">
+          <div>
+            <div class="flex items-center justify-between border-b border-gray-200 pb-1.5 mb-2">
+              <strong class="text-gray-900 font-bold text-xs">3. Real-Time Tracking</strong>
+              <span class="text-[10px] text-green-700 font-bold bg-green-100 px-1.5 py-0.5 rounded">Live Output</span>
+            </div>
+            <div class="space-y-1.5 text-[11px] bg-white p-2 rounded border border-gray-200">
+              <div class="flex items-center gap-2 text-green-600 font-semibold">
+                <span class="w-2 h-2 rounded-full bg-green-500"></span>
+                <span>Processing &rarr; Shipped</span>
+              </div>
+              <div class="text-[10px] text-gray-500">Carrier: CJ Logistics / USPS</div>
+              <div class="text-[10px] font-mono text-gray-800 bg-gray-100 p-1 rounded">TRK-983172048</div>
+            </div>
+          </div>
+          <div class="text-[11px] text-gray-600 bg-white p-1.5 rounded border border-gray-200 mt-2">
+            &bull; Live 4-stage tracking timeline bar with direct carrier lookup button.
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="flex items-center justify-between text-xs text-gray-400 border-t border-gray-200 pt-2">
+      <span>Ryanz Clothes &bull; Result (Storefront)</span>
+      <span>Slide 8</span>
+    </div>
+  </div>
+
+
+  <!-- ===================== SLIDE 9: 4. RESULT (OUTPUT: ADMIN & CJ IMPORTER) ===================== -->
+  <div class="slide-page">
+    <!-- RUPP Header -->
+    <div class="flex items-center justify-between border-b border-gray-300 pb-3">
+      <div class="flex items-center gap-3">
+        <img src="https://www.waca.associates/en/wp-content/uploads/2021/03/rupp_logo.png" alt="RUPP Logo" class="h-10 w-auto object-contain">
+        <div>
+          <div class="font-bold text-sm text-gray-900 tracking-wide uppercase leading-tight">
+            ROYAL UNIVERSITY OF PHNOM PENH
+          </div>
+          <div class="font-khmer text-xs text-gray-600 font-semibold leading-tight">
+            សាកលវិទ្យាល័យ ភូមិន្ទភ្នំពេញ
+          </div>
+        </div>
+      </div>
+      <div class="text-xs text-red-600 font-medium">Department of ITE</div>
+    </div>
+
+    <!-- Title & Visual Outputs -->
+    <div class="my-auto py-1 space-y-3">
+      <div>
+        <h2 class="text-3xl font-bold text-gray-900">4. Result: <span class="text-red-600">Admin &amp; Automation Outputs</span></h2>
+        <p class="text-xs text-gray-600 mt-0.5">Supplier dropshipping importer, order dispatch console, and email engine</p>
+      </div>
+
+      <div class="grid grid-cols-2 gap-4 text-xs">
+        
+        <!-- Output 1: CJ Dropshipping API Importer Console -->
+        <div class="border border-gray-300 p-3.5 rounded bg-gray-50 flex flex-col justify-between h-56">
+          <div>
+            <div class="flex items-center justify-between border-b border-gray-200 pb-1.5 mb-2">
+              <strong class="text-gray-900 font-bold text-xs">CJ Dropshipping Open API Importer Output</strong>
+              <span class="text-[10px] text-green-700 font-bold bg-green-100 px-1.5 py-0.5 rounded">Integrated</span>
+            </div>
+            <div class="space-y-1.5 text-[11px] bg-slate-900 text-white p-2.5 rounded">
+              <div class="flex justify-between text-[10px] text-slate-400">
+                <span>Supplier Cost: $15.00</span>
+                <span class="text-green-400 font-bold">Multiplier: 2.2x</span>
+              </div>
+              <div class="font-bold text-white text-xs">Landed Store Price: $33.00</div>
+              <div class="text-[10px] text-emerald-400">&bull; Est. Profit: +$18.00 per unit</div>
+            </div>
+          </div>
+          <div class="text-[11px] text-gray-700 space-y-0.5 mt-2">
+            <div>&bull; <span class="text-red-600 font-semibold">1-Click Import:</span> Fetches product images, variants, and colors directly into Firestore.</div>
+            <div>&bull; Real-time status: <span class="text-green-600 font-bold">Live API Connected</span></div>
+          </div>
+        </div>
+
+        <!-- Output 2: Transactional HTML Email Output -->
+        <div class="border border-gray-300 p-3.5 rounded bg-gray-50 flex flex-col justify-between h-56">
+          <div>
+            <div class="flex items-center justify-between border-b border-gray-200 pb-1.5 mb-2">
+              <strong class="text-gray-900 font-bold text-xs">Automated HTML Customer Email Output</strong>
+              <span class="text-[10px] text-green-700 font-bold bg-green-100 px-1.5 py-0.5 rounded">Automated</span>
+            </div>
+            <div class="space-y-1 text-[11px] bg-white border border-gray-200 p-2.5 rounded shadow-xs">
+              <div class="font-bold text-gray-900 flex justify-between">
+                <span>Ryanz Clothes Order #RC-8819</span>
+                <span class="text-green-600 font-semibold">Confirmed</span>
+              </div>
+              <div class="text-[10px] text-gray-500">Delivering to: Phnom Penh, Cambodia</div>
+              <div class="text-[10px] bg-blue-50 text-blue-800 p-1 rounded font-medium mt-1">
+                Direct Tracking URL Included in Email
+              </div>
+            </div>
+          </div>
+          <div class="text-[11px] text-gray-700 space-y-0.5 mt-2">
+            <div>&bull; <span class="text-red-600 font-semibold">Automated Triggers:</span> Dispatched upon Checkout, Status Update, and Tracking dispatch.</div>
+            <div>&bull; 100% mobile-friendly responsive HTML format.</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="flex items-center justify-between text-xs text-gray-400 border-t border-gray-200 pt-2">
+      <span>Ryanz Clothes &bull; Result (Admin &amp; API)</span>
+      <span>Slide 9</span>
+    </div>
+  </div>
+
+
+  <!-- ===================== SLIDE 10: 5. DISCUSSION ===================== -->
+  <div class="slide-page">
+    <!-- RUPP Header -->
+    <div class="flex items-center justify-between border-b border-gray-300 pb-3">
+      <div class="flex items-center gap-3">
+        <img src="https://www.waca.associates/en/wp-content/uploads/2021/03/rupp_logo.png" alt="RUPP Logo" class="h-10 w-auto object-contain">
+        <div>
+          <div class="font-bold text-sm text-gray-900 tracking-wide uppercase leading-tight">
+            ROYAL UNIVERSITY OF PHNOM PENH
+          </div>
+          <div class="font-khmer text-xs text-gray-600 font-semibold leading-tight">
+            សាកលវិទ្យាល័យ ភូមិន្ទភ្នំពេញ
+          </div>
+        </div>
+      </div>
+      <div class="text-xs text-red-600 font-medium">Department of ITE</div>
+    </div>
+
+    <!-- Title & Body -->
+    <div class="my-auto space-y-4 py-2 text-lg text-gray-900 leading-relaxed">
+      <div>
+        <h2 class="text-4xl font-bold text-gray-900">Discussion</h2>
+        <p class="text-base text-gray-600 mt-1">Technical Challenges &amp; Solutions</p>
+      </div>
+
+      <ul class="space-y-3">
+        <li class="flex items-start gap-3">
+          <span class="text-xl font-bold text-red-600">&bull;</span>
+          <div>
+            <strong class="text-red-600">1. API CORS on Localhost:</strong>
+            <span class="text-base text-gray-800 block">External supplier API blocked browser requests due to CORS headers. <em>Solution:</em> Configured a local Vite server proxy during development, and direct HTTPS endpoint on Firebase production.</span>
+          </div>
+        </li>
+
+        <li class="flex items-start gap-3">
+          <span class="text-xl font-bold text-red-600">&bull;</span>
+          <div>
+            <strong class="text-red-600">2. Supplier API Rate Limits (HTTP 429):</strong>
+            <span class="text-base text-gray-800 block">Multiple fast API calls caused request throttling. <em>Solution:</em> Implemented a client-side request queue with a 1000ms delay between consecutive requests.</span>
+          </div>
+        </li>
+
+        <li class="flex items-start gap-3">
+          <span class="text-xl font-bold text-red-600">&bull;</span>
+          <div>
+            <strong class="text-red-600">3. Browser Ad-Blocker Interference:</strong>
+            <span class="text-base text-gray-800 block">Some privacy extensions blocked default Firestore WebSocket streams. <em>Solution:</em> Configured long-polling fallback (<code>experimentalForceLongPolling</code>) in Firebase initialization.</span>
+          </div>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Footer -->
+    <div class="flex items-center justify-between text-xs text-gray-400 border-t border-gray-200 pt-2">
+      <span>Ryanz Clothes &bull; Discussion</span>
+      <span>Slide 10</span>
+    </div>
+  </div>
+
+
+  <!-- ===================== SLIDE 11: 6. CONCLUSION ===================== -->
+  <div class="slide-page">
+    <!-- RUPP Header -->
+    <div class="flex items-center justify-between border-b border-gray-300 pb-3">
+      <div class="flex items-center gap-3">
+        <img src="https://www.waca.associates/en/wp-content/uploads/2021/03/rupp_logo.png" alt="RUPP Logo" class="h-10 w-auto object-contain">
+        <div>
+          <div class="font-bold text-sm text-gray-900 tracking-wide uppercase leading-tight">
+            ROYAL UNIVERSITY OF PHNOM PENH
+          </div>
+          <div class="font-khmer text-xs text-gray-600 font-semibold leading-tight">
+            សាកលវិទ្យាល័យ ភូមិន្ទភ្នំពេញ
+          </div>
+        </div>
+      </div>
+      <div class="text-xs text-red-600 font-medium">Department of ITE</div>
+    </div>
+
+    <!-- Title & Body -->
+    <div class="my-auto space-y-4 py-2 text-lg text-gray-900 leading-relaxed">
+      <div>
+        <h2 class="text-4xl font-bold text-gray-900">Conclusion</h2>
+        <p class="text-base text-gray-600 mt-1">Summary of Work &amp; Future Improvements</p>
+      </div>
+
+      <ul class="space-y-3">
+        <li class="flex items-start gap-3">
+          <span class="text-xl font-bold text-red-600">&bull;</span>
+          <div>
+            <strong>Summary of Completed Work:</strong>
+            <ul class="pl-6 space-y-1 text-base text-gray-800 mt-1">
+              <li>- Built and deployed a <span class="text-red-600 font-semibold">full-stack e-commerce web application</span> on Firebase</li>
+              <li>- Implemented full CRUD management for products, categories, orders, and user roles</li>
+              <li>- Integrated <span class="text-red-600 font-semibold">CJ Dropshipping Open API</span> for automated catalog import and order fulfillment</li>
+              <li>- Built an automated email notification system for receipts and shipping updates</li>
+            </ul>
+          </div>
+        </li>
+
+        <li class="flex items-start gap-3">
+          <span class="text-xl font-bold text-red-600">&bull;</span>
+          <div>
+            <strong>Future Improvements:</strong>
+            <ul class="pl-6 space-y-1 text-base text-gray-800 mt-1">
+              <li>- <strong>Mobile Application:</strong> Develop a <span class="text-red-600 font-semibold">React Native</span> mobile app for iOS and Android</li>
+              <li>- <strong>Payment Gateway:</strong> Add direct local payment gateways for Cambodian customers</li>
+              <li>- <strong>Order Webhooks:</strong> Add automated courier webhook status updates</li>
+            </ul>
+          </div>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Footer -->
+    <div class="flex items-center justify-between text-xs text-gray-400 border-t border-gray-200 pt-2">
+      <span>Ryanz Clothes &bull; Conclusion</span>
+      <span>Slide 11</span>
+    </div>
+  </div>
+
+
+  <!-- ===================== SLIDE 12: CLOSING / Q&A ===================== -->
+  <div class="slide-page">
+    <!-- RUPP Header -->
+    <div class="flex items-center justify-between border-b border-gray-300 pb-3">
+      <div class="flex items-center gap-3">
+        <img src="https://www.waca.associates/en/wp-content/uploads/2021/03/rupp_logo.png" alt="RUPP Logo" class="h-10 w-auto object-contain">
+        <div>
+          <div class="font-bold text-sm text-gray-900 tracking-wide uppercase leading-tight">
+            ROYAL UNIVERSITY OF PHNOM PENH
+          </div>
+          <div class="font-khmer text-xs text-gray-600 font-semibold leading-tight">
+            សាកលវិទ្យាល័យ ភូមិន្ទភ្នំពេញ
+          </div>
+        </div>
+      </div>
+      <div class="text-xs text-red-600 font-medium">Department of ITE</div>
+    </div>
+
+    <!-- Center Content -->
+    <div class="my-auto py-4 space-y-5">
+      <h2 class="text-4xl font-bold text-gray-900">
+        Questions &amp; <span class="text-red-600">Answers</span>
+      </h2>
+
+      <div class="text-2xl text-gray-800 font-normal">
+        Thank you for your time and attention!
+      </div>
+
+      <div class="space-y-1.5 text-base text-gray-800 leading-relaxed border-l-2 border-red-600 pl-4 py-1">
+        <div><strong>Project:</strong> Ryanz Clothes E-Commerce System</div>
+        <div><strong>Developer &amp; Presenter:</strong> Morn Sotheara</div>
+        <div><strong>Project Advisor:</strong> Chhim Bunchhun</div>
+        <div><strong>Department:</strong> Information Technology Engineering (ITE)</div>
+        <div><strong>University:</strong> Royal University of Phnom Penh (RUPP)</div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="flex items-center justify-between text-xs text-gray-400 border-t border-gray-200 pt-2">
+      <span>Royal University of Phnom Penh &bull; ITE</span>
+      <span>Slide 12</span>
+    </div>
+  </div>
+
+</body>
+
+</html>
