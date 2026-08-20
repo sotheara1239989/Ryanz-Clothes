@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Outlet, Link } from 'react-router-dom';
-import { Menu, ArrowUpRight, Truck } from 'lucide-react';
+import { Menu, ArrowUpRight } from 'lucide-react';
 import AdminSidebar from './AdminSidebar';
 import { useAuth } from '../../context/AuthContext';
 
@@ -33,14 +33,6 @@ export const AdminLayout = () => {
           </div>
 
           <div className="flex items-center gap-3">
-            <Link
-              to="/admin/cjdropshipping"
-              className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-800 text-xs font-semibold rounded-lg transition-colors"
-            >
-              <Truck className="w-3.5 h-3.5 text-gray-600" />
-              <span>CJ Importer</span>
-            </Link>
-
             <Link
               to="/"
               target="_blank"
