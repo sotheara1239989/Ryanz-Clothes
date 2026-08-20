@@ -93,25 +93,25 @@ export const Login = () => {
 
   return (
     <div className="min-h-[80vh] flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full bg-white rounded-3xl p-8 sm:p-10 border border-gray-100 shadow-xl space-y-6">
+      <div className="max-w-md w-full bg-white rounded-2xl p-6 sm:p-8 border border-gray-200 shadow-xs space-y-6">
         
-        {/* Real Brand Logo & Title */}
+        {/* Brand Logo & Title */}
         <div className="text-center space-y-2">
           <Link to="/" className="inline-block group mb-1">
             <img 
               src="/logo.png" 
               alt="Ryanz Clothes Logo" 
-              className="w-14 h-14 rounded-2xl shadow-xs mx-auto object-cover group-hover:scale-105 transition-transform" 
+              className="w-10 h-10 rounded-lg shadow-xs mx-auto object-contain group-hover:scale-105 transition-transform" 
             />
           </Link>
-          <h2 className="text-2xl font-extrabold text-slate-950 tracking-tight">Sign In to Your Account</h2>
-          <p className="text-xs text-slate-500">
+          <h2 className="text-2xl font-bold text-gray-900 tracking-tight">Sign In to Your Account</h2>
+          <p className="text-xs text-gray-500">
             Access your profile, synced orders, and exclusive releases
           </p>
         </div>
 
         {error && (
-          <div className="p-3.5 bg-rose-50 border border-rose-200 text-rose-700 text-xs rounded-2xl font-medium flex items-center gap-2">
+          <div className="p-3.5 bg-rose-50 border border-rose-200 text-rose-700 text-xs rounded-lg font-medium flex items-center gap-2">
             <AlertCircle className="w-4 h-4 shrink-0" />
             <span>{error}</span>
           </div>
@@ -120,7 +120,7 @@ export const Login = () => {
         {/* Email & Password Form */}
         <form onSubmit={handleEmailLogin} className="space-y-4">
           <div>
-            <label className="block text-xs font-semibold text-slate-700 mb-1">Email Address</label>
+            <label className="block text-xs font-semibold text-gray-700 mb-1">Email Address</label>
             <div className="relative">
               <input
                 type="email"
@@ -128,15 +128,15 @@ export const Login = () => {
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 placeholder="you@example.com"
-                className="w-full pl-9 pr-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:bg-white focus:outline-none focus:border-slate-900 transition-colors"
+                className="w-full pl-9 pr-3.5 py-2 bg-gray-50 border border-gray-200 rounded-lg text-xs text-gray-900 focus:bg-white focus:outline-none focus:border-black transition-colors"
               />
-              <Mail className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
+              <Mail className="w-4 h-4 text-gray-400 absolute left-3 top-2.5" />
             </div>
           </div>
 
           <div>
             <div className="flex items-center justify-between mb-1">
-              <label className="block text-xs font-semibold text-slate-700">Password</label>
+              <label className="block text-xs font-semibold text-gray-700">Password</label>
               <button
                 type="button"
                 onClick={() => {
@@ -145,7 +145,7 @@ export const Login = () => {
                   setResetSubmitted(false);
                   setIsForgotModalOpen(true);
                 }}
-                className="text-[11px] font-semibold text-slate-500 hover:text-slate-950 transition-colors hover:underline"
+                className="text-[11px] font-semibold text-gray-500 hover:text-black transition-colors hover:underline"
               >
                 Forgot password?
               </button>
@@ -157,13 +157,13 @@ export const Login = () => {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 placeholder="••••••••"
-                className="w-full pl-9 pr-10 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:bg-white focus:outline-none focus:border-slate-900 transition-colors"
+                className="w-full pl-9 pr-10 py-2 bg-gray-50 border border-gray-200 rounded-lg text-xs text-gray-900 focus:bg-white focus:outline-none focus:border-black transition-colors"
               />
-              <Lock className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
+              <Lock className="w-4 h-4 text-gray-400 absolute left-3 top-2.5" />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-2.5 text-slate-400 hover:text-slate-700 transition-colors"
+                className="absolute right-3 top-2 text-gray-400 hover:text-gray-700 transition-colors"
                 title={showPassword ? "Hide password" : "Show password"}
               >
                 {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -174,7 +174,7 @@ export const Login = () => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3.5 bg-slate-950 hover:bg-black disabled:bg-slate-400 text-white text-xs font-bold rounded-xl shadow-md transition-all flex items-center justify-center gap-2"
+            className="w-full py-2.5 bg-black hover:bg-gray-800 disabled:bg-gray-400 text-white text-xs font-semibold rounded-lg shadow-xs transition-colors flex items-center justify-center gap-2"
           >
             <span>{loading ? 'Authenticating...' : 'Sign In'}</span>
           </button>
@@ -186,7 +186,7 @@ export const Login = () => {
             <div className="w-full border-t border-gray-200" />
           </div>
           <div className="relative flex justify-center text-xs">
-            <span className="px-3 bg-white text-slate-400 font-medium">or continue with</span>
+            <span className="px-3 bg-white text-gray-400 font-medium">or continue with</span>
           </div>
         </div>
 
@@ -196,7 +196,7 @@ export const Login = () => {
             onClick={handleGoogleLogin}
             disabled={loading}
             type="button"
-            className="w-full py-2.5 bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 text-xs font-semibold rounded-xl shadow-xs transition-all flex items-center justify-center gap-2.5"
+            className="w-full py-2 bg-white hover:bg-gray-50 border border-gray-200 text-gray-700 text-xs font-semibold rounded-lg shadow-xs transition-colors flex items-center justify-center gap-2.5"
           >
             <svg className="w-4 h-4" viewBox="0 0 24 24">
               <path
@@ -221,67 +221,65 @@ export const Login = () => {
         </div>
 
         {/* Create Account Link */}
-        <div className="pt-2 text-center text-xs text-slate-500 border-t border-gray-100">
-          <span>Don't have an account? </span>
-          <Link to="/register" className="font-bold text-slate-900 hover:underline">
-            Create Account
+        <div className="pt-2 text-center text-xs text-gray-500">
+          Don't have an account?{' '}
+          <Link to="/register" className="font-semibold text-black hover:underline">
+            Create Account &rarr;
           </Link>
         </div>
-
       </div>
 
       {/* Forgot Password Modal */}
       {isForgotModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl max-w-md w-full p-6 sm:p-8 space-y-4 shadow-2xl relative animate-in fade-in zoom-in duration-200">
+        <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl max-w-sm w-full p-6 space-y-4 shadow-xl border border-gray-200 relative animate-in fade-in zoom-in duration-150">
             <div className="flex items-center justify-between pb-3 border-b border-gray-100">
-              <h3 className="text-base font-extrabold text-slate-900">Reset Password</h3>
+              <h3 className="text-sm font-bold text-gray-900">Reset Password</h3>
               <button 
                 onClick={() => setIsForgotModalOpen(false)}
-                className="p-1 rounded-full text-gray-400 hover:text-black hover:bg-gray-100 transition-colors"
+                className="p-1 rounded-lg text-gray-400 hover:text-black hover:bg-gray-100 transition-colors"
               >
-                <X className="w-5 h-5" />
+                <X className="w-4 h-4" />
               </button>
             </div>
 
             {resetSubmitted ? (
-              <div className="text-center py-6 space-y-3">
-                <div className="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto text-xl font-bold">
+              <div className="text-center py-4 space-y-3">
+                <div className="w-10 h-10 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto text-base font-bold">
                   ✓
                 </div>
-                <h4 className="text-base font-bold text-slate-900">Check Your Email</h4>
-                <p className="text-xs text-slate-500 leading-relaxed">
-                  We have sent a secure password reset link to <strong>{resetEmail}</strong>. Please check your inbox and spam folder.
+                <h4 className="text-sm font-bold text-gray-900">Email Dispatched!</h4>
+                <p className="text-xs text-gray-500">
+                  We've sent a password reset link to <strong className="text-gray-900">{resetEmail}</strong>.
                 </p>
                 <button
-                  type="button"
                   onClick={() => setIsForgotModalOpen(false)}
-                  className="w-full py-2.5 bg-slate-950 text-white text-xs font-bold rounded-xl hover:bg-black transition-colors"
+                  className="w-full py-2 bg-black text-white text-xs font-semibold rounded-lg hover:bg-gray-800 transition-colors"
                 >
-                  Done
+                  Return to Login
                 </button>
               </div>
             ) : (
               <form onSubmit={handleForgotPasswordSubmit} className="space-y-4">
-                <p className="text-xs text-slate-500 leading-relaxed">
-                  Enter your account email address and we'll send you an official reset link.
+                <p className="text-xs text-gray-500">
+                  Enter your email address and we'll send you instructions to reset your password.
                 </p>
 
                 {resetError && (
-                  <div className="p-3 bg-rose-50 border border-rose-200 text-rose-700 text-xs rounded-xl font-medium">
+                  <div className="p-2.5 bg-rose-50 border border-rose-200 text-rose-700 text-xs rounded-lg">
                     {resetError}
                   </div>
                 )}
 
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">Email Address</label>
+                  <label className="block text-xs font-semibold text-gray-700 mb-1">Email Address</label>
                   <input
                     type="email"
                     required
                     value={resetEmail}
                     onChange={(e) => setResetEmail(e.target.value)}
                     placeholder="you@example.com"
-                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:bg-white focus:outline-none focus:border-slate-900"
+                    className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-xs text-gray-900 focus:bg-white focus:outline-none focus:border-black"
                   />
                 </div>
 
@@ -289,16 +287,16 @@ export const Login = () => {
                   <button
                     type="button"
                     onClick={() => setIsForgotModalOpen(false)}
-                    className="flex-1 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl transition-colors"
+                    className="flex-1 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-semibold rounded-lg transition-colors"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
                     disabled={resetLoading}
-                    className="flex-1 py-2.5 bg-slate-950 hover:bg-black text-white text-xs font-bold rounded-xl transition-colors disabled:opacity-50"
+                    className="flex-1 py-2 bg-black hover:bg-gray-800 disabled:bg-gray-400 text-white text-xs font-semibold rounded-lg transition-colors"
                   >
-                    {resetLoading ? 'Sending...' : 'Send Reset Link'}
+                    {resetLoading ? 'Sending...' : 'Send Link'}
                   </button>
                 </div>
               </form>
@@ -306,7 +304,6 @@ export const Login = () => {
           </div>
         </div>
       )}
-
     </div>
   );
 };
