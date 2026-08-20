@@ -33,9 +33,7 @@ export const ProductCard = ({ product }) => {
 
   const discountPercent =
     hasDiscount && Number(price) > 0
-      ? Math.round(
-          ((Number(price) - Number(discountPrice)) / Number(price)) * 100,
-        )
+      ? Math.round(((Number(price) - Number(discountPrice)) / Number(price)) * 100)
       : 0;
 
   const rawImage =
@@ -55,7 +53,6 @@ export const ProductCard = ({ product }) => {
 
   return (
     <div className="group relative bg-white rounded-2xl border border-gray-100 shadow-xs hover:shadow-md transition-all duration-200 flex flex-col overflow-hidden">
-      {/* Image Container */}
       <div className="relative aspect-[3/4] w-full overflow-hidden bg-gray-100 block">
         <Link to={`/product/${id}`} className="block h-full w-full">
           <img
@@ -69,12 +66,11 @@ export const ProductCard = ({ product }) => {
               e.target.src =
                 "data:image/svg+xml," +
                 encodeURIComponent(
-                  '<svg xmlns="http://www.w3.org/2000/svg" width="400" height="500" fill="%23e2e8f0"><rect width="400" height="500"/><text x="50%" y="50%" fill="%2394a3b8" font-size="14" text-anchor="middle" dominant-baseline="middle">Image unavailable</text></svg>',
+                  '<svg xmlns="http://www.w3.org/2000/svg" width="400" height="500" fill="%23e2e8f0"><rect width="400" height="500"/><text x="50%" y="50%" fill="%2394a3b8" font-size="14" text-anchor="middle" dominant-baseline="middle">Image unavailable</text></svg>'
                 );
             }}
           />
 
-          {/* Single Dominant Badge (No Clutter) */}
           <div className="absolute top-3 left-3 z-10">
             {hasDiscount ? (
               <span className="px-2.5 py-1 text-[11px] font-bold bg-rose-600 text-white rounded-md shadow-xs">
@@ -91,7 +87,6 @@ export const ProductCard = ({ product }) => {
             ) : null}
           </div>
 
-          {/* Out of Stock Overlay */}
           {isOutOfStock && (
             <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
               <span className="px-3 py-1.5 bg-rose-600 text-white text-xs font-bold uppercase tracking-wider rounded-md shadow-xs">
@@ -101,7 +96,6 @@ export const ProductCard = ({ product }) => {
           )}
         </Link>
 
-        {/* Quick Add Button */}
         {!isOutOfStock && (
           <div className="absolute inset-x-3 bottom-3 opacity-0 group-hover:opacity-100 transition-opacity duration-150 z-20">
             <button
@@ -114,15 +108,12 @@ export const ProductCard = ({ product }) => {
         )}
       </div>
 
-      {/* Details Section */}
       <div className="p-3.5 flex-1 flex flex-col justify-between">
         <div>
-          {/* Category */}
           <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">
             {category || "Streetwear"}
           </div>
 
-          {/* Product Name */}
           <Link
             to={`/product/${id}`}
             className="block font-semibold text-slate-900 text-xs sm:text-sm hover:text-blue-600 transition-colors line-clamp-2 leading-snug mb-2"
@@ -131,7 +122,6 @@ export const ProductCard = ({ product }) => {
           </Link>
         </div>
 
-        {/* Price & Stock */}
         <div className="pt-2 border-t border-gray-100 flex items-center justify-between">
           <div className="flex items-baseline gap-2">
             <span className="text-sm sm:text-base font-bold text-slate-900">

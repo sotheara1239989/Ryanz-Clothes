@@ -31,7 +31,6 @@ export const ProductDetails = () => {
   const { currentUser, userProfile } = useAuth();
   const { showToast } = useToast();
 
-  // === 1. BASIC STATE HOOKS ===
   const [product, setProduct] = useState(null);
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -47,7 +46,6 @@ export const ProductDetails = () => {
   const [reviewerName, setReviewerName] = useState("");
   const [submittingReview, setSubmittingReview] = useState(false);
 
-  // === 2. HELPER FUNCTIONS ===
   const safeStrMatch = (a, b) => {
     if (a === undefined || a === null || b === undefined || b === null)
       return false;
@@ -62,7 +60,6 @@ export const ProductDetails = () => {
     return strA.trim().toLowerCase() === strB.trim().toLowerCase();
   };
 
-  // === 3. DERIVED STATE HOOKS (useMemo & useCallback) ===
   const availableSizes = useMemo(() => {
     if (Array.isArray(product?.variants) && product.variants.length > 0) {
       const set = new Set();
@@ -370,7 +367,6 @@ export const ProductDetails = () => {
     );
   }
 
-  // === 6. RENDER DATA PREP ===
   const {
     name = "Apparel Item",
     description = "",
@@ -405,7 +401,6 @@ export const ProductDetails = () => {
   const isOutOfStock = effectiveStock <= 0;
   const variantSku = activeVariant?.sku || product?.cjpSku || null;
 
-  // === 7. EVENT HANDLERS ===
   const handleAddToCart = () => {
     if (isOutOfStock) return;
     addToCart(
@@ -486,7 +481,6 @@ export const ProductDetails = () => {
     }
   };
 
-  // === 8. COMPONENT RENDER ===
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

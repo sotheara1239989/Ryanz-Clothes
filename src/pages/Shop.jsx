@@ -26,14 +26,13 @@ export const Shop = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Filters State
   const [selectedCategory, setSelectedCategory] = useState(searchParams.get('category') || 'all');
   const [searchTerm, setSearchTerm] = useState(searchParams.get('search') || '');
-  const [selectedFilterTab, setSelectedFilterTab] = useState(searchParams.get('filter') || 'all'); // 'all', 'new', 'featured', 'sale'
+  const [selectedFilterTab, setSelectedFilterTab] = useState(searchParams.get('filter') || 'all');
   const [selectedSizes, setSelectedSizes] = useState([]);
   const [inStockOnly, setInStockOnly] = useState(false);
   const [maxPrice, setMaxPrice] = useState(250);
-  const [sortBy, setSortBy] = useState('newest'); // 'newest', 'price-low', 'price-high', 'rating', 'name'
+  const [sortBy, setSortBy] = useState('newest');
   const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
 
   // Sync URL params to local state if query changes

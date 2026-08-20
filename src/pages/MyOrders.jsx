@@ -28,20 +28,17 @@ export const MyOrders = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Manual Order Tracking State (for guests or specific lookups)
   const [searchOrderId, setSearchOrderId] = useState(initialOrderId);
   const [trackedOrder, setTrackedOrder] = useState(null);
   const [trackingLoading, setTrackingLoading] = useState(false);
   const [trackingError, setTrackingError] = useState('');
 
-  // Perform initial search if order ID is in URL query (?id=...)
   useEffect(() => {
     if (initialOrderId) {
       handleTrackOrder(initialOrderId);
     }
   }, [initialOrderId]);
 
-  // Load user's orders (by UID and/or Email) or load recent device orders
   useEffect(() => {
     if (currentUser) {
       setLoading(true);

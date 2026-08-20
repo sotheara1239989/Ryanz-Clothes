@@ -14,7 +14,6 @@ export const Home = () => {
 
   useEffect(() => {
     setLoading(true);
-    // Real-time listener for products from Firestore
     const unsubProducts = listenToProducts(
       (allProducts) => {
         setProducts(allProducts.filter((p) => p.isActive !== false));
@@ -22,14 +21,11 @@ export const Home = () => {
       },
       (err) => {
         console.error("Firestore products error:", err);
-        setError(
-          "Could not connect to Firestore. Please check Firebase configuration."
-        );
+        setError("Could not connect to Firestore. Please check Firebase configuration.");
         setLoading(false);
       }
     );
 
-    // Real-time listener for categories from Firestore
     const unsubCategories = listenToCategories(
       (allCategories) => {
         setCategories(allCategories.filter((c) => c.isActive !== false));
@@ -45,13 +41,14 @@ export const Home = () => {
     };
   }, []);
 
-  // Filter dynamic collections from Firestore data
   const featuredProducts = products
     .filter((p) => p.featured === true)
     .slice(0, 4);
+
   const newArrivals = products
     .filter((p) => p.isNewArrival === true || p.createdAt)
     .slice(0, 4);
+
   const saleProducts = products
     .filter(
       (p) =>
@@ -63,7 +60,6 @@ export const Home = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
-      {/* Compact Minimalist Hero Banner */}
       <section className="bg-slate-950 text-white py-10 sm:py-12 border-b border-slate-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
           <div className="space-y-1.5">
@@ -95,9 +91,7 @@ export const Home = () => {
         </div>
       </section>
 
-      {/* Main Content Sections */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-16 flex-1">
-        {/* Featured Products Section */}
         <section className="space-y-6">
           <div className="flex items-center justify-between border-b border-gray-200 pb-4">
             <div>
@@ -134,7 +128,6 @@ export const Home = () => {
           )}
         </section>
 
-        {/* New Arrivals Section */}
         <section className="space-y-6">
           <div className="flex items-center justify-between border-b border-gray-200 pb-4">
             <div>
@@ -171,7 +164,6 @@ export const Home = () => {
           )}
         </section>
 
-        {/* Sale / Discount Section */}
         {saleProducts.length > 0 && (
           <section className="space-y-6 p-8 rounded-3xl bg-white border border-gray-200 shadow-xs">
             <div className="flex items-center justify-between border-b border-gray-100 pb-4">

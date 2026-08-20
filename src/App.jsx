@@ -4,7 +4,6 @@ import { AuthProvider } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
 import { ToastProvider } from './context/ToastContext';
 
-// Customer Components & Pages
 import Navbar from './components/common/Navbar';
 import Footer from './components/common/Footer';
 import ProtectedRoute from './components/common/ProtectedRoute';
@@ -22,7 +21,6 @@ import About from './pages/About';
 import Contact from './pages/Contact';
 import Services from './pages/Services';
 
-// Admin Components & Pages
 import AdminLayout from './components/admin/AdminLayout';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import AdminProducts from './pages/admin/AdminProducts';
@@ -35,7 +33,6 @@ import AdminCJDropshipping from './pages/admin/AdminCJDropshipping';
 import ErrorBoundary from './components/common/ErrorBoundary';
 import ScrollToTop from './components/common/ScrollToTop';
 
-// Customer Storefront Layout Wrapper
 const StorefrontLayout = () => {
   return (
     <div className="flex flex-col min-h-screen">
@@ -58,7 +55,6 @@ export function App() {
           <Router>
             <ScrollToTop />
             <Routes>
-              {/* Customer Storefront Routes */}
               <Route element={<StorefrontLayout />}>
                 <Route path="/" element={<Home />} />
                 <Route path="/shop" element={<Shop />} />
@@ -84,7 +80,6 @@ export function App() {
                 <Route path="/services" element={<Services />} />
               </Route>
 
-              {/* Admin Panel Routes (Protected for Admin) */}
               <Route
                 path="/admin"
                 element={
@@ -105,7 +100,6 @@ export function App() {
                 <Route path="cj-dropshipping" element={<AdminCJDropshipping />} />
               </Route>
 
-              {/* 404 Fallback */}
               <Route
                 path="*"
                 element={
