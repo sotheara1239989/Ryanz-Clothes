@@ -155,11 +155,25 @@ export const Navbar = () => {
             </NavLink>
 
             <NavLink
-              to="/shop?filter=sale"
-              className="text-sm font-semibold tracking-wide text-rose-600 hover:text-rose-700 transition-colors flex items-center gap-1"
+              to="/services"
+              className={({ isActive }) =>
+                `text-sm font-semibold tracking-wide transition-colors ${
+                  isActive ? 'text-slate-950' : 'text-slate-600 hover:text-slate-950'
+                }`
+              }
             >
-              <span>Sale</span>
-              <span className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-ping" />
+              Services
+            </NavLink>
+
+            <NavLink
+              to="/about"
+              className={({ isActive }) =>
+                `text-sm font-semibold tracking-wide transition-colors ${
+                  isActive ? 'text-slate-950' : 'text-slate-600 hover:text-slate-950'
+                }`
+              }
+            >
+              About
             </NavLink>
           </div>
 

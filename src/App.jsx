@@ -18,6 +18,9 @@ import MyOrders from './pages/MyOrders';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import ForgotPassword from './pages/ForgotPassword';
+import About from './pages/About';
+import Contact from './pages/Contact';
+import Services from './pages/Services';
 
 // Admin Components & Pages
 import AdminLayout from './components/admin/AdminLayout';
@@ -76,6 +79,9 @@ export function App() {
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
                 <Route path="/forgot-password" element={<ForgotPassword />} />
+                <Route path="/about" element={<About />} />
+                <Route path="/contact" element={<Contact />} />
+                <Route path="/services" element={<Services />} />
               </Route>
 
               {/* Admin Panel Routes (Protected for Admin) */}
