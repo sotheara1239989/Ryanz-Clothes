@@ -112,13 +112,13 @@ export const AdminCJDropshipping = () => {
       setConnecting(true);
       const res = await fetchCjAccessToken(credentials.apiKey);
       setCredentials(res);
-      showToast("Successfully connected to CJ Dropshipping API!", "success");
+      showToast("✓ Successfully connected to CJ Dropshipping API & generated live access token!", "success");
       handleSearch(searchKeyword);
     } catch (err) {
       console.error("CJ connection error:", err);
       // Still save API key for future attempts
       saveCjCredentials(credentials);
-      showToast("Saved API Key. Operating with verified CJ supplier feed.", "info");
+      showToast(`CJ API Notice: ${err.message || 'Could not authenticate. Verify your CJ API Key in CJ Developer Portal.'}`, "error");
     } finally {
       setConnecting(false);
     }

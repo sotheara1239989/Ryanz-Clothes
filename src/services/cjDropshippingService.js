@@ -1,7 +1,13 @@
 import { addProduct } from './productService';
 
 const CJ_STORAGE_KEY = 'ryanz_cj_credentials';
-export const CJ_API_BASE = typeof window !== 'undefined' && window.location?.origin
+
+const isLocalhost = typeof window !== 'undefined' && (
+  window.location.hostname === 'localhost' || 
+  window.location.hostname === '127.0.0.1'
+);
+
+export const CJ_API_BASE = isLocalhost
   ? '/cj-api'
   : 'https://developers.cjdropshipping.com/api2.0/v1';
 

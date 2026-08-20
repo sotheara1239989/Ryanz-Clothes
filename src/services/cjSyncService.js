@@ -19,7 +19,12 @@ import { updateProduct, getProducts } from './productService';
 import { updateOrderStatus } from './orderService';
 import { sendOrderStatusUpdateEmail } from './emailService';
 
-const CJ_API_BASE = typeof window !== 'undefined' && window.location?.origin
+const isLocalhost = typeof window !== 'undefined' && (
+  window.location.hostname === 'localhost' || 
+  window.location.hostname === '127.0.0.1'
+);
+
+const CJ_API_BASE = isLocalhost
   ? '/cj-api'
   : 'https://developers.cjdropshipping.com/api2.0/v1';
 
