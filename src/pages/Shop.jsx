@@ -17,6 +17,7 @@ import { listenToCategories } from '../services/categoryService';
 import ProductCard from '../components/common/ProductCard';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 import EmptyState from '../components/common/EmptyState';
+import { AnalyticsStrip } from '../components/common/AnalyticsStrip';
 
 export const Shop = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -199,7 +200,7 @@ export const Shop = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header Banner */}
-      <div className="bg-white border-b border-gray-100 py-8">
+      <div className="bg-white border-b border-gray-100 py-8 shadow-md">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
