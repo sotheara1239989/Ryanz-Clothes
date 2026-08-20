@@ -47,10 +47,8 @@ export const Navbar = () => {
   return (
     <header className="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-gray-100 transition-all">
       {/* Top Notification Bar */}
-      <div className="bg-slate-950 text-white text-[11px] font-medium py-1.5 px-4 text-center tracking-wider flex items-center justify-center gap-3">
-        <span>COMPLIMENTARY FREE WORLDWIDE EXPRESS SHIPPING ON ALL ORDERS</span>
-        <span className="hidden md:inline text-slate-400">|</span>
-        <span className="hidden md:inline text-slate-300">ZERO DELIVERY FEES EVERYWHERE</span>
+      <div className="bg-slate-950 text-white text-[11px] font-semibold py-2 px-4 text-center tracking-widest uppercase">
+        Complimentary Express Worldwide Delivery &bull; Zero Shipping Fees
       </div>
 
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -69,9 +67,9 @@ export const Navbar = () => {
           <div className="flex-shrink-0 flex items-center">
             <Link to="/" className="flex items-center gap-2 group">
               <img 
-                src="/favicon.png" 
+                src="/logo.png" 
                 alt="Ryanz Clothes" 
-                className="w-8 h-8 rounded-lg shadow-sm group-hover:scale-105 transition-transform object-cover" 
+                className="w-8 h-8 rounded-lg shadow-xs group-hover:scale-105 transition-transform object-cover" 
               />
               <span className="text-xl font-extrabold tracking-tighter text-slate-950 font-sans">
                 RYANZ<span className="text-slate-500 font-light ml-1">CLOTHES</span>

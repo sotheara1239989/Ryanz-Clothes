@@ -63,100 +63,40 @@ export const Home = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
-      {/* Hero Section */}
-      <section className="relative overflow-hidden bg-slate-950 text-white py-20 lg:py-32">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-            <div className="lg:col-span-7 space-y-6">
-              <span className="text-xs font-bold uppercase tracking-widest text-slate-400 block">
-                New Season Streetwear Collection
-              </span>
+      {/* Compact Minimalist Hero Banner */}
+      <section className="bg-slate-950 text-white py-10 sm:py-12 border-b border-slate-800">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+          <div className="space-y-1.5">
+            <span className="text-[11px] font-bold uppercase tracking-widest text-slate-400 block">
+              Spring / Summer Collection
+            </span>
+            <h1 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-white uppercase">
+              Urban Essentials
+            </h1>
+            <p className="text-xs sm:text-sm text-slate-400 max-w-lg leading-relaxed">
+              Heavyweight French terry, boxy tailored tees, and tactical streetwear cuts.
+            </p>
+          </div>
 
-              <h1 className="text-4xl sm:text-6xl font-extrabold tracking-tight text-white leading-[1.1]">
-                STREETWEAR <br />
-                <span className="text-slate-300">
-                  REDEFINED FOR TODAY.
-                </span>
-              </h1>
-
-              <p className="text-base sm:text-lg text-slate-400 max-w-xl leading-relaxed">
-                Elevate your everyday rotation with heavyweight organic cottons,
-                tailored dropped shoulders, and architectural streetwear
-                silhouettes.
-              </p>
-
-              <div className="pt-2 flex flex-wrap items-center gap-4">
-                <Link
-                  to="/shop"
-                  className="px-8 py-4 bg-white text-slate-950 hover:bg-slate-200 text-sm font-bold rounded-2xl shadow-md transition-all"
-                >
-                  Explore Collection &rarr;
-                </Link>
-
-                <Link
-                  to="/shop?filter=sale"
-                  className="px-6 py-4 bg-slate-900 hover:bg-slate-800 border border-slate-800 text-rose-400 text-sm font-semibold rounded-2xl transition-all"
-                >
-                  Special Offers
-                </Link>
-              </div>
-
-              {/* Quick dynamic metrics */}
-              <div className="pt-8 border-t border-slate-900 grid grid-cols-3 gap-6 max-w-md">
-                <div>
-                  <div className="text-2xl font-bold text-white">
-                    {products.length > 0 ? `${products.length}+` : "100+"}
-                  </div>
-                  <div className="text-xs text-slate-500">Styles Available</div>
-                </div>
-                <div>
-                  <div className="text-2xl font-bold text-white">
-                    {categories.length > 0 ? categories.length : "8"}
-                  </div>
-                  <div className="text-xs text-slate-500">Collections</div>
-                </div>
-                <div>
-                  <div className="text-2xl font-bold text-emerald-400">
-                    100%
-                  </div>
-                  <div className="text-xs text-slate-500">Authentic Cotton</div>
-                </div>
-              </div>
-            </div>
-
-            {/* Hero Image Showcase */}
-            <div className="lg:col-span-5 relative">
-              <div className="relative mx-auto max-w-sm rounded-3xl overflow-hidden shadow-2xl border border-slate-800 bg-slate-900">
-                <img
-                  src="https://img.freepik.com/premium-photo/summer-collection-men-clothes-set-with-checkered-shirt-jeans-shoes-belt-isolated-white-background_142957-1103.jpg"
-                  alt="Ryanz Clothes Hero"
-                  className="w-full h-[450px] object-cover object-center"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent" />
-                <div className="absolute bottom-6 left-6 right-6 p-4 rounded-2xl bg-slate-900/90 backdrop-blur-md border border-slate-800 text-white flex items-center justify-between">
-                  <div>
-                    <p className="text-xs text-slate-400 uppercase tracking-wider font-semibold">
-                      New Season Drop
-                    </p>
-                    <h3 className="text-sm font-bold text-white">
-                      Ryanz Heavy Oversized Series
-                    </h3>
-                  </div>
-                  <Link
-                    to="/shop"
-                    className="px-3.5 py-1.5 bg-white text-black text-xs font-bold rounded-xl hover:bg-slate-200 transition-colors"
-                  >
-                    Shop &rarr;
-                  </Link>
-                </div>
-              </div>
-            </div>
+          <div className="flex items-center gap-3 shrink-0">
+            <Link
+              to="/shop"
+              className="px-6 py-3 bg-white hover:bg-slate-200 text-slate-950 text-xs font-bold uppercase tracking-wider rounded-xl shadow-xs transition-all"
+            >
+              Shop All &rarr;
+            </Link>
+            <Link
+              to="/shop?filter=sale"
+              className="px-5 py-3 bg-slate-900 hover:bg-slate-800 text-rose-400 text-xs font-bold uppercase tracking-wider rounded-xl border border-slate-800 transition-colors"
+            >
+              Sale
+            </Link>
           </div>
         </div>
       </section>
 
       {/* Main Content Sections */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-20 flex-1">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-16 flex-1">
         {/* Featured Products Section */}
         <section className="space-y-6">
           <div className="flex items-center justify-between border-b border-gray-200 pb-4">

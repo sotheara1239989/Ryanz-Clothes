@@ -223,7 +223,7 @@ export const Shop = () => {
                 onClick={() => handleFilterTabSelect('all')}
                 className={`px-4 py-2 rounded-xl text-xs font-semibold transition-all ${
                   selectedFilterTab === 'all'
-                    ? 'bg-slate-950 text-white shadow-sm'
+                    ? 'bg-slate-950 text-white shadow-xs'
                     : 'bg-gray-100 hover:bg-gray-200 text-slate-700'
                 }`}
               >
@@ -232,37 +232,34 @@ export const Shop = () => {
 
               <button
                 onClick={() => handleFilterTabSelect('new')}
-                className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold transition-all ${
+                className={`px-4 py-2 rounded-xl text-xs font-semibold transition-all ${
                   selectedFilterTab === 'new'
-                    ? 'bg-slate-950 text-white shadow-sm'
+                    ? 'bg-slate-950 text-white shadow-xs'
                     : 'bg-gray-100 hover:bg-gray-200 text-slate-700'
                 }`}
               >
-                <Clock className="w-3.5 h-3.5" />
                 New Arrivals
               </button>
 
               <button
                 onClick={() => handleFilterTabSelect('featured')}
-                className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold transition-all ${
+                className={`px-4 py-2 rounded-xl text-xs font-semibold transition-all ${
                   selectedFilterTab === 'featured'
-                    ? 'bg-slate-950 text-white shadow-sm'
+                    ? 'bg-slate-950 text-white shadow-xs'
                     : 'bg-gray-100 hover:bg-gray-200 text-slate-700'
                 }`}
               >
-                <Sparkles className="w-3.5 h-3.5 text-amber-400" />
                 Featured
               </button>
 
               <button
                 onClick={() => handleFilterTabSelect('sale')}
-                className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold transition-all ${
+                className={`px-4 py-2 rounded-xl text-xs font-semibold transition-all ${
                   selectedFilterTab === 'sale'
-                    ? 'bg-rose-600 text-white shadow-sm'
+                    ? 'bg-rose-600 text-white shadow-xs'
                     : 'bg-rose-50 text-rose-600 hover:bg-rose-100'
                 }`}
               >
-                <Flame className="w-3.5 h-3.5" />
                 On Sale
               </button>
             </div>
