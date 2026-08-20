@@ -1,15 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import {
-  ArrowRight,
-  Sparkles,
-  Flame,
-  Tag,
-  Layers,
-  PlusCircle,
-  ShieldCheck,
-  Clock,
-} from "lucide-react";
 import { listenToProducts } from "../services/productService";
 import { listenToCategories } from "../services/categoryService";
 import ProductCard from "../components/common/ProductCard";
@@ -33,10 +23,10 @@ export const Home = () => {
       (err) => {
         console.error("Firestore products error:", err);
         setError(
-          "Could not connect to Firestore. Please check Firebase configuration.",
+          "Could not connect to Firestore. Please check Firebase configuration."
         );
         setLoading(false);
-      },
+      }
     );
 
     // Real-time listener for categories from Firestore
@@ -46,7 +36,7 @@ export const Home = () => {
       },
       (err) => {
         console.error("Firestore categories error:", err);
-      },
+      }
     );
 
     return () => {
@@ -67,7 +57,7 @@ export const Home = () => {
       (p) =>
         p.discountPrice &&
         Number(p.discountPrice) > 0 &&
-        Number(p.discountPrice) < Number(p.price),
+        Number(p.discountPrice) < Number(p.price)
     )
     .slice(0, 4);
 
@@ -75,21 +65,16 @@ export const Home = () => {
     <div className="min-h-screen bg-gray-50 flex flex-col">
       {/* Hero Section */}
       <section className="relative overflow-hidden bg-slate-950 text-white py-20 lg:py-32">
-        {/* Background glow effects */}
-        <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-purple-600/10 rounded-full blur-3xl pointer-events-none" />
-
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             <div className="lg:col-span-7 space-y-6">
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-900 border border-slate-800 text-xs font-semibold text-slate-300">
-                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                <span>NEW SEASON STREETWEAR COLLECTION</span>
-              </div>
+              <span className="text-xs font-bold uppercase tracking-widest text-slate-400 block">
+                New Season Streetwear Collection
+              </span>
 
               <h1 className="text-4xl sm:text-6xl font-extrabold tracking-tight text-white leading-[1.1]">
                 STREETWEAR <br />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-slate-100 via-slate-300 to-slate-500">
+                <span className="text-slate-300">
                   REDEFINED FOR TODAY.
                 </span>
               </h1>
@@ -103,18 +88,16 @@ export const Home = () => {
               <div className="pt-2 flex flex-wrap items-center gap-4">
                 <Link
                   to="/shop"
-                  className="px-8 py-4 bg-white text-slate-950 hover:bg-slate-200 text-sm font-bold rounded-2xl shadow-xl transition-all hover:scale-105 flex items-center gap-2"
+                  className="px-8 py-4 bg-white text-slate-950 hover:bg-slate-200 text-sm font-bold rounded-2xl shadow-md transition-all"
                 >
-                  <span>Explore Collection</span>
-                  <ArrowRight className="w-4 h-4" />
+                  Explore Collection &rarr;
                 </Link>
 
                 <Link
                   to="/shop?filter=sale"
-                  className="px-6 py-4 bg-slate-900 hover:bg-slate-800 border border-slate-800 text-rose-400 text-sm font-semibold rounded-2xl transition-all flex items-center gap-2"
+                  className="px-6 py-4 bg-slate-900 hover:bg-slate-800 border border-slate-800 text-rose-400 text-sm font-semibold rounded-2xl transition-all"
                 >
-                  <Sparkles className="w-4 h-4 text-rose-400" />
-                  <span>View Special Offers</span>
+                  Special Offers
                 </Link>
               </div>
 
@@ -161,9 +144,9 @@ export const Home = () => {
                   </div>
                   <Link
                     to="/shop"
-                    className="p-2 bg-white text-black rounded-xl hover:scale-105 transition-transform"
+                    className="px-3.5 py-1.5 bg-white text-black text-xs font-bold rounded-xl hover:bg-slate-200 transition-colors"
                   >
-                    <ArrowRight className="w-4 h-4" />
+                    Shop &rarr;
                   </Link>
                 </div>
               </div>
@@ -174,28 +157,22 @@ export const Home = () => {
 
       {/* Main Content Sections */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-20 flex-1">
-        {/* Featured Products Section (Firestore Query: featured == true) */}
+        {/* Featured Products Section */}
         <section className="space-y-6">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center text-amber-600">
-                <Sparkles className="w-5 h-5" />
-              </div>
-              <div>
-                <span className="text-xs font-bold uppercase tracking-wider text-amber-600">
-                  Hand-Picked Drops
-                </span>
-                <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900">
-                  Featured Products
-                </h2>
-              </div>
+          <div className="flex items-center justify-between border-b border-gray-200 pb-4">
+            <div>
+              <span className="text-xs font-bold uppercase tracking-widest text-slate-400 block mb-0.5">
+                Hand-Picked Drops
+              </span>
+              <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900">
+                Featured Products
+              </h2>
             </div>
             <Link
               to="/shop"
-              className="text-xs font-bold text-slate-900 hover:text-blue-600 flex items-center gap-1 transition-colors"
+              className="text-xs font-bold text-slate-900 hover:text-blue-600 transition-colors"
             >
-              Browse Shop
-              <ArrowRight className="w-3.5 h-3.5" />
+              Browse Shop &rarr;
             </Link>
           </div>
 
@@ -219,26 +196,20 @@ export const Home = () => {
 
         {/* New Arrivals Section */}
         <section className="space-y-6">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-600">
-                <Clock className="w-5 h-5" />
-              </div>
-              <div>
-                <span className="text-xs font-bold uppercase tracking-wider text-blue-600">
-                  Fresh Additions
-                </span>
-                <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900">
-                  New Arrivals
-                </h2>
-              </div>
+          <div className="flex items-center justify-between border-b border-gray-200 pb-4">
+            <div>
+              <span className="text-xs font-bold uppercase tracking-widest text-slate-400 block mb-0.5">
+                Fresh Additions
+              </span>
+              <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900">
+                New Arrivals
+              </h2>
             </div>
             <Link
               to="/shop?filter=new"
-              className="text-xs font-bold text-slate-900 hover:text-blue-600 flex items-center gap-1 transition-colors"
+              className="text-xs font-bold text-slate-900 hover:text-blue-600 transition-colors"
             >
-              See All New
-              <ArrowRight className="w-3.5 h-3.5" />
+              See All New &rarr;
             </Link>
           </div>
 
@@ -260,29 +231,23 @@ export const Home = () => {
           )}
         </section>
 
-        {/* Sale / Discount Section (Firestore Query: discountPrice > 0) */}
+        {/* Sale / Discount Section */}
         {saleProducts.length > 0 && (
-          <section className="space-y-6 p-8 rounded-3xl bg-gradient-to-br from-rose-50 to-orange-50 border border-rose-100">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-rose-600 text-white flex items-center justify-center">
-                  <Flame className="w-5 h-5" />
-                </div>
-                <div>
-                  <span className="text-xs font-bold uppercase tracking-wider text-rose-600">
-                    Limited Offers
-                  </span>
-                  <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900">
-                    Special Sale & Discounts
-                  </h2>
-                </div>
+          <section className="space-y-6 p-8 rounded-3xl bg-white border border-gray-200 shadow-xs">
+            <div className="flex items-center justify-between border-b border-gray-100 pb-4">
+              <div>
+                <span className="text-xs font-bold uppercase tracking-widest text-red-600 block mb-0.5">
+                  Limited Offers
+                </span>
+                <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900">
+                  Special Sale &amp; Discounts
+                </h2>
               </div>
               <Link
                 to="/shop?filter=sale"
-                className="text-xs font-bold text-rose-700 hover:text-rose-900 flex items-center gap-1 transition-colors"
+                className="text-xs font-bold text-red-600 hover:text-red-800 transition-colors"
               >
-                View Full Sale
-                <ArrowRight className="w-3.5 h-3.5" />
+                View Full Sale &rarr;
               </Link>
             </div>
 
