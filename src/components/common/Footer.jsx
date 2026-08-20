@@ -1,13 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { 
-  ShieldCheck, 
-  Truck, 
-  RotateCcw, 
-  X,
-  Package
-} from 'lucide-react';
-import { listenToCategories } from '../../services/categoryService';
+import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import { ShieldCheck, Truck, RotateCcw, X, Package } from "lucide-react";
+import { listenToCategories } from "../../services/categoryService";
 
 export const Footer = () => {
   const [categories, setCategories] = useState([]);
@@ -30,8 +24,12 @@ export const Footer = () => {
               <Truck className="w-4 h-4" />
             </div>
             <div>
-              <h4 className="text-gray-900 font-bold text-xs">Free Worldwide Delivery</h4>
-              <p className="text-[11px] text-gray-500">Zero freight shipping fees</p>
+              <h4 className="text-gray-900 font-bold text-xs">
+                Free Worldwide Delivery
+              </h4>
+              <p className="text-[11px] text-gray-500">
+                Zero freight shipping fees
+              </p>
             </div>
           </div>
 
@@ -40,8 +38,12 @@ export const Footer = () => {
               <RotateCcw className="w-4 h-4" />
             </div>
             <div>
-              <h4 className="text-gray-900 font-bold text-xs">30-Day Free Returns</h4>
-              <p className="text-[11px] text-gray-500">Hassle-free size exchange</p>
+              <h4 className="text-gray-900 font-bold text-xs">
+                30-Day Free Returns
+              </h4>
+              <p className="text-[11px] text-gray-500">
+                Hassle-free size exchange
+              </p>
             </div>
           </div>
 
@@ -50,8 +52,12 @@ export const Footer = () => {
               <ShieldCheck className="w-4 h-4" />
             </div>
             <div>
-              <h4 className="text-gray-900 font-bold text-xs">460GSM Custom Terry</h4>
-              <p className="text-[11px] text-gray-500">Architectural heavyweight cotton</p>
+              <h4 className="text-gray-900 font-bold text-xs">
+                460GSM Custom Terry
+              </h4>
+              <p className="text-[11px] text-gray-500">
+                Architectural heavyweight cotton
+              </p>
             </div>
           </div>
 
@@ -60,52 +66,89 @@ export const Footer = () => {
               <Package className="w-4 h-4" />
             </div>
             <div>
-              <h4 className="text-gray-900 font-bold text-xs">Direct CJ Fulfillment</h4>
-              <p className="text-[11px] text-gray-500">Live tracked parcel updates</p>
+              <h4 className="text-gray-900 font-bold text-xs">
+                Direct CJ Fulfillment
+              </h4>
+              <p className="text-[11px] text-gray-500">
+                Live tracked parcel updates
+              </p>
             </div>
           </div>
         </div>
       </div>
 
       {/* Main Footer Links */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 grid grid-cols-1 md:grid-cols-12 gap-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 grid grid-cols-2 md:grid-cols-12 gap-10">
         {/* Brand Column */}
-        <div className="md:col-span-5 space-y-3">
-          <div className="flex items-center gap-2">
-            <img 
-              src="/logo.png" 
-              alt="Ryanz Clothes" 
-              className="w-7 h-7 rounded-md object-contain" 
+        <div className="col-span-2 md:col-span-4 space-y-4">
+          <div className="flex items-center gap-2.5">
+            <img
+              src="/logo.png"
+              alt="Ryanz Clothes"
+              className="w-8 h-8 rounded-lg object-contain"
             />
-            <span className="text-base font-extrabold tracking-tight text-gray-900 font-sans uppercase">
-              RYANZ<span className="text-gray-400 font-normal ml-1">CLOTHES</span>
+            <span className="text-lg font-extrabold tracking-tight text-gray-900 font-sans uppercase">
+              RYANZ
+              <span className="text-gray-400 font-normal ml-1">CLOTHES</span>
             </span>
           </div>
-          <p className="text-xs text-gray-500 leading-relaxed max-w-sm">
-            Engineered for modern streetwear enthusiasts. Premium cuts, heavy custom-milled fabrics, and architectural silhouettes designed for everyday rotation.
+          <p className="text-sm text-gray-500 leading-relaxed max-w-xs">
+            Engineered for modern streetwear enthusiasts. Premium cuts, heavy
+            custom-milled fabrics, and architectural silhouettes designed for
+            everyday rotation.
           </p>
-          <p className="text-[11px] text-gray-400 pt-1">
-            Department of Information Technology Engineering (ITE) &bull; Royal University of Phnom Penh (RUPP)
+          <p className="text-xs text-gray-400 pt-1">
+            Department of Information Technology Engineering (ITE) &bull; Royal
+            University of Phnom Penh (RUPP)
           </p>
         </div>
 
         {/* Quick Links */}
-        <div className="md:col-span-2 space-y-2.5">
-          <h4 className="text-xs font-bold uppercase tracking-wider text-gray-900">Navigation</h4>
-          <ul className="space-y-1.5 text-xs">
-            <li><Link to="/" className="hover:text-black transition-colors">Home</Link></li>
-            <li><Link to="/shop" className="hover:text-black transition-colors">Shop All</Link></li>
-            <li><Link to="/about" className="hover:text-black transition-colors">About Us</Link></li>
-            <li><Link to="/services" className="hover:text-black transition-colors">Services</Link></li>
-            <li><Link to="/contact" className="hover:text-black transition-colors">Contact</Link></li>
-            <li><Link to="/my-orders" className="hover:text-black transition-colors font-medium">Track Orders</Link></li>
+        <div className="md:col-span-3 space-y-4">
+          <h4 className="text-sm font-bold uppercase tracking-wider text-gray-900">
+            Navigation
+          </h4>
+          <ul className="space-y-2.5 text-sm">
+            <li>
+              <Link to="/" className="text-gray-500 hover:text-black transition-colors">
+                Home
+              </Link>
+            </li>
+            <li>
+              <Link to="/shop" className="text-gray-500 hover:text-black transition-colors">
+                Shop All
+              </Link>
+            </li>
+            <li>
+              <Link to="/about" className="text-gray-500 hover:text-black transition-colors">
+                About Us
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="/services"
+                className="text-gray-500 hover:text-black transition-colors"
+              >
+                Services
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="/contact"
+                className="text-gray-500 hover:text-black transition-colors"
+              >
+                Contact
+              </Link>
+            </li>
           </ul>
         </div>
 
         {/* Dynamic Categories */}
-        <div className="md:col-span-2 space-y-2.5">
-          <h4 className="text-xs font-bold uppercase tracking-wider text-gray-900">Collections</h4>
-          <ul className="space-y-1.5 text-xs">
+        <div className="md:col-span-3 space-y-4">
+          <h4 className="text-sm font-bold uppercase tracking-wider text-gray-900">
+            Collections
+          </h4>
+          <ul className="space-y-2.5 text-sm">
             {categories.length === 0 ? (
               <li className="text-gray-400">Loading...</li>
             ) : (
@@ -113,7 +156,7 @@ export const Footer = () => {
                 <li key={cat.id}>
                   <Link
                     to={`/shop?category=${cat.slug || cat.name}`}
-                    className="hover:text-black transition-colors"
+                    className="text-gray-500 hover:text-black transition-colors"
                   >
                     {cat.name}
                   </Link>
@@ -123,41 +166,57 @@ export const Footer = () => {
           </ul>
         </div>
 
-        {/* Academic Project Presentation Deck link */}
-        <div className="md:col-span-3 space-y-3">
-          <h4 className="text-xs font-bold uppercase tracking-wider text-gray-900">Academic Capstone</h4>
-          <p className="text-xs text-gray-500 leading-relaxed">
-            Developer: <strong className="text-gray-900">Morn Sotheara</strong><br />
-            Advisor: <strong className="text-gray-900">Chhim Bunchhun</strong>
-          </p>
-          <a
-            href="/presentation.html"
-            target="_blank"
-            rel="noreferrer"
-            className="inline-flex items-center gap-1.5 px-3 py-2 bg-gray-100 hover:bg-gray-200 text-gray-900 text-xs font-semibold rounded-lg border border-gray-200 transition-colors"
-          >
-            <span>View Presentation Deck (12 Slides)</span>
-            <span>&rarr;</span>
-          </a>
+        {/* Support */}
+        <div className="md:col-span-2 space-y-4">
+          <h4 className="text-sm font-bold uppercase tracking-wider text-gray-900">
+            Support
+          </h4>
+          <ul className="space-y-2.5 text-sm">
+            <li>
+              <Link
+                to="/my-orders"
+                className="text-gray-500 hover:text-black transition-colors"
+              >
+                Track Orders
+              </Link>
+            </li>
+            <li>
+              <button
+                onClick={() => setModalContent("privacy")}
+                className="text-gray-500 hover:text-black transition-colors"
+              >
+                Privacy Policy
+              </button>
+            </li>
+            <li>
+              <button
+                onClick={() => setModalContent("terms")}
+                className="text-gray-500 hover:text-black transition-colors"
+              >
+                Terms of Service
+              </button>
+            </li>
+          </ul>
         </div>
       </div>
 
       {/* Bottom Legal & Copyright Bar */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-10 pt-6 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-gray-500">
         <div>
-          &copy; {new Date().getFullYear()} Ryanz Clothes &bull; All Rights Reserved.
+          &copy; {new Date().getFullYear()} Ryanz Clothes &bull; All Rights
+          Reserved.
         </div>
 
         <div className="flex items-center gap-4 text-xs">
-          <button 
-            onClick={() => setModalContent('privacy')}
+          <button
+            onClick={() => setModalContent("privacy")}
             className="hover:text-black transition-colors"
           >
             Privacy Policy
           </button>
           <span>&bull;</span>
-          <button 
-            onClick={() => setModalContent('terms')}
+          <button
+            onClick={() => setModalContent("terms")}
             className="hover:text-black transition-colors"
           >
             Terms of Service
@@ -171,9 +230,11 @@ export const Footer = () => {
           <div className="bg-white rounded-2xl max-w-lg w-full p-6 space-y-4 shadow-xl border border-gray-200 relative animate-in fade-in zoom-in duration-150">
             <div className="flex items-center justify-between pb-3 border-b border-gray-100">
               <h3 className="text-base font-bold text-gray-900">
-                {modalContent === 'privacy' ? 'Privacy Policy' : 'Terms of Service'}
+                {modalContent === "privacy"
+                  ? "Privacy Policy"
+                  : "Terms of Service"}
               </h3>
-              <button 
+              <button
                 onClick={() => setModalContent(null)}
                 className="p-1 rounded-lg text-gray-400 hover:text-black hover:bg-gray-100 transition-colors"
               >
@@ -182,28 +243,40 @@ export const Footer = () => {
             </div>
 
             <div className="text-xs text-gray-600 space-y-3 max-h-80 overflow-y-auto pr-1">
-              {modalContent === 'privacy' ? (
+              {modalContent === "privacy" ? (
                 <>
                   <p>
-                    <strong>1. Information Collection:</strong> Ryanz Clothes collects order delivery details (name, email, shipping address, and phone number) strictly for processing and dispatching orders via cloud dropshipping fulfillment.
+                    <strong>1. Information Collection:</strong> Ryanz Clothes
+                    collects order delivery details (name, email, shipping
+                    address, and phone number) strictly for processing and
+                    dispatching orders via cloud dropshipping fulfillment.
                   </p>
                   <p>
-                    <strong>2. Data Protection:</strong> User authentication and customer profile data are secured via Google Firebase Authentication and Cloud Firestore security rules.
+                    <strong>2. Data Protection:</strong> User authentication and
+                    customer profile data are secured via Google Firebase
+                    Authentication and Cloud Firestore security rules.
                   </p>
                   <p>
-                    <strong>3. Third-Party Fulfillment:</strong> Order items and shipping addresses are synchronized with CJ Dropshipping Open API to generate international tracking numbers.
+                    <strong>3. Third-Party Fulfillment:</strong> Order items and
+                    shipping addresses are synchronized with CJ Dropshipping
+                    Open API to generate international tracking numbers.
                   </p>
                 </>
               ) : (
                 <>
                   <p>
-                    <strong>1. Orders &amp; Pricing:</strong> All prices are displayed in USD ($). Orders placed on Ryanz Clothes are processed immediately for international dispatch.
+                    <strong>1. Orders &amp; Pricing:</strong> All prices are
+                    displayed in USD ($). Orders placed on Ryanz Clothes are
+                    processed immediately for international dispatch.
                   </p>
                   <p>
-                    <strong>2. Complimentary Shipping:</strong> We provide 100% free worldwide shipping with end-to-end milestone tracking.
+                    <strong>2. Complimentary Shipping:</strong> We provide 100%
+                    free worldwide shipping with end-to-end milestone tracking.
                   </p>
                   <p>
-                    <strong>3. Returns &amp; Exchanges:</strong> Customers may request size exchanges or returns within 30 days of receiving their parcel.
+                    <strong>3. Returns &amp; Exchanges:</strong> Customers may
+                    request size exchanges or returns within 30 days of
+                    receiving their parcel.
                   </p>
                 </>
               )}
