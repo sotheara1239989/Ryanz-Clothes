@@ -519,86 +519,21 @@ export const AdminCJDropshipping = () => {
         )}
       </div>
 
-      {/* Two Column Layout: API Key & Pricing Rules */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        
-        {/* CJ API Credentials */}
-        <div className="lg:col-span-6 bg-slate-950 rounded-3xl p-6 sm:p-7 border border-slate-800 space-y-4">
-          <div className="flex items-center justify-between pb-3 border-b border-slate-800">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center text-blue-400">
-                <Truck className="w-4 h-4" />
-              </div>
-              <h3 className="text-sm font-bold text-white">CJ API Credentials</h3>
+      {/* Pricing Markup & Target Category Rules */}
+      <div className="bg-slate-950 rounded-3xl p-6 sm:p-7 border border-slate-800 space-y-4">
+        <div className="flex items-center justify-between pb-3 border-b border-slate-800">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-400">
+              <Sliders className="w-4 h-4" />
             </div>
-            <a
-              href="https://developers.cjdropshipping.com/"
-              target="_blank"
-              rel="noreferrer"
-              className="text-[11px] text-blue-400 hover:underline flex items-center gap-1"
-            >
-              <span>CJ Developer Portal</span>
-              <ExternalLink className="w-3 h-3" />
-            </a>
+            <h3 className="text-sm font-bold text-white">Import &amp; Profit Markup Rules</h3>
           </div>
-
-          <form onSubmit={handleConnectCj} className="space-y-3 text-xs">
-            <div>
-              <div className="flex items-center justify-between mb-1">
-                <label className="block font-semibold text-slate-300">CJ Dropshipping API Key</label>
-                {import.meta.env.VITE_CJ_API_KEY && (
-                  <span className="text-[10px] text-emerald-400 font-bold bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
-                    ✓ Configured in .env (VITE_CJ_API_KEY)
-                  </span>
-                )}
-              </div>
-              <input
-                type="password"
-                value={credentials.apiKey}
-                onChange={(e) => setCredentials({ ...credentials, apiKey: e.target.value })}
-                placeholder="CJUserNum@api@xxxxxxxxxxxxxxxxxxxxxxx"
-                className="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-white font-mono focus:outline-none focus:border-blue-500 text-xs"
-              />
-              <p className="text-[10px] text-slate-500 mt-1">
-                Find in your CJ Account → <strong>Authorization</strong> → <strong>API</strong> or set in <code>.env</code>.
-              </p>
-            </div>
-
-            <div className="flex items-center justify-between pt-2">
-              <span className={`text-[11px] font-semibold flex items-center gap-1.5 ${
-                credentials.accessToken || credentials.apiKey ? 'text-emerald-400' : 'text-slate-400'
-              }`}>
-                <span className={`w-2 h-2 rounded-full ${credentials.accessToken || credentials.apiKey ? 'bg-emerald-400 animate-pulse' : 'bg-slate-600'}`} />
-                <span>{credentials.accessToken ? 'Live API Connected' : 'Verified Catalog Feed Active'}</span>
-              </span>
-
-              <button
-                type="submit"
-                disabled={connecting}
-                className="px-4 py-2 bg-blue-600 hover:bg-blue-500 disabled:bg-slate-700 text-white font-bold rounded-xl shadow transition-all flex items-center gap-1.5"
-              >
-                {connecting ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Save className="w-3.5 h-3.5" />}
-                <span>Save Credentials</span>
-              </button>
-            </div>
-          </form>
+          <span className="text-[10px] text-emerald-400 font-bold bg-emerald-500/10 px-2 py-0.5 rounded">
+            Auto-Calculated
+          </span>
         </div>
 
-        {/* Pricing Markup & Target Category Rules */}
-        <div className="lg:col-span-6 bg-slate-950 rounded-3xl p-6 sm:p-7 border border-slate-800 space-y-4">
-          <div className="flex items-center justify-between pb-3 border-b border-slate-800">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-400">
-                <Sliders className="w-4 h-4" />
-              </div>
-              <h3 className="text-sm font-bold text-white">Import & Profit Markup Rules</h3>
-            </div>
-            <span className="text-[10px] text-emerald-400 font-bold bg-emerald-500/10 px-2 py-0.5 rounded">
-              Auto-Calculated
-            </span>
-          </div>
-
-          <div className="grid grid-cols-2 gap-4 text-xs">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
             {/* Markup multiplier */}
             <div>
               <label className="block font-semibold text-slate-300 mb-1">
@@ -670,8 +605,6 @@ export const AdminCJDropshipping = () => {
             </div>
           </div>
         </div>
-
-      </div>
 
       {/* Direct PID / URL Single Product Importer */}
       <div className="bg-slate-950 p-4 sm:p-5 rounded-2xl border border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4">
