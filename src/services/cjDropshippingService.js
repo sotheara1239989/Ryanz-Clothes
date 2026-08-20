@@ -232,25 +232,38 @@ export const safeParseDate = (dateVal) => {
 };
 
 /**
- * Retrieve stored CJ Dropshipping credentials from localStorage or .env
+ * Retrieve stored CJ Dropshipping credentials from .env or localStorage
  */
 export const getCjCredentials = () => {
+  const envApiKey = import.meta.env.VITE_CJ_API_KEY || '';
+  const envAccessToken = import.meta.env.VITE_CJ_ACCESS_TOKEN || '';
+  const envRefreshToken = import.meta.env.VITE_CJ_REFRESH_TOKEN || '';
+  const envEmail = import.meta.env.VITE_CJ_EMAIL || '';
+
   try {
     const saved = localStorage.getItem(CJ_STORAGE_KEY);
     if (saved) {
-      return JSON.parse(saved);
+      const parsed = JSON.parse(saved);
+      return {
+        apiKey: envApiKey || parsed.apiKey || '',
+        accessToken: parsed.accessToken || envAccessToken || '',
+        accessTokenExpiryDate: parsed.accessTokenExpiryDate || '',
+        refreshToken: parsed.refreshToken || envRefreshToken || '',
+        refreshTokenExpiryDate: parsed.refreshTokenExpiryDate || '',
+        email: envEmail || parsed.email || ''
+      };
     }
   } catch (e) {
     console.warn("Could not read CJ credentials from storage:", e);
   }
 
   return {
-    apiKey: import.meta.env.VITE_CJ_API_KEY || '',
-    accessToken: import.meta.env.VITE_CJ_ACCESS_TOKEN || '',
+    apiKey: envApiKey,
+    accessToken: envAccessToken,
     accessTokenExpiryDate: '',
-    refreshToken: import.meta.env.VITE_CJ_REFRESH_TOKEN || '',
+    refreshToken: envRefreshToken,
     refreshTokenExpiryDate: '',
-    email: import.meta.env.VITE_CJ_EMAIL || ''
+    email: envEmail
   };
 };
 

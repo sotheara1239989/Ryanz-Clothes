@@ -544,7 +544,14 @@ export const AdminCJDropshipping = () => {
 
           <form onSubmit={handleConnectCj} className="space-y-3 text-xs">
             <div>
-              <label className="block font-semibold text-slate-300 mb-1">CJ Dropshipping API Key</label>
+              <div className="flex items-center justify-between mb-1">
+                <label className="block font-semibold text-slate-300">CJ Dropshipping API Key</label>
+                {import.meta.env.VITE_CJ_API_KEY && (
+                  <span className="text-[10px] text-emerald-400 font-bold bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
+                    ✓ Configured in .env (VITE_CJ_API_KEY)
+                  </span>
+                )}
+              </div>
               <input
                 type="password"
                 value={credentials.apiKey}
@@ -553,7 +560,7 @@ export const AdminCJDropshipping = () => {
                 className="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-white font-mono focus:outline-none focus:border-blue-500 text-xs"
               />
               <p className="text-[10px] text-slate-500 mt-1">
-                Find in your CJ Account → <strong>Authorization</strong> → <strong>API</strong>.
+                Find in your CJ Account → <strong>Authorization</strong> → <strong>API</strong> or set in <code>.env</code>.
               </p>
             </div>
 
