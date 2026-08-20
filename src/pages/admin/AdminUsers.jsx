@@ -3,10 +3,7 @@ import {
   Users, 
   Search, 
   ShieldCheck, 
-  User, 
-  Mail, 
-  Phone, 
-  Calendar 
+  User 
 } from 'lucide-react';
 import { listenToUsers, updateUserRole } from '../../services/userService';
 import { useToast } from '../../context/ToastContext';
@@ -39,7 +36,7 @@ export const AdminUsers = () => {
     const newRole = currentRole === 'admin' ? 'customer' : 'admin';
     try {
       await updateUserRole(userId, newRole);
-      showToast(`User "${userName || userId}" role updated to "${newRole}" in Firestore!`, "success");
+      showToast(`User "${userName || userId}" role updated to "${newRole}".`, "success");
     } catch (err) {
       console.error("Error updating user role:", err);
       showToast("Failed to update user role.", "error");
@@ -57,35 +54,60 @@ export const AdminUsers = () => {
     return true;
   });
 
+  const totalUsers = users.length;
+  const adminCount = users.filter(u => u.role === 'admin').length;
+  const customerCount = users.filter(u => u.role !== 'admin').length;
+  const phoneCount = users.filter(u => Boolean(u.phone)).length;
+
   return (
-    <div className="space-y-8 max-w-7xl mx-auto">
+    <div className="space-y-6 max-w-7xl mx-auto">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
-            Customer Accounts & Roles
+          <h1 className="text-2xl font-bold text-gray-900 tracking-tight">
+            Customers
           </h1>
-          <p className="text-xs text-slate-400 mt-1">
-            Directory of registered shoppers, profile details, and role permissions
+          <p className="text-xs text-gray-500 mt-0.5">
+            Registered accounts, contact details, and role permissions
           </p>
         </div>
 
-        <div className="text-xs font-black bg-[#0c121e] px-4 py-2 rounded-xl border border-slate-800/80 text-slate-300 shadow-sm">
-          Total Users: <span className="text-emerald-400">{users.length}</span>
+        <div className="text-xs font-semibold bg-white px-3.5 py-1.5 rounded-lg border border-gray-200 text-gray-700 shadow-xs">
+          Total Customers: <span className="text-gray-900 font-bold">{users.length}</span>
+        </div>
+      </div>
+
+      {/* Customers Quick Analytics Strip */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+        <div className="bg-white p-3.5 rounded-xl border border-gray-200 shadow-xs flex items-center justify-between">
+          <span className="text-gray-500 font-medium">User Directory</span>
+          <span className="font-bold text-gray-900">{totalUsers} accounts</span>
+        </div>
+        <div className="bg-purple-50/70 p-3.5 rounded-xl border border-purple-200/80 shadow-xs flex items-center justify-between">
+          <span className="text-purple-800 font-medium">Administrator Staff</span>
+          <span className="font-bold text-purple-900">{adminCount} admins</span>
+        </div>
+        <div className="bg-gray-50 p-3.5 rounded-xl border border-gray-200 shadow-xs flex items-center justify-between">
+          <span className="text-gray-600 font-medium">Shopper Accounts</span>
+          <span className="font-bold text-gray-900">{customerCount} customers</span>
+        </div>
+        <div className="bg-emerald-50/70 p-3.5 rounded-xl border border-emerald-200/80 shadow-xs flex items-center justify-between">
+          <span className="text-emerald-800 font-medium">Phone on File</span>
+          <span className="font-bold text-emerald-900">{phoneCount} verified</span>
         </div>
       </div>
 
       {/* Search Toolbar */}
-      <div className="bg-[#0c121e] p-4 rounded-2xl border border-slate-800/80 shadow-lg">
+      <div className="bg-white p-4 rounded-xl border border-gray-200 shadow-xs">
         <div className="relative w-full sm:w-80">
           <input
             type="text"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="Search by name, email, or phone..."
-            className="w-full pl-9 pr-4 py-2 bg-slate-900/90 border border-slate-700/80 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 transition-colors"
+            className="w-full pl-9 pr-3.5 py-2 bg-gray-50 border border-gray-200 rounded-lg text-xs text-gray-900 placeholder-gray-400 focus:bg-white focus:outline-none focus:border-black transition-colors"
           />
-          <Search className="w-4 h-4 text-slate-500 absolute left-3 top-2.5 pointer-events-none" />
+          <Search className="w-4 h-4 text-gray-400 absolute left-3 top-2.5 pointer-events-none" />
         </div>
       </div>
 
@@ -93,91 +115,73 @@ export const AdminUsers = () => {
       {loading ? (
         <LoadingSpinner message="Loading customer directory..." />
       ) : filteredUsers.length > 0 ? (
-        <div className="bg-[#0c121e] rounded-2xl sm:rounded-3xl border border-slate-800/80 overflow-hidden shadow-2xl">
+        <div className="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-xs">
           <div className="overflow-x-auto">
-            <table className="w-full min-w-[640px] text-left text-xs text-slate-300">
-              <thead className="bg-slate-900/90 text-slate-400 uppercase text-[10px] font-extrabold tracking-wider border-b border-slate-800/80">
+            <table className="w-full min-w-[640px] text-left text-xs text-gray-700">
+              <thead className="bg-gray-50 text-gray-500 uppercase text-[10px] font-bold tracking-wider border-b border-gray-200">
                 <tr>
-                  <th className="py-4 px-6">Customer</th>
-                  <th className="py-4 px-6">Email Address</th>
-                  <th className="py-4 px-6">Phone</th>
-                  <th className="py-4 px-6">Orders Placed</th>
-                  <th className="py-4 px-6">Registered On</th>
-                  <th className="py-4 px-6">Current Role</th>
-                  <th className="py-4 px-6 text-right">Role Actions</th>
+                  <th className="py-3.5 px-5">Customer</th>
+                  <th className="py-3.5 px-5">Email Address</th>
+                  <th className="py-3.5 px-5">Phone</th>
+                  <th className="py-3.5 px-5">Registered</th>
+                  <th className="py-3.5 px-5">Role</th>
+                  <th className="py-3.5 px-5 text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-800/60 font-medium">
-                {filteredUsers.map((user) => {
-                  const isAdminUser = user.role === 'admin';
+              <tbody className="divide-y divide-gray-100 font-medium">
+                {filteredUsers.map((u) => {
+                  const isAdmin = u.role === 'admin';
+                  const dateStr = u.createdAt?.seconds 
+                    ? new Date(u.createdAt.seconds * 1000).toLocaleDateString()
+                    : 'Recent';
 
                   return (
-                    <tr key={user.id} className="hover:bg-slate-900/50 transition-colors">
-                      {/* Name & Avatar */}
-                      <td className="py-4 px-6">
-                        <div className="flex items-center gap-3">
-                          <div className="w-9 h-9 rounded-xl bg-slate-900 border border-slate-800 text-white flex items-center justify-center font-bold text-xs uppercase">
-                            {user.name?.charAt(0) || user.email?.charAt(0) || 'U'}
+                    <tr key={u.id} className="hover:bg-gray-50 transition-colors">
+                      <td className="py-3.5 px-5">
+                        <div className="flex items-center gap-2.5">
+                          <div className="w-8 h-8 rounded-full bg-gray-100 text-gray-700 flex items-center justify-center font-bold text-xs shrink-0">
+                            {u.name?.charAt(0)?.toUpperCase() || 'U'}
                           </div>
                           <div>
-                            <div className="font-bold text-white text-xs">{user.name || 'Anonymous Customer'}</div>
-                            <div className="text-[10px] text-slate-500 font-mono">
-                              {user.authProvider === 'order_checkout' ? 'Guest Checkout Customer' : `UID: ${user.id.slice(0, 8)}...`}
-                            </div>
+                            <div className="font-semibold text-gray-900">{u.name || 'Anonymous User'}</div>
+                            <div className="text-[10px] text-gray-400 font-mono">UID: {u.id?.slice(0, 8)}</div>
                           </div>
                         </div>
                       </td>
 
-                      {/* Email */}
-                      <td className="py-4 px-6 text-slate-300 font-medium">
-                        {user.email || 'No email provided'}
+                      <td className="py-3.5 px-5 text-gray-600">
+                        {u.email || 'No email provided'}
                       </td>
 
-                      {/* Phone */}
-                      <td className="py-4 px-6 text-slate-400">
-                        {user.phone || '—'}
+                      <td className="py-3.5 px-5 text-gray-600">
+                        {u.phone || '—'}
                       </td>
 
-                      {/* Orders Count & Spend */}
-                      <td className="py-4 px-6 text-slate-300">
-                        <div className="font-bold text-white text-xs">
-                          {user.orderCount ? `${user.orderCount} Order${user.orderCount > 1 ? 's' : ''}` : '1 Order'}
-                        </div>
-                        {user.totalSpent !== undefined && Number(user.totalSpent) > 0 && (
-                          <div className="text-[10px] text-emerald-400 font-semibold">
-                            ${Number(user.totalSpent).toFixed(2)} spent
-                          </div>
-                        )}
+                      <td className="py-3.5 px-5 text-gray-500">
+                        {dateStr}
                       </td>
 
-                      {/* Created Date */}
-                      <td className="py-4 px-6 text-slate-400">
-                        {user.createdAt?.toDate ? user.createdAt.toDate().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'Active'}
-                      </td>
-
-                      {/* Role Badge */}
-                      <td className="py-4 px-6">
-                        <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold ${
-                          isAdminUser
-                            ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
-                            : 'bg-slate-900 text-slate-400 border border-slate-800'
+                      <td className="py-3.5 px-5">
+                        <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-semibold ${
+                          isAdmin 
+                            ? 'bg-purple-50 text-purple-700 border border-purple-200'
+                            : 'bg-gray-100 text-gray-700'
                         }`}>
-                          {isAdminUser ? <ShieldCheck className="w-3 h-3 text-emerald-400" /> : <User className="w-3 h-3" />}
-                          <span className="capitalize">{user.role || 'customer'}</span>
+                          {isAdmin ? <ShieldCheck className="w-3 h-3 text-purple-600" /> : <User className="w-3 h-3 text-gray-500" />}
+                          <span className="capitalize">{u.role || 'Customer'}</span>
                         </span>
                       </td>
 
-                      {/* Role Toggle Action */}
-                      <td className="py-4 px-6 text-right">
+                      <td className="py-3.5 px-5 text-right">
                         <button
-                          onClick={() => handleRoleToggle(user.id, user.role, user.name)}
-                          className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-                            isAdminUser
-                              ? 'bg-rose-950/40 text-rose-400 hover:bg-rose-950 border border-rose-900/50'
-                              : 'bg-emerald-950/40 text-emerald-400 hover:bg-emerald-950 border border-emerald-900/50'
+                          onClick={() => handleRoleToggle(u.id, u.role, u.name)}
+                          className={`text-xs font-semibold px-2.5 py-1 rounded-lg border transition-colors ${
+                            isAdmin
+                              ? 'bg-gray-50 hover:bg-gray-100 text-gray-700 border-gray-200'
+                              : 'bg-black hover:bg-gray-800 text-white border-transparent'
                           }`}
                         >
-                          {isAdminUser ? 'Demote to Customer' : 'Promote to Admin'}
+                          {isAdmin ? 'Demote to Customer' : 'Make Admin'}
                         </button>
                       </td>
                     </tr>
@@ -188,8 +192,8 @@ export const AdminUsers = () => {
           </div>
         </div>
       ) : (
-        <div className="bg-slate-950 rounded-3xl p-12 border border-slate-800 text-center text-slate-400 text-xs">
-          No users registered in Firestore yet.
+        <div className="bg-white rounded-xl border border-gray-200 p-12 text-center text-gray-400 text-xs shadow-xs">
+          No customer accounts found.
         </div>
       )}
 

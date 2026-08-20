@@ -26,7 +26,6 @@ export const Contact = () => {
       setLoading(true);
       setError(null);
 
-      // Save inquiry to Firestore inquiries collection
       await addDoc(collection(db, 'inquiries'), {
         name: name.trim(),
         email: email.trim(),
@@ -54,7 +53,7 @@ export const Contact = () => {
         {/* Header */}
         <div className="text-center space-y-3 max-w-2xl mx-auto">
           <span className="text-xs font-bold uppercase tracking-widest text-slate-500">
-            24/7 Customer Concierge
+            Customer Concierge
           </span>
           <h1 className="text-3xl sm:text-5xl font-extrabold text-slate-950 tracking-tight">
             Get in Touch
@@ -68,7 +67,7 @@ export const Contact = () => {
           
           {/* Contact Details Column */}
           <div className="lg:col-span-5 space-y-6">
-            <div className="bg-white rounded-3xl p-8 border border-gray-100 shadow-xs space-y-6">
+            <div className="bg-white rounded-2xl p-6 sm:p-8 border border-gray-200 shadow-xs space-y-6">
               <h3 className="text-lg font-bold text-slate-950">Direct Channels</h3>
               
               <div className="space-y-4 text-xs">
@@ -99,7 +98,7 @@ export const Contact = () => {
             </div>
 
             {/* Operating Hours Card */}
-            <div className="bg-slate-950 text-white rounded-3xl p-8 border border-slate-800 space-y-3">
+            <div className="bg-slate-950 text-white rounded-2xl p-6 sm:p-8 border border-slate-800 space-y-3">
               <h4 className="text-sm font-bold text-white">Concierge Hours</h4>
               <p className="text-xs text-slate-400 leading-relaxed">
                 Monday – Saturday: 8:00 AM – 9:00 PM (GMT+7)<br />
@@ -113,7 +112,7 @@ export const Contact = () => {
 
           {/* Form Column */}
           <div className="lg:col-span-7">
-            <div className="bg-white rounded-3xl p-8 sm:p-10 border border-gray-100 shadow-xs">
+            <div className="bg-white rounded-2xl p-6 sm:p-8 border border-gray-200 shadow-xs">
               {submitted ? (
                 <div className="text-center py-10 space-y-4">
                   <div className="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto text-xl font-bold">
@@ -191,7 +190,7 @@ export const Contact = () => {
                   <button
                     type="submit"
                     disabled={loading}
-                    className="w-full py-3.5 bg-slate-950 hover:bg-black text-white text-xs font-bold rounded-2xl transition-colors flex items-center justify-center gap-2 shadow-sm disabled:opacity-50"
+                    className="w-full py-3.5 bg-slate-950 hover:bg-black text-white text-xs font-bold rounded-xl transition-colors flex items-center justify-center gap-2 shadow-xs disabled:opacity-50"
                   >
                     {loading ? (
                       <span>Sending inquiry...</span>

@@ -42,7 +42,6 @@ export const Checkout = () => {
   const [orderComplete, setOrderComplete] = useState(null);
   const [isVerifying, setIsVerifying] = useState(true);
 
-  // Sync and verify cart items with Firestore upon opening Checkout
   useEffect(() => {
     const verify = async () => {
       setIsVerifying(true);
@@ -73,7 +72,6 @@ export const Checkout = () => {
     try {
       setIsSubmitting(true);
 
-      // Create verified order in Firestore
       const createdOrder = await createOrder({
         items: cartItems,
         customerInfo: formData,
@@ -81,11 +79,9 @@ export const Checkout = () => {
         userId: currentUser ? currentUser.uid : 'guest'
       });
 
-      // Clear local cart
       clearCart();
       setOrderComplete(createdOrder);
 
-      // Save recent order ID in localStorage for instant guest sync
       try {
         const recent = JSON.parse(localStorage.getItem('ryanz_recent_orders') || '[]');
         if (!recent.includes(createdOrder.id)) {
@@ -98,40 +94,39 @@ export const Checkout = () => {
 
       showToast("Order placed successfully! Thank you for your purchase.", "success");
     } catch (error) {
-      console.error("Order placement failed:", error);
-      showToast(error.message || "Failed to place order. Please try again.", "error");
+      console.error("Error submitting order:", error);
+      showToast("Failed to place order. Please try again.", "error");
     } finally {
       setIsSubmitting(false);
     }
   };
 
   if (isVerifying) {
-    return <LoadingSpinner fullPage message="Verifying bag items and live prices..." />;
+    return <LoadingSpinner fullPage message="Verifying stock and calculating landed totals..." />;
   }
 
-  // Order Success Screen
   if (orderComplete) {
     return (
-      <div className="min-h-[75vh] flex items-center justify-center bg-gray-50 py-16 px-4">
-        <div className="max-w-xl w-full bg-white rounded-3xl p-8 sm:p-12 border border-gray-100 shadow-xl text-center space-y-6">
-          <div className="w-20 h-20 bg-emerald-50 text-emerald-600 rounded-3xl flex items-center justify-center mx-auto shadow-inner">
-            <CheckCircle2 className="w-10 h-10" />
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4">
+        <div className="max-w-lg w-full bg-white rounded-2xl p-6 sm:p-8 border border-gray-200 shadow-xs text-center space-y-6">
+          <div className="w-14 h-14 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto text-2xl font-bold">
+            ✓
           </div>
 
           <div>
-            <span className="text-xs font-bold uppercase tracking-widest text-emerald-600">
+            <span className="text-xs font-bold uppercase tracking-widest text-emerald-700">
               Order Confirmed
             </span>
-            <h1 className="text-3xl font-extrabold text-slate-950 mt-1">Thank You For Your Order!</h1>
-            <p className="text-xs text-slate-500 mt-2">
-              Order ID: <span className="font-mono font-bold text-slate-800">{orderComplete.id}</span>
+            <h1 className="text-2xl font-bold text-gray-900 mt-1">Thank You For Your Order!</h1>
+            <p className="text-xs text-gray-500 mt-1.5">
+              Order ID: <span className="font-mono font-bold text-gray-900">{orderComplete.id}</span>
             </p>
           </div>
 
           {/* Email Confirmation Notice */}
-          <div className="p-4 bg-emerald-50 rounded-2xl border border-emerald-200 text-left flex items-start gap-3">
-            <div className="w-8 h-8 rounded-xl bg-emerald-600 text-white flex items-center justify-center shrink-0">
-              <Mail className="w-4 h-4" />
+          <div className="p-4 bg-emerald-50 rounded-xl border border-emerald-200 text-left flex items-start gap-3">
+            <div className="w-7 h-7 rounded-lg bg-emerald-600 text-white flex items-center justify-center shrink-0 text-xs">
+              <Mail className="w-3.5 h-3.5" />
             </div>
             <div className="space-y-0.5 text-xs">
               <div className="font-bold text-gray-900">Confirmation Email Dispatched</div>
@@ -142,18 +137,18 @@ export const Checkout = () => {
             </div>
           </div>
 
-          <div className="bg-slate-50 rounded-2xl p-4 text-left text-xs text-slate-600 space-y-2 border border-slate-100">
-            <div className="flex justify-between font-semibold text-slate-900 border-b border-slate-200 pb-2">
+          <div className="bg-gray-50 rounded-xl p-4 text-left text-xs text-gray-600 space-y-2 border border-gray-200">
+            <div className="flex justify-between font-semibold text-gray-900 border-b border-gray-200 pb-2">
               <span>Items Snapshot:</span>
               <span>{orderComplete.items?.length} items</span>
             </div>
             {orderComplete.items?.map((it, idx) => (
               <div key={idx} className="flex justify-between text-[11px]">
                 <span>{it.quantity}x {it.productName} ({it.selectedSize})</span>
-                <span className="font-semibold text-slate-900">${it.itemTotal?.toFixed(2)}</span>
+                <span className="font-semibold text-gray-900">${it.itemTotal?.toFixed(2)}</span>
               </div>
             ))}
-            <div className="pt-2 border-t border-slate-200 flex justify-between font-extrabold text-sm text-slate-950">
+            <div className="pt-2 border-t border-gray-200 flex justify-between font-bold text-sm text-gray-900">
               <span>Total Charged:</span>
               <span>${orderComplete.totalAmount?.toFixed(2)}</span>
             </div>
@@ -162,7 +157,7 @@ export const Checkout = () => {
           <div className="flex flex-col sm:flex-row gap-3 pt-2">
             <Link
               to={`/my-orders?id=${orderComplete.id}`}
-              className="flex-1 py-3.5 bg-black hover:bg-gray-800 text-white text-xs font-semibold rounded-xl shadow transition-all flex items-center justify-center gap-2"
+              className="flex-1 py-3 bg-black hover:bg-gray-800 text-white text-xs font-semibold rounded-lg shadow-xs transition-colors flex items-center justify-center gap-1.5"
             >
               <PackageCheck className="w-4 h-4" />
               <span>Track in My Orders</span>
@@ -170,7 +165,7 @@ export const Checkout = () => {
 
             <Link
               to="/shop"
-              className="flex-1 py-3.5 bg-gray-100 hover:bg-gray-200 text-gray-800 text-xs font-semibold rounded-xl transition-all flex items-center justify-center"
+              className="flex-1 py-3 bg-gray-100 hover:bg-gray-200 text-gray-800 text-xs font-semibold rounded-lg transition-colors flex items-center justify-center"
             >
               Continue Shopping
             </Link>
@@ -192,14 +187,14 @@ export const Checkout = () => {
         <div className="flex items-center gap-3 mb-8">
           <button
             onClick={() => navigate('/cart')}
-            className="p-2 bg-white rounded-xl border border-gray-200 text-slate-700 hover:bg-slate-50"
+            className="p-2 bg-white rounded-lg border border-gray-200 text-gray-700 hover:bg-gray-50 shadow-xs"
           >
             <ArrowLeft className="w-4 h-4" />
           </button>
           <div>
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-950">Secure Checkout</h1>
-            <p className="text-xs text-slate-500">
-              Guaranteed 256-bit encrypted checkout & fast order processing
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight">Secure Checkout</h1>
+            <p className="text-xs text-gray-500 mt-0.5">
+              Guaranteed 256-bit encrypted checkout &amp; fast order processing
             </p>
           </div>
         </div>
@@ -210,15 +205,15 @@ export const Checkout = () => {
           <div className="lg:col-span-7 space-y-6">
             
             {/* Customer Information */}
-            <div className="bg-white rounded-3xl p-6 sm:p-8 border border-gray-100 shadow-sm space-y-4">
-              <h3 className="text-base font-bold text-slate-950 flex items-center gap-2">
-                <Truck className="w-5 h-5 text-slate-700" />
+            <div className="bg-white rounded-2xl p-6 sm:p-8 border border-gray-200 shadow-xs space-y-4">
+              <h3 className="text-sm font-bold text-gray-900 flex items-center gap-2">
+                <Truck className="w-4 h-4 text-gray-600" />
                 <span>Shipping Information</span>
               </h3>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">Full Name *</label>
+                  <label className="block text-xs font-semibold text-gray-700 mb-1">Full Name *</label>
                   <input
                     type="text"
                     name="name"
@@ -226,12 +221,12 @@ export const Checkout = () => {
                     onChange={handleChange}
                     required
                     placeholder="Ryan Miller"
-                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:outline-none focus:border-slate-900"
+                    className="w-full px-3.5 py-2 bg-gray-50 border border-gray-200 rounded-lg text-xs text-gray-900 focus:bg-white focus:outline-none focus:border-black transition-colors"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">Email Address *</label>
+                  <label className="block text-xs font-semibold text-gray-700 mb-1">Email Address *</label>
                   <input
                     type="email"
                     name="email"
@@ -239,12 +234,12 @@ export const Checkout = () => {
                     onChange={handleChange}
                     required
                     placeholder="ryan@example.com"
-                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:outline-none focus:border-slate-900"
+                    className="w-full px-3.5 py-2 bg-gray-50 border border-gray-200 rounded-lg text-xs text-gray-900 focus:bg-white focus:outline-none focus:border-black transition-colors"
                   />
                 </div>
 
                 <div className="sm:col-span-2">
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">Street Address *</label>
+                  <label className="block text-xs font-semibold text-gray-700 mb-1">Street Address *</label>
                   <input
                     type="text"
                     name="street"
@@ -252,12 +247,12 @@ export const Checkout = () => {
                     onChange={handleChange}
                     required
                     placeholder="123 Streetwear Ave, Apt 4B"
-                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:outline-none focus:border-slate-900"
+                    className="w-full px-3.5 py-2 bg-gray-50 border border-gray-200 rounded-lg text-xs text-gray-900 focus:bg-white focus:outline-none focus:border-black transition-colors"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">City *</label>
+                  <label className="block text-xs font-semibold text-gray-700 mb-1">City *</label>
                   <input
                     type="text"
                     name="city"
@@ -265,58 +260,58 @@ export const Checkout = () => {
                     onChange={handleChange}
                     required
                     placeholder="Los Angeles"
-                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:outline-none focus:border-slate-900"
+                    className="w-full px-3.5 py-2 bg-gray-50 border border-gray-200 rounded-lg text-xs text-gray-900 focus:bg-white focus:outline-none focus:border-black transition-colors"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">State / Province</label>
+                  <label className="block text-xs font-semibold text-gray-700 mb-1">State / Province</label>
                   <input
                     type="text"
                     name="state"
                     value={formData.state}
                     onChange={handleChange}
                     placeholder="CA"
-                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:outline-none focus:border-slate-900"
+                    className="w-full px-3.5 py-2 bg-gray-50 border border-gray-200 rounded-lg text-xs text-gray-900 focus:bg-white focus:outline-none focus:border-black transition-colors"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">Postal / Zip Code</label>
+                  <label className="block text-xs font-semibold text-gray-700 mb-1">Postal / Zip Code</label>
                   <input
                     type="text"
                     name="zipCode"
                     value={formData.zipCode}
                     onChange={handleChange}
                     placeholder="90001"
-                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:outline-none focus:border-slate-900"
+                    className="w-full px-3.5 py-2 bg-gray-50 border border-gray-200 rounded-lg text-xs text-gray-900 focus:bg-white focus:outline-none focus:border-black transition-colors"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">Phone Number</label>
+                  <label className="block text-xs font-semibold text-gray-700 mb-1">Phone Number</label>
                   <input
                     type="tel"
                     name="phone"
                     value={formData.phone}
                     onChange={handleChange}
                     placeholder="+1 (555) 000-0000"
-                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:outline-none focus:border-slate-900"
+                    className="w-full px-3.5 py-2 bg-gray-50 border border-gray-200 rounded-lg text-xs text-gray-900 focus:bg-white focus:outline-none focus:border-black transition-colors"
                   />
                 </div>
               </div>
             </div>
 
             {/* Payment Method Selector */}
-            <div className="bg-white rounded-3xl p-6 sm:p-8 border border-gray-100 shadow-sm space-y-4">
-              <h3 className="text-base font-bold text-slate-950 flex items-center gap-2">
-                <CreditCard className="w-5 h-5 text-slate-700" />
+            <div className="bg-white rounded-2xl p-6 sm:p-8 border border-gray-200 shadow-xs space-y-4">
+              <h3 className="text-sm font-bold text-gray-900 flex items-center gap-2">
+                <CreditCard className="w-4 h-4 text-gray-600" />
                 <span>Payment Method</span>
               </h3>
 
-              <div className="space-y-3">
-                <label className={`flex items-center justify-between p-4 rounded-2xl border cursor-pointer transition-all ${
-                  paymentMethod === 'Cash On Delivery (COD)' ? 'border-slate-950 bg-slate-50 shadow-sm' : 'border-gray-200'
+              <div className="space-y-3 text-xs">
+                <label className={`flex items-center justify-between p-3.5 rounded-xl border cursor-pointer transition-all ${
+                  paymentMethod === 'Cash On Delivery (COD)' ? 'border-black bg-gray-50 ring-1 ring-black' : 'border-gray-200 hover:border-gray-300'
                 }`}>
                   <div className="flex items-center gap-3">
                     <input
@@ -324,20 +319,20 @@ export const Checkout = () => {
                       name="payment"
                       checked={paymentMethod === 'Cash On Delivery (COD)'}
                       onChange={() => setPaymentMethod('Cash On Delivery (COD)')}
-                      className="accent-slate-950"
+                      className="accent-black w-4 h-4"
                     />
                     <div>
-                      <div className="text-xs font-bold text-slate-900">Cash On Delivery (COD)</div>
-                      <div className="text-[11px] text-slate-500">Pay cash upon arrival of your parcel</div>
+                      <div className="font-bold text-gray-900">Cash On Delivery (COD)</div>
+                      <div className="text-[11px] text-gray-500">Pay cash upon arrival of your parcel</div>
                     </div>
                   </div>
-                  <span className="text-[11px] font-semibold text-slate-600 bg-white px-2.5 py-1 rounded-lg border">
+                  <span className="text-[11px] font-semibold text-gray-600 bg-white px-2.5 py-0.5 rounded border border-gray-200">
                     Popular
                   </span>
                 </label>
 
-                <label className={`flex items-center justify-between p-4 rounded-2xl border cursor-pointer transition-all ${
-                  paymentMethod === 'Credit Card' ? 'border-slate-950 bg-slate-50 shadow-sm' : 'border-gray-200'
+                <label className={`flex items-center justify-between p-3.5 rounded-xl border cursor-pointer transition-all ${
+                  paymentMethod === 'Credit Card' ? 'border-black bg-gray-50 ring-1 ring-black' : 'border-gray-200 hover:border-gray-300'
                 }`}>
                   <div className="flex items-center gap-3">
                     <input
@@ -345,14 +340,14 @@ export const Checkout = () => {
                       name="payment"
                       checked={paymentMethod === 'Credit Card'}
                       onChange={() => setPaymentMethod('Credit Card')}
-                      className="accent-slate-950"
+                      className="accent-black w-4 h-4"
                     />
                     <div>
-                      <div className="text-xs font-bold text-slate-900">Credit / Debit Card</div>
-                      <div className="text-[11px] text-slate-500">Instant test card payment simulator</div>
+                      <div className="font-bold text-gray-900">Credit / Debit Card</div>
+                      <div className="text-[11px] text-gray-500">Instant test card payment simulator</div>
                     </div>
                   </div>
-                  <Lock className="w-4 h-4 text-slate-400" />
+                  <Lock className="w-4 h-4 text-gray-400" />
                 </label>
               </div>
             </div>
@@ -361,8 +356,8 @@ export const Checkout = () => {
 
           {/* Live Order Snapshot & Verification Column */}
           <div className="lg:col-span-5 space-y-6">
-            <div className="bg-white rounded-3xl p-6 sm:p-8 border border-gray-100 shadow-sm space-y-6 sticky top-24">
-              <h3 className="text-base font-bold text-slate-950 pb-4 border-b border-gray-100">
+            <div className="bg-white rounded-2xl p-6 sm:p-8 border border-gray-200 shadow-xs space-y-6 sticky top-24">
+              <h3 className="text-sm font-bold text-gray-900 pb-3 border-b border-gray-100">
                 Order Items Snapshot ({cartItems.length})
               </h3>
 
@@ -377,12 +372,12 @@ export const Checkout = () => {
                       className="w-12 h-14 object-cover rounded-lg bg-gray-100 shrink-0"
                     />
                     <div className="flex-1 min-w-0">
-                      <h4 className="text-xs font-bold text-slate-900 truncate">{item.name}</h4>
-                      <p className="text-[11px] text-slate-500">
+                      <h4 className="text-xs font-bold text-gray-900 truncate">{item.name}</h4>
+                      <p className="text-[11px] text-gray-500">
                         {item.selectedSize} / {item.selectedColor} × {item.quantity}
                       </p>
                     </div>
-                    <span className="text-xs font-extrabold text-slate-950 shrink-0">
+                    <span className="text-xs font-bold text-gray-900 shrink-0">
                       ${(item.activePrice * item.quantity).toFixed(2)}
                     </span>
                   </div>
@@ -391,15 +386,15 @@ export const Checkout = () => {
 
               {/* Calculations */}
               <div className="space-y-2 pt-4 border-t border-gray-100 text-xs">
-                <div className="flex justify-between text-slate-600">
+                <div className="flex justify-between text-gray-600">
                   <span>Subtotal</span>
-                  <span className="font-semibold text-slate-900">${subtotal.toFixed(2)}</span>
+                  <span className="font-semibold text-gray-900">${subtotal.toFixed(2)}</span>
                 </div>
-                <div className="flex justify-between text-slate-600">
+                <div className="flex justify-between text-gray-600">
                   <span>Worldwide Shipping</span>
-                  <strong className="text-emerald-600 font-bold">FREE ($0.00)</strong>
+                  <strong className="text-emerald-700 font-bold">FREE ($0.00)</strong>
                 </div>
-                <div className="pt-3 border-t border-gray-100 flex justify-between text-base font-extrabold text-slate-950">
+                <div className="pt-3 border-t border-gray-100 flex justify-between text-base font-bold text-gray-900">
                   <span>Total Amount</span>
                   <span>${totalAmount.toFixed(2)}</span>
                 </div>
@@ -409,13 +404,13 @@ export const Checkout = () => {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full py-4 bg-slate-950 hover:bg-black disabled:bg-slate-400 text-white text-sm font-bold rounded-2xl shadow-xl transition-all flex items-center justify-center gap-2"
+                className="w-full py-3 bg-black hover:bg-gray-800 disabled:bg-gray-400 text-white text-xs font-semibold rounded-lg shadow-xs transition-colors flex items-center justify-center gap-2"
               >
-                <Lock className="w-4 h-4" />
+                <Lock className="w-3.5 h-3.5" />
                 <span>{isSubmitting ? 'Processing Order...' : `Complete Order ($${totalAmount.toFixed(2)})`}</span>
               </button>
 
-              <p className="text-[10px] text-slate-400 text-center leading-relaxed">
+              <p className="text-[10px] text-gray-400 text-center leading-relaxed">
                 By placing your order, you agree to Ryanz Clothes terms of service. You will receive an instant order confirmation and tracking ID.
               </p>
             </div>

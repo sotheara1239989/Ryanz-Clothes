@@ -1,26 +1,24 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { 
   DollarSign, 
   ShoppingBag, 
   Package, 
   Users, 
-  TrendingUp, 
-  AlertTriangle, 
   ArrowRight, 
-  PlusCircle, 
+  Plus, 
   Layers, 
-  CheckCircle2, 
-  Clock 
+  AlertTriangle,
+  TrendingUp,
+  CheckCircle2,
+  Clock,
+  Truck
 } from 'lucide-react';
 import { listenToProducts } from '../../services/productService';
 import { listenToAllOrders, updateOrderStatus } from '../../services/orderService';
 import { listenToUsers } from '../../services/userService';
 import { useToast } from '../../context/ToastContext';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
-
-import { isFirebaseConfigured } from '../../firebase/config';
-import { normalizeImageUrl } from '../../services/cjDropshippingService';
 
 export const AdminDashboard = () => {
   const [products, setProducts] = useState([]);
@@ -47,18 +45,45 @@ export const AdminDashboard = () => {
     };
   }, []);
 
-  // Compute live metrics
-  const totalRevenue = orders
-    .filter(o => o.status !== 'cancelled')
-    .reduce((sum, o) => sum + (Number(o.totalAmount) || 0), 0);
+  // Computed Business Metrics
+  const activeOrders = useMemo(() => orders.filter(o => o.status !== 'cancelled'), [orders]);
+  
+  const totalRevenue = useMemo(() => {
+    return activeOrders.reduce((sum, o) => sum + (Number(o.totalAmount) || 0), 0);
+  }, [activeOrders]);
 
-  const pendingOrders = orders.filter(o => o.status === 'pending');
-  const lowStockProducts = products.filter(p => Number(p.stock) <= 5);
+  const averageOrderValue = useMemo(() => {
+    if (activeOrders.length === 0) return 0;
+    return totalRevenue / activeOrders.length;
+  }, [activeOrders, totalRevenue]);
+
+  const pendingOrders = useMemo(() => orders.filter(o => o.status === 'pending'), [orders]);
+  const processingOrders = useMemo(() => orders.filter(o => o.status === 'processing'), [orders]);
+  const shippedOrders = useMemo(() => orders.filter(o => o.status === 'shipped'), [orders]);
+  const deliveredOrders = useMemo(() => orders.filter(o => o.status === 'delivered'), [orders]);
+
+  const lowStockProducts = useMemo(() => products.filter(p => Number(p.stock) <= 5), [products]);
+  const activeProducts = useMemo(() => products.filter(p => p.isActive !== false), [products]);
+
+  // Category Distribution Calculation
+  const categoryStats = useMemo(() => {
+    const counts = {};
+    products.forEach(p => {
+      const cat = (p.category || 'streetwear').toLowerCase();
+      counts[cat] = (counts[cat] || 0) + 1;
+    });
+    const total = products.length || 1;
+    return Object.entries(counts).map(([name, count]) => ({
+      name: name.charAt(0).toUpperCase() + name.slice(1),
+      count,
+      percentage: Math.round((count / total) * 100)
+    })).sort((a, b) => b.count - a.count).slice(0, 4);
+  }, [products]);
 
   const handleQuickStatusChange = async (orderId, newStatus) => {
     try {
       await updateOrderStatus(orderId, newStatus);
-      showToast(`Order status updated to "${newStatus}" in Firestore.`, 'success');
+      showToast(`Order status updated to "${newStatus}".`, 'success');
     } catch (err) {
       console.error("Status change error:", err);
       showToast("Failed to update order status.", "error");
@@ -66,132 +91,238 @@ export const AdminDashboard = () => {
   };
 
   if (loading) {
-    return <LoadingSpinner fullPage message="Connecting to Firestore live streams..." />;
+    return <LoadingSpinner fullPage message="Connecting to Firestore..." />;
   }
 
   return (
-    <div className="space-y-8 max-w-7xl mx-auto">
-      {/* Overview Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
+    <div className="space-y-6 max-w-7xl mx-auto">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-xl sm:text-3xl font-extrabold text-white tracking-tight">
-            Store Performance & Metrics
+          <h1 className="text-2xl font-bold text-gray-900 tracking-tight">
+            Dashboard
           </h1>
-          <p className="text-[11px] sm:text-xs text-slate-400 mt-0.5">
-            Real-time aggregate data and store inventory analytics
+          <p className="text-xs text-gray-500 mt-0.5">
+            Store performance overview, inventory analytics, and recent sales
           </p>
         </div>
 
-        <div className="grid grid-cols-2 sm:flex items-center gap-2.5 sm:gap-3 w-full sm:w-auto">
+        <div className="flex items-center gap-2.5">
           <Link
             to="/admin/products"
-            className="px-3.5 py-2 sm:px-4 sm:py-2.5 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 text-xs font-extrabold rounded-xl shadow-md shadow-emerald-950/40 transition-all hover:scale-[1.02] flex items-center justify-center gap-2"
+            className="px-3.5 py-2 bg-black hover:bg-gray-800 text-white text-xs font-semibold rounded-lg shadow-xs transition-colors flex items-center gap-1.5"
           >
-            <PlusCircle className="w-4 h-4" />
+            <Plus className="w-4 h-4" />
             <span>Add Product</span>
           </Link>
           <Link
             to="/admin/categories"
-            className="px-3.5 py-2 sm:px-4 sm:py-2.5 bg-slate-800/80 hover:bg-slate-700/80 text-slate-200 text-xs font-bold rounded-xl border border-slate-700/80 transition-all hover:scale-[1.02] flex items-center justify-center gap-2"
+            className="px-3.5 py-2 bg-white hover:bg-gray-50 text-gray-800 text-xs font-semibold rounded-lg border border-gray-200 shadow-xs transition-colors flex items-center gap-1.5"
           >
-            <Layers className="w-4 h-4 text-slate-400" />
+            <Layers className="w-4 h-4 text-gray-500" />
             <span>Categories</span>
           </Link>
         </div>
       </div>
 
-      {/* Metrics Cards Grid (2x2 on Mobile, 4x1 on Desktop) */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-6">
+      {/* Primary Analytics Grid */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         
-        {/* Total Revenue */}
-        <div className="bg-[#0c121e] p-3.5 sm:p-6 rounded-2xl sm:rounded-3xl border border-emerald-500/20 shadow-lg shadow-emerald-950/20 relative overflow-hidden group hover:border-emerald-500/40 transition-all flex flex-col justify-between">
-          <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-500/10 rounded-full blur-2xl pointer-events-none group-hover:bg-emerald-500/15 transition-colors" />
-          <div className="flex items-center justify-between relative z-10">
-            <span className="text-[10px] sm:text-xs font-bold text-slate-400 uppercase tracking-wider truncate">Revenue</span>
-            <div className="w-7 h-7 sm:w-10 sm:h-10 rounded-lg sm:rounded-2xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shadow-sm shrink-0">
-              <DollarSign className="w-3.5 h-3.5 sm:w-5 sm:h-5" />
+        {/* Gross Revenue */}
+        <div className="bg-white p-5 rounded-xl border border-gray-200 shadow-xs flex flex-col justify-between">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-semibold text-gray-500">Gross Revenue</span>
+            <div className="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-700 flex items-center justify-center">
+              <DollarSign className="w-4 h-4" />
             </div>
           </div>
-          <div className="mt-2 sm:mt-4 relative z-10">
-            <div className="text-lg sm:text-3xl font-black text-white tracking-tight truncate">
+          <div className="mt-4">
+            <div className="text-2xl font-bold text-gray-900">
               ${totalRevenue.toFixed(2)}
             </div>
-            <div className="text-[9px] sm:text-[11px] text-emerald-400 font-bold mt-1 flex items-center gap-1 truncate">
-              <TrendingUp className="w-3 h-3 shrink-0" />
-              <span className="truncate">Live orders</span>
+            <div className="text-[11px] text-gray-500 mt-1 flex items-center gap-1">
+              <span>Avg. Order:</span>
+              <strong className="text-gray-900 font-semibold">${averageOrderValue.toFixed(2)}</strong>
             </div>
           </div>
         </div>
 
-        {/* Total Orders */}
-        <div className="bg-[#0c121e] p-3.5 sm:p-6 rounded-2xl sm:rounded-3xl border border-sky-500/20 shadow-lg shadow-sky-950/20 relative overflow-hidden group hover:border-sky-500/40 transition-all flex flex-col justify-between">
-          <div className="absolute top-0 right-0 w-24 h-24 bg-sky-500/10 rounded-full blur-2xl pointer-events-none group-hover:bg-sky-500/15 transition-colors" />
-          <div className="flex items-center justify-between relative z-10">
-            <span className="text-[10px] sm:text-xs font-bold text-slate-400 uppercase tracking-wider truncate">Orders</span>
-            <div className="w-7 h-7 sm:w-10 sm:h-10 rounded-lg sm:rounded-2xl bg-sky-500/15 border border-sky-500/30 flex items-center justify-center text-sky-400 shadow-sm shrink-0">
-              <Package className="w-3.5 h-3.5 sm:w-5 sm:h-5" />
+        {/* Order Volume */}
+        <div className="bg-white p-5 rounded-xl border border-gray-200 shadow-xs flex flex-col justify-between">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-semibold text-gray-500">Total Orders</span>
+            <div className="w-8 h-8 rounded-lg bg-blue-50 text-blue-700 flex items-center justify-center">
+              <Package className="w-4 h-4" />
             </div>
           </div>
-          <div className="mt-2 sm:mt-4 relative z-10">
-            <div className="text-lg sm:text-3xl font-black text-white tracking-tight">{orders.length}</div>
-            <div className="text-[9px] sm:text-[11px] text-amber-400 font-bold mt-1 flex items-center gap-1 truncate">
-              <Clock className="w-3 h-3 shrink-0" />
-              <span className="truncate">{pendingOrders.length} pending</span>
+          <div className="mt-4">
+            <div className="text-2xl font-bold text-gray-900">
+              {orders.length}
+            </div>
+            <div className="text-[11px] text-amber-700 mt-1 font-medium">
+              {pendingOrders.length + processingOrders.length} in fulfillment pipeline
             </div>
           </div>
         </div>
 
-        {/* Total Products */}
-        <div className="bg-[#0c121e] p-3.5 sm:p-6 rounded-2xl sm:rounded-3xl border border-purple-500/20 shadow-lg shadow-purple-950/20 relative overflow-hidden group hover:border-purple-500/40 transition-all flex flex-col justify-between">
-          <div className="absolute top-0 right-0 w-24 h-24 bg-purple-500/10 rounded-full blur-2xl pointer-events-none group-hover:bg-purple-500/15 transition-colors" />
-          <div className="flex items-center justify-between relative z-10">
-            <span className="text-[10px] sm:text-xs font-bold text-slate-400 uppercase tracking-wider truncate">Catalog</span>
-            <div className="w-7 h-7 sm:w-10 sm:h-10 rounded-lg sm:rounded-2xl bg-purple-500/15 border border-purple-500/30 flex items-center justify-center text-purple-400 shadow-sm shrink-0">
-              <ShoppingBag className="w-3.5 h-3.5 sm:w-5 sm:h-5" />
+        {/* Active Catalog */}
+        <div className="bg-white p-5 rounded-xl border border-gray-200 shadow-xs flex flex-col justify-between">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-semibold text-gray-500">Catalog Size</span>
+            <div className="w-8 h-8 rounded-lg bg-purple-50 text-purple-700 flex items-center justify-center">
+              <ShoppingBag className="w-4 h-4" />
             </div>
           </div>
-          <div className="mt-2 sm:mt-4 relative z-10">
-            <div className="text-lg sm:text-3xl font-black text-white tracking-tight">{products.length}</div>
-            <div className="text-[9px] sm:text-[11px] text-purple-300 font-bold mt-1 flex items-center gap-1 truncate">
-              <CheckCircle2 className="w-3 h-3 shrink-0 text-purple-400" />
-              <span className="truncate">{products.filter(p => p.isActive !== false).length} active</span>
+          <div className="mt-4">
+            <div className="text-2xl font-bold text-gray-900">
+              {products.length}
+            </div>
+            <div className="text-[11px] text-gray-500 mt-1">
+              {activeProducts.length} published &bull; {products.length - activeProducts.length} draft
             </div>
           </div>
         </div>
 
         {/* Registered Customers */}
-        <div className="bg-[#0c121e] p-3.5 sm:p-6 rounded-2xl sm:rounded-3xl border border-amber-500/20 shadow-lg shadow-amber-950/20 relative overflow-hidden group hover:border-amber-500/40 transition-all flex flex-col justify-between">
-          <div className="absolute top-0 right-0 w-24 h-24 bg-amber-500/10 rounded-full blur-2xl pointer-events-none group-hover:bg-amber-500/15 transition-colors" />
-          <div className="flex items-center justify-between relative z-10">
-            <span className="text-[10px] sm:text-xs font-bold text-slate-400 uppercase tracking-wider truncate">Customers</span>
-            <div className="w-7 h-7 sm:w-10 sm:h-10 rounded-lg sm:rounded-2xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center text-amber-400 shadow-sm shrink-0">
-              <Users className="w-3.5 h-3.5 sm:w-5 sm:h-5" />
+        <div className="bg-white p-5 rounded-xl border border-gray-200 shadow-xs flex flex-col justify-between">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-semibold text-gray-500">Customer Base</span>
+            <div className="w-8 h-8 rounded-lg bg-zinc-100 text-zinc-700 flex items-center justify-center">
+              <Users className="w-4 h-4" />
             </div>
           </div>
-          <div className="mt-2 sm:mt-4 relative z-10">
-            <div className="text-lg sm:text-3xl font-black text-white tracking-tight">{users.length}</div>
-            <div className="text-[9px] sm:text-[11px] text-amber-300 font-bold mt-1 flex items-center gap-1 truncate">
-              <Users className="w-3 h-3 shrink-0 text-amber-400" />
-              <span className="truncate">Accounts</span>
+          <div className="mt-4">
+            <div className="text-2xl font-bold text-gray-900">
+              {users.length}
             </div>
+            <div className="text-[11px] text-emerald-700 font-medium mt-1">
+              Registered shopper accounts
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      {/* Visual Analytics & Breakdown Cards */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        
+        {/* Order Fulfillment Status Distribution */}
+        <div className="bg-white p-5 rounded-xl border border-gray-200 shadow-xs space-y-4">
+          <div className="flex items-center justify-between pb-3 border-b border-gray-100">
+            <div>
+              <h3 className="text-xs font-bold uppercase tracking-wider text-gray-500">
+                Fulfillment Distribution
+              </h3>
+              <p className="text-xs text-gray-900 font-semibold mt-0.5">
+                {deliveredOrders.length} Completed of {orders.length || 0} Total Orders
+              </p>
+            </div>
+            <span className="text-xs font-bold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-md">
+              {orders.length > 0 ? Math.round((deliveredOrders.length / orders.length) * 100) : 0}% Delivered
+            </span>
+          </div>
+
+          {/* Segmented Progress Bar */}
+          <div className="w-full h-3 bg-gray-100 rounded-full overflow-hidden flex">
+            <div 
+              style={{ width: `${orders.length ? (deliveredOrders.length / orders.length) * 100 : 0}%` }}
+              className="bg-emerald-500 h-full transition-all" 
+              title={`Delivered: ${deliveredOrders.length}`}
+            />
+            <div 
+              style={{ width: `${orders.length ? (shippedOrders.length / orders.length) * 100 : 0}%` }}
+              className="bg-blue-500 h-full transition-all" 
+              title={`Shipped: ${shippedOrders.length}`}
+            />
+            <div 
+              style={{ width: `${orders.length ? (processingOrders.length / orders.length) * 100 : 0}%` }}
+              className="bg-amber-400 h-full transition-all" 
+              title={`Processing: ${processingOrders.length}`}
+            />
+            <div 
+              style={{ width: `${orders.length ? (pendingOrders.length / orders.length) * 100 : 0}%` }}
+              className="bg-zinc-300 h-full transition-all" 
+              title={`Pending: ${pendingOrders.length}`}
+            />
+          </div>
+
+          {/* Status Breakdown Legend */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1 text-xs">
+            <div className="flex items-center gap-1.5">
+              <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 shrink-0" />
+              <span className="text-gray-600">Delivered ({deliveredOrders.length})</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <span className="w-2.5 h-2.5 rounded-full bg-blue-500 shrink-0" />
+              <span className="text-gray-600">Shipped ({shippedOrders.length})</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <span className="w-2.5 h-2.5 rounded-full bg-amber-400 shrink-0" />
+              <span className="text-gray-600">Processing ({processingOrders.length})</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <span className="w-2.5 h-2.5 rounded-full bg-zinc-300 shrink-0" />
+              <span className="text-gray-600">Pending ({pendingOrders.length})</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Catalog Categories Share */}
+        <div className="bg-white p-5 rounded-xl border border-gray-200 shadow-xs space-y-4">
+          <div className="flex items-center justify-between pb-3 border-b border-gray-100">
+            <div>
+              <h3 className="text-xs font-bold uppercase tracking-wider text-gray-500">
+                Catalog Share by Category
+              </h3>
+              <p className="text-xs text-gray-900 font-semibold mt-0.5">
+                Top apparel drops in live catalog
+              </p>
+            </div>
+            <Link
+              to="/admin/categories"
+              className="text-xs font-semibold text-gray-600 hover:text-black transition-colors"
+            >
+              All Categories &rarr;
+            </Link>
+          </div>
+
+          <div className="space-y-2.5 text-xs">
+            {categoryStats.length === 0 ? (
+              <p className="text-gray-400 py-4 text-center">No categories active yet.</p>
+            ) : (
+              categoryStats.map((cat) => (
+                <div key={cat.name} className="space-y-1">
+                  <div className="flex justify-between font-medium">
+                    <span className="text-gray-800">{cat.name}</span>
+                    <span className="text-gray-500">{cat.count} items ({cat.percentage}%)</span>
+                  </div>
+                  <div className="w-full bg-gray-100 h-1.5 rounded-full overflow-hidden">
+                    <div
+                      className="bg-black h-full rounded-full transition-all"
+                      style={{ width: `${cat.percentage}%` }}
+                    />
+                  </div>
+                </div>
+              ))
+            )}
           </div>
         </div>
 
       </div>
 
       {/* Two Column Layout: Recent Orders & Inventory Alerts */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         
         {/* Recent Orders Section */}
-        <div className="lg:col-span-8 bg-[#0c121e] rounded-3xl p-6 sm:p-8 border border-slate-800/80 shadow-xl space-y-6">
-          <div className="flex items-center justify-between pb-4 border-b border-slate-800/80">
+        <div className="lg:col-span-8 bg-white rounded-xl border border-gray-200 shadow-xs overflow-hidden">
+          <div className="p-5 border-b border-gray-200 flex items-center justify-between">
             <div>
-              <h3 className="text-base font-extrabold text-white">Recent Orders Stream</h3>
-              <p className="text-xs text-slate-400">Live order activity across customer storefront</p>
+              <h3 className="text-sm font-bold text-gray-900">Recent Customer Purchases</h3>
+              <p className="text-xs text-gray-500">Live order stream across storefront</p>
             </div>
             <Link
               to="/admin/orders"
-              className="text-xs font-extrabold text-emerald-400 hover:text-emerald-300 flex items-center gap-1.5 transition-colors"
+              className="text-xs font-semibold text-gray-900 hover:text-blue-600 flex items-center gap-1 transition-colors"
             >
               <span>View All Orders</span>
               <ArrowRight className="w-3.5 h-3.5" />
@@ -199,44 +330,54 @@ export const AdminDashboard = () => {
           </div>
 
           {orders.length === 0 ? (
-            <div className="text-center py-12 text-slate-500 text-xs">
-              No customer orders received yet. Live orders will populate automatically.
+            <div className="text-center py-12 text-gray-400 text-xs">
+              No customer orders received yet.
             </div>
           ) : (
-            <div className="space-y-3">
+            <div className="divide-y divide-gray-100">
               {orders.slice(0, 5).map((order) => (
                 <div
                   key={order.id}
-                  className="bg-slate-900/60 hover:bg-slate-900 p-4 rounded-2xl border border-slate-800/80 flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-all"
+                  className="p-4 hover:bg-gray-50 flex flex-col sm:flex-row sm:items-center justify-between gap-3 transition-colors"
                 >
-                  <div className="space-y-1">
+                  <div className="space-y-0.5">
                     <div className="flex items-center gap-2">
-                      <span className="text-xs font-black text-white font-mono bg-slate-800/80 px-2 py-0.5 rounded-md">
+                      <span className="text-xs font-bold text-gray-900 font-mono">
                         #{order.id.slice(0, 8)}
                       </span>
-                      <span className="text-xs text-slate-200 font-bold">• {order.customerName || 'Customer'}</span>
+                      <span className="text-xs text-gray-700 font-medium">&bull; {order.customerName || 'Customer'}</span>
                     </div>
-                    <p className="text-[11px] text-slate-400">
-                      {order.items?.length || 0} item(s) • Total: <strong className="text-emerald-400 font-black">${Number(order.totalAmount || 0).toFixed(2)}</strong>
+                    <p className="text-[11px] text-gray-500">
+                      {order.items?.length || 0} item(s) &bull; Total: <strong className="text-gray-900 font-semibold">${Number(order.totalAmount || 0).toFixed(2)}</strong>
                     </p>
                   </div>
 
                   <div className="flex items-center gap-3">
                     <select
-                      value={order.status}
+                      value={order.status || 'pending'}
                       onChange={(e) => handleQuickStatusChange(order.id, e.target.value)}
-                      className={`text-xs font-extrabold px-3 py-1.5 rounded-xl border focus:outline-none cursor-pointer transition-all ${
-                        order.status === 'delivered' ? 'bg-emerald-500/15 border-emerald-500/30 text-emerald-300' :
-                        order.status === 'shipped' ? 'bg-sky-500/15 border-sky-500/30 text-sky-300' :
-                        order.status === 'cancelled' ? 'bg-rose-500/15 border-rose-500/30 text-rose-300' : 'bg-amber-500/15 border-amber-500/30 text-amber-300'
+                      className={`text-xs font-semibold px-2.5 py-1 rounded-lg border cursor-pointer focus:outline-none ${
+                        order.status === 'delivered' ? 'bg-emerald-50 text-emerald-800 border-emerald-200' :
+                        order.status === 'shipped' ? 'bg-blue-50 text-blue-800 border-blue-200' :
+                        order.status === 'processing' ? 'bg-amber-50 text-amber-800 border-amber-200' :
+                        order.status === 'cancelled' ? 'bg-rose-50 text-rose-800 border-rose-200' :
+                        'bg-gray-50 text-gray-700 border-gray-200'
                       }`}
                     >
-                      <option value="pending" className="bg-slate-900 text-white">Pending</option>
-                      <option value="processing" className="bg-slate-900 text-white">Processing</option>
-                      <option value="shipped" className="bg-slate-900 text-white">Shipped</option>
-                      <option value="delivered" className="bg-slate-900 text-white">Delivered</option>
-                      <option value="cancelled" className="bg-slate-900 text-white">Cancelled</option>
+                      <option value="pending">Pending</option>
+                      <option value="processing">Processing</option>
+                      <option value="shipped">Shipped</option>
+                      <option value="delivered">Delivered</option>
+                      <option value="cancelled">Cancelled</option>
                     </select>
+
+                    <Link
+                      to="/admin/orders"
+                      className="p-1.5 text-gray-400 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
+                      title="View Details"
+                    >
+                      <ArrowRight className="w-4 h-4" />
+                    </Link>
                   </div>
                 </div>
               ))}
@@ -245,60 +386,43 @@ export const AdminDashboard = () => {
         </div>
 
         {/* Low Stock Alerts */}
-        <div className="lg:col-span-4 bg-[#0c121e] rounded-3xl p-6 sm:p-8 border border-slate-800/80 shadow-xl space-y-6">
-          <div className="flex items-center justify-between pb-4 border-b border-slate-800/80">
+        <div className="lg:col-span-4 bg-white rounded-xl border border-gray-200 shadow-xs p-5 space-y-4">
+          <div className="flex items-center justify-between pb-3 border-b border-gray-100">
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center text-amber-400">
-                <AlertTriangle className="w-4 h-4" />
-              </div>
-              <h3 className="text-base font-extrabold text-white">Inventory Alerts</h3>
+              <AlertTriangle className="w-4 h-4 text-amber-600" />
+              <h3 className="text-sm font-bold text-gray-900">Inventory Alerts</h3>
             </div>
-            <span className="text-xs font-black text-amber-400 bg-amber-400/15 border border-amber-400/30 px-2.5 py-0.5 rounded-lg">
-              {lowStockProducts.length}
+            <span className="text-xs font-semibold text-amber-800 bg-amber-50 border border-amber-200/80 px-2 py-0.5 rounded-full">
+              {lowStockProducts.length} low stock
             </span>
           </div>
 
           {lowStockProducts.length === 0 ? (
-            <div className="text-center py-8 text-slate-500 text-xs">
-              All inventory levels are healthy!
+            <div className="text-center py-8 text-gray-400 text-xs">
+              All apparel items are sufficiently stocked.
             </div>
           ) : (
-            <div className="space-y-3">
+            <div className="space-y-2.5">
               {lowStockProducts.slice(0, 5).map((prod) => (
                 <div
                   key={prod.id}
-                  className="bg-slate-900/60 p-3.5 rounded-2xl border border-slate-800/80 flex items-center justify-between gap-3"
+                  className="bg-gray-50 p-3 rounded-lg border border-gray-100 flex items-center justify-between gap-3"
                 >
-                  <div className="flex items-center gap-3 min-w-0">
-                    <img
-                      src={normalizeImageUrl((prod.images && prod.images[0]))}
-                      alt={prod.name}
-                      referrerPolicy="no-referrer"
-                      className="w-10 h-12 object-cover rounded-xl bg-slate-800 shrink-0 border border-slate-700/60 shadow-sm"
-                      onError={(e) => {
-                        e.target.onerror = null;
-                        e.target.src = 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="40" height="48" fill="%231e293b"><rect width="40" height="48"/><text x="50%" y="50%" fill="%2364748b" font-size="8" text-anchor="middle" dominant-baseline="middle">N/A</text></svg>');
-                      }}
-                    />
-                    <div className="min-w-0">
-                      <h4 className="text-xs font-bold text-white truncate">{prod.name}</h4>
-                      <p className="text-[10px] text-slate-400 font-semibold">${Number(prod.price).toFixed(2)}</p>
-                    </div>
+                  <div className="min-w-0">
+                    <div className="text-xs font-semibold text-gray-900 truncate">{prod.name}</div>
+                    <div className="text-[11px] text-gray-500">${Number(prod.price).toFixed(2)}</div>
                   </div>
-
-                  <span className={`text-[11px] font-black px-2.5 py-1 rounded-xl shrink-0 ${
-                    prod.stock <= 0 ? 'bg-rose-500/15 text-rose-400 border border-rose-500/30' : 'bg-amber-500/15 text-amber-300 border border-amber-500/30'
-                  }`}>
-                    {prod.stock <= 0 ? 'Out of Stock' : `${prod.stock} left`}
+                  <span className="px-2 py-0.5 bg-amber-100 text-amber-800 text-[11px] font-bold rounded">
+                    {prod.stock} left
                   </span>
                 </div>
               ))}
 
               <Link
                 to="/admin/products"
-                className="block text-center text-xs font-bold text-slate-400 hover:text-emerald-400 pt-2 transition-colors"
+                className="block text-center text-xs font-semibold text-gray-600 hover:text-gray-900 pt-2 transition-colors"
               >
-                Manage Inventory in Products →
+                Manage Inventory &rarr;
               </Link>
             </div>
           )}

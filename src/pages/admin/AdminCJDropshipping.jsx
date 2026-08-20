@@ -411,206 +411,120 @@ export const AdminCJDropshipping = () => {
   const cjProductsInStore = liveStoreProducts.filter(p => Boolean(p.cjpId || p.cjpSku));
 
   return (
-    <div className="space-y-8 max-w-7xl mx-auto">
+    <div className="space-y-6 max-w-7xl mx-auto">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <div className="inline-flex items-center gap-2 px-3 py-1 bg-sky-500/10 border border-sky-500/20 rounded-full text-xs font-bold text-sky-400 mb-2">
-            <Truck className="w-3.5 h-3.5" />
-            <span>Dropshipping Supplier Integration</span>
-          </div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
-            CJ Dropshipping Importer & Live Sync
+          <h1 className="text-2xl font-bold text-gray-900 tracking-tight">
+            CJ Dropshipping
           </h1>
-          <p className="text-xs text-slate-400 mt-1">
-            Search apparel items, sizes, colors, and calculate dynamic USA landed pricing with automated inventory sync
+          <p className="text-xs text-gray-500 mt-0.5">
+            Search apparel items, calculate retail pricing, and import products into Firestore
           </p>
         </div>
 
-        <div className="flex items-center gap-3">
-          <Link
-            to="/admin/products"
-            className="px-4 py-2.5 bg-[#0c121e] hover:bg-slate-800 border border-slate-700/80 text-slate-200 text-xs font-bold rounded-xl transition-all shadow-sm"
-          >
-            View Catalog Products →
-          </Link>
-        </div>
-      </div>
-
-      {/* Live CJ API Sync & Automation Command Center */}
-      <div className="bg-gradient-to-br from-[#0c121e] via-slate-900 to-indigo-950/40 rounded-3xl p-6 sm:p-7 border border-indigo-500/20 shadow-2xl space-y-4">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-800/80">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-indigo-500/15 border border-indigo-500/30 flex items-center justify-center text-indigo-400">
-              <RefreshCw className={`w-5 h-5 ${syncingAll ? 'animate-spin' : ''}`} />
-            </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <h3 className="text-sm font-black text-white">CJ Live Sync & Automation Engine</h3>
-                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
-                  REALTIME
-                </span>
-              </div>
-              <p className="text-xs text-slate-400">
-                Automatically verify live inventory counts, warehouse stock, and supplier price fluctuations
-              </p>
-            </div>
-          </div>
-
+        <div className="flex items-center gap-2.5">
           <button
             type="button"
             onClick={handleSyncAllProducts}
             disabled={syncingAll}
-            className="px-5 py-2.5 bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 disabled:opacity-50 text-white text-xs font-black rounded-xl shadow-lg shadow-indigo-500/20 transition-all flex items-center justify-center gap-2 shrink-0"
+            className="px-3.5 py-2 bg-black hover:bg-gray-800 disabled:bg-gray-400 text-white text-xs font-semibold rounded-lg shadow-xs transition-colors flex items-center gap-1.5"
           >
-            {syncingAll ? (
-              <>
-                <Loader2 className="w-4 h-4 animate-spin" />
-                <span>Syncing Store Catalog...</span>
-              </>
-            ) : (
-              <>
-                <RefreshCw className="w-4 h-4" />
-                <span>Sync All Live Products ({cjProductsInStore.length})</span>
-              </>
-            )}
+            <RefreshCw className={`w-3.5 h-3.5 ${syncingAll ? 'animate-spin' : ''}`} />
+            <span>{syncingAll ? 'Syncing...' : `Sync All (${cjProductsInStore.length})`}</span>
           </button>
         </div>
-
-        {/* Sync Stats Overview */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-2">
-          <div className="bg-slate-900/80 p-3.5 rounded-2xl border border-slate-800">
-            <span className="text-[11px] font-medium text-slate-400">Total Store Products</span>
-            <p className="text-lg font-extrabold text-white mt-0.5">{liveStoreProducts.length}</p>
-          </div>
-          <div className="bg-slate-900/80 p-3.5 rounded-2xl border border-slate-800">
-            <span className="text-[11px] font-medium text-slate-400">CJ Synced Items</span>
-            <p className="text-lg font-extrabold text-indigo-400 mt-0.5">{cjProductsInStore.length}</p>
-          </div>
-          <div className="bg-slate-900/80 p-3.5 rounded-2xl border border-slate-800">
-            <span className="text-[11px] font-medium text-slate-400">Last Synced Updates</span>
-            <p className="text-lg font-extrabold text-emerald-400 mt-0.5">
-              {lastSyncResult ? `${lastSyncResult.syncedCount} items` : 'Ready'}
-            </p>
-          </div>
-          <div className="bg-slate-900/80 p-3.5 rounded-2xl border border-slate-800">
-            <span className="text-[11px] font-medium text-slate-400">API Sync Health</span>
-            <p className="text-lg font-extrabold text-emerald-400 mt-0.5 flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-              <span>100% Online</span>
-            </p>
-          </div>
-        </div>
-
-        {/* Live Sync Progress Bar */}
-        {syncingAll && syncProgress && (
-          <div className="bg-slate-900 p-4 rounded-2xl border border-indigo-500/30 space-y-2 animate-pulse">
-            <div className="flex items-center justify-between text-xs text-indigo-300">
-              <span className="font-semibold truncate">Syncing: {syncProgress.productName}</span>
-              <span className="font-mono">{syncProgress.current} / {syncProgress.total}</span>
-            </div>
-            <div className="w-full bg-slate-800 rounded-full h-2 overflow-hidden">
-              <div 
-                className="bg-gradient-to-r from-indigo-500 to-blue-500 h-full transition-all duration-300"
-                style={{ width: `${(syncProgress.current / (syncProgress.total || 1)) * 100}%` }}
-              />
-            </div>
-          </div>
-        )}
       </div>
 
       {/* Pricing Markup & Target Category Rules */}
-      <div className="bg-slate-950 rounded-3xl p-6 sm:p-7 border border-slate-800 space-y-4">
-        <div className="flex items-center justify-between pb-3 border-b border-slate-800">
+      <div className="bg-white rounded-xl p-5 border border-gray-200 shadow-xs space-y-4">
+        <div className="flex items-center justify-between pb-3 border-b border-gray-100">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-400">
+            <div className="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center text-gray-700">
               <Sliders className="w-4 h-4" />
             </div>
-            <h3 className="text-sm font-bold text-white">Import &amp; Profit Markup Rules</h3>
+            <h3 className="text-sm font-bold text-gray-900">Pricing &amp; Category Rules</h3>
           </div>
-          <span className="text-[10px] text-emerald-400 font-bold bg-emerald-500/10 px-2 py-0.5 rounded">
-            Auto-Calculated
+          <span className="text-[10px] text-gray-500 font-semibold bg-gray-100 px-2 py-0.5 rounded">
+            Auto-Applied on Import
           </span>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
-            {/* Markup multiplier */}
-            <div>
-              <label className="block font-semibold text-slate-300 mb-1">
-                Profit Markup: <strong className="text-emerald-400">{markupMultiplier}x</strong>
-              </label>
+          <div>
+            <label className="block font-semibold text-gray-700 mb-1">
+              Markup Multiplier: <strong className="text-gray-900">{markupMultiplier}x</strong>
+            </label>
+            <input
+              type="range"
+              min="1.2"
+              max="4.0"
+              step="0.1"
+              value={markupMultiplier}
+              onChange={(e) => setMarkupMultiplier(parseFloat(e.target.value))}
+              className="w-full h-1.5 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-black"
+            />
+            <p className="text-[11px] text-gray-400 mt-1">
+              Supplier $15 &rarr; Store Price: <strong className="text-gray-900">${(15 * markupMultiplier).toFixed(2)}</strong>
+            </p>
+          </div>
+
+          <div>
+            <label className="block font-semibold text-gray-700 mb-1">Target Category</label>
+            <select
+              value={targetCategory}
+              onChange={(e) => setTargetCategory(e.target.value)}
+              className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-gray-900 focus:bg-white focus:outline-none focus:border-black text-xs cursor-pointer"
+            >
+              {categories.map((c) => (
+                <option key={c.id} value={c.slug || c.name}>
+                  {c.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="col-span-2 flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-gray-100">
+            <label className="flex items-center gap-2 cursor-pointer">
               <input
-                type="range"
-                min="1.2"
-                max="4.0"
-                step="0.1"
-                value={markupMultiplier}
-                onChange={(e) => setMarkupMultiplier(parseFloat(e.target.value))}
-                className="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-emerald-500"
+                type="checkbox"
+                checked={applySaleDiscount}
+                onChange={(e) => setApplySaleDiscount(e.target.checked)}
+                className="accent-black w-4 h-4"
               />
-              <p className="text-[10px] text-slate-500 mt-1">
-                Supplier $15 → Store Price: <strong className="text-white">${(15 * markupMultiplier).toFixed(2)}</strong>
-              </p>
-            </div>
+              <span className="text-gray-700 font-medium text-xs">Apply {discountPercent}% Sale Discount Tag</span>
+            </label>
 
-            {/* Target Category */}
-            <div>
-              <label className="block font-semibold text-slate-300 mb-1">Target Category</label>
-              <select
-                value={targetCategory}
-                onChange={(e) => setTargetCategory(e.target.value)}
-                className="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-emerald-500 text-xs"
-              >
-                {categories.map((c) => (
-                  <option key={c.id} value={c.slug || c.name}>
-                    {c.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {/* Sale discount toggle */}
-            <div className="col-span-2 flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-slate-900">
-              <label className="flex items-center gap-2 cursor-pointer">
+            <div className="flex items-center gap-3">
+              <label className="flex items-center gap-1.5 text-xs text-gray-600 cursor-pointer">
                 <input
                   type="checkbox"
-                  checked={applySaleDiscount}
-                  onChange={(e) => setApplySaleDiscount(e.target.checked)}
-                  className="accent-emerald-500"
+                  checked={markAsFeatured}
+                  onChange={(e) => setMarkAsFeatured(e.target.checked)}
+                  className="accent-black w-4 h-4"
                 />
-                <span className="text-slate-300 font-medium text-xs">Apply {discountPercent}% Sale Discount Tag</span>
+                <span>Featured</span>
               </label>
 
-              <div className="flex items-center gap-3">
-                <label className="flex items-center gap-1.5 text-[11px] text-slate-400 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={markAsFeatured}
-                    onChange={(e) => setMarkAsFeatured(e.target.checked)}
-                    className="accent-emerald-500"
-                  />
-                  <span>Featured</span>
-                </label>
-
-                <label className="flex items-center gap-1.5 text-[11px] text-slate-400 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={markAsNewArrival}
-                    onChange={(e) => setMarkAsNewArrival(e.target.checked)}
-                    className="accent-emerald-500"
-                  />
-                  <span>New Arrival</span>
-                </label>
-              </div>
+              <label className="flex items-center gap-1.5 text-xs text-gray-600 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={markAsNewArrival}
+                  onChange={(e) => setMarkAsNewArrival(e.target.checked)}
+                  className="accent-black w-4 h-4"
+                />
+                <span>New Arrival</span>
+              </label>
             </div>
           </div>
         </div>
+      </div>
 
       {/* Direct PID / URL Single Product Importer */}
-      <div className="bg-slate-950 p-4 sm:p-5 rounded-2xl border border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div className="bg-white p-4 rounded-xl border border-gray-200 shadow-xs flex flex-col sm:flex-row items-center justify-between gap-3">
         <div className="flex items-center gap-2">
-          <Download className="w-4 h-4 text-emerald-400" />
-          <span className="text-xs font-bold text-white">Import by CJ Product ID or URL:</span>
+          <Download className="w-4 h-4 text-gray-500" />
+          <span className="text-xs font-semibold text-gray-800">Direct PID / URL Import:</span>
         </div>
 
         <form onSubmit={handleDirectPidImport} className="flex-1 flex gap-2 w-full sm:w-auto">
@@ -618,41 +532,40 @@ export const AdminCJDropshipping = () => {
             type="text"
             value={directPid}
             onChange={(e) => setDirectPid(e.target.value)}
-            placeholder="Paste CJ PID (e.g. CJHD-380-VNTG) or Product URL..."
-            className="flex-1 px-3.5 py-2 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500"
+            placeholder="Paste CJ PID or Product URL..."
+            className="flex-1 px-3.5 py-2 bg-gray-50 border border-gray-200 rounded-lg text-xs text-gray-900 placeholder-gray-400 focus:bg-white focus:outline-none focus:border-black transition-colors"
           />
           <button
             type="submit"
             disabled={importingDirect || !directPid.trim()}
-            className="px-4 py-2 bg-emerald-500 hover:bg-emerald-400 disabled:bg-slate-800 text-slate-950 font-bold rounded-xl text-xs shadow transition-all shrink-0 flex items-center gap-1.5"
+            className="px-3.5 py-2 bg-black hover:bg-gray-800 disabled:bg-gray-400 text-white font-semibold rounded-lg text-xs transition-colors shrink-0 flex items-center gap-1.5"
           >
             {importingDirect ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Download className="w-3.5 h-3.5" />}
-            <span>Pull & Import</span>
+            <span>Pull &amp; Import</span>
           </button>
         </form>
       </div>
 
       {/* Search Toolbar & Batch Action Bar */}
-      <div className="bg-slate-950 p-4 rounded-2xl border border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4">
-        {/* Search */}
+      <div className="bg-white p-4 rounded-xl border border-gray-200 shadow-xs flex flex-col sm:flex-row items-center justify-between gap-3">
         <div className="relative w-full sm:w-80">
           <input
             type="text"
             value={searchKeyword}
             onChange={(e) => setSearchKeyword(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleSearch(searchKeyword)}
-            placeholder="Search hoodies, tees, cargo pants, caps..."
-            className="w-full pl-9 pr-4 py-2 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500"
+            placeholder="Search hoodies, tees, cargo pants..."
+            className="w-full pl-9 pr-3.5 py-2 bg-gray-50 border border-gray-200 rounded-lg text-xs text-gray-900 placeholder-gray-400 focus:bg-white focus:outline-none focus:border-black transition-colors"
           />
-          <Search className="w-4 h-4 text-slate-500 absolute left-3 top-2.5 pointer-events-none" />
+          <Search className="w-4 h-4 text-gray-400 absolute left-3 top-2.5 pointer-events-none" />
         </div>
 
         {/* Selection & Batch CTA */}
-        <div className="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-end">
+        <div className="flex items-center gap-2 w-full sm:w-auto justify-between sm:justify-end">
           <button
             type="button"
             onClick={toggleSelectAll}
-            className="px-3 py-1.5 bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-300 text-xs font-semibold rounded-lg"
+            className="px-3 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-semibold rounded-lg transition-colors"
           >
             {selectedPids.length === cjProducts.length && cjProducts.length > 0 ? 'Deselect All' : 'Select All'}
           </button>
@@ -661,9 +574,9 @@ export const AdminCJDropshipping = () => {
             <button
               onClick={handleBatchImport}
               disabled={batchImporting}
-              className="px-4 py-2 bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-extrabold rounded-xl shadow-lg transition-all flex items-center gap-2 animate-bounce"
+              className="px-3.5 py-1.5 bg-black hover:bg-gray-800 text-white text-xs font-semibold rounded-lg shadow-xs transition-colors flex items-center gap-1.5"
             >
-              <Download className="w-4 h-4" />
+              <Download className="w-3.5 h-3.5" />
               <span>Import ({selectedPids.length}) to Firestore</span>
             </button>
           )}
@@ -672,20 +585,20 @@ export const AdminCJDropshipping = () => {
 
       {/* Batch Import Modal Progress */}
       {batchImporting && importProgress && (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-slate-950 border border-slate-800 rounded-3xl p-8 max-w-md w-full text-center space-y-4 shadow-2xl">
-            <Loader2 className="w-10 h-10 text-emerald-400 animate-spin mx-auto" />
-            <h3 className="text-base font-bold text-white">Importing to Cloud Firestore</h3>
-            <p className="text-xs text-slate-400 truncate">
+        <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white border border-gray-200 rounded-2xl p-6 max-w-md w-full text-center space-y-3 shadow-2xl">
+            <Loader2 className="w-8 h-8 text-black animate-spin mx-auto" />
+            <h3 className="text-sm font-bold text-gray-900">Importing Products</h3>
+            <p className="text-xs text-gray-500 truncate">
               {importProgress.productName}
             </p>
-            <div className="w-full bg-slate-900 rounded-full h-2 overflow-hidden">
+            <div className="w-full bg-gray-100 rounded-full h-1.5 overflow-hidden">
               <div
-                className="bg-emerald-500 h-full transition-all duration-300"
+                className="bg-black h-full transition-all duration-300"
                 style={{ width: `${(importProgress.current / importProgress.total) * 100}%` }}
               />
             </div>
-            <p className="text-xs text-emerald-400 font-bold">
+            <p className="text-xs text-gray-700 font-semibold">
               {importProgress.current} of {importProgress.total} products imported
             </p>
           </div>
@@ -694,12 +607,12 @@ export const AdminCJDropshipping = () => {
 
       {/* CJ Supplier Products Grid */}
       {loadingProducts ? (
-        <div className="py-16 text-center text-slate-400 text-xs space-y-3">
-          <Loader2 className="w-8 h-8 animate-spin text-emerald-400 mx-auto" />
+        <div className="py-12 text-center text-gray-400 text-xs space-y-2">
+          <Loader2 className="w-6 h-6 animate-spin text-black mx-auto" />
           <p>Querying CJ Dropshipping catalog...</p>
         </div>
       ) : cjProducts.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {cjProducts.map((prod) => {
             const cost = parseFloat(prod.sellPrice) || 20;
             const shipping = calculateCjUsShippingFee(prod);
@@ -716,12 +629,12 @@ export const AdminCJDropshipping = () => {
             return (
               <div
                 key={prod.pid}
-                className={`bg-slate-950 rounded-3xl border transition-all duration-300 overflow-hidden flex flex-col justify-between ${
-                  isSelected ? 'border-emerald-500 shadow-xl shadow-emerald-500/10' : 'border-slate-800 hover:border-slate-700'
+                className={`bg-white rounded-xl border transition-all duration-200 overflow-hidden flex flex-col justify-between shadow-xs ${
+                  isSelected ? 'border-black ring-1 ring-black' : 'border-gray-200 hover:border-gray-300'
                 }`}
               >
                 {/* Image & Checkbox */}
-                <div className="relative aspect-[4/3] w-full bg-slate-900 overflow-hidden">
+                <div className="relative aspect-[4/3] w-full bg-gray-100 overflow-hidden">
                   <img
                     src={normalizeImageUrl(prod.productImage)}
                     alt={prod.productNameEn}
@@ -729,84 +642,83 @@ export const AdminCJDropshipping = () => {
                     className="w-full h-full object-cover"
                     onError={(e) => {
                       e.target.onerror = null;
-                      e.target.src = 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300" fill="%231e293b"><rect width="400" height="300"/><text x="50%" y="50%" fill="%2364748b" font-size="14" text-anchor="middle" dominant-baseline="middle">Image preview unavailable</text></svg>');
+                      e.target.src = 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300" fill="%23f1f5f9"><rect width="400" height="300"/><text x="50%" y="50%" fill="%2394a3b8" font-size="14" text-anchor="middle" dominant-baseline="middle">Preview unavailable</text></svg>');
                     }}
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent" />
 
                   {/* Select Checkbox */}
                   <button
                     type="button"
                     onClick={() => toggleSelectPid(prod.pid)}
-                    className={`absolute top-3 left-3 w-7 h-7 rounded-xl flex items-center justify-center transition-all ${
-                      isSelected ? 'bg-emerald-500 text-slate-950 shadow-lg' : 'bg-slate-900/80 text-white border border-slate-700'
+                    className={`absolute top-2.5 left-2.5 w-6 h-6 rounded-md flex items-center justify-center transition-all ${
+                      isSelected ? 'bg-black text-white shadow-xs' : 'bg-white/90 text-gray-700 border border-gray-200'
                     }`}
                   >
-                    {isSelected && <Check className="w-4 h-4 stroke-[3]" />}
+                    {isSelected && <Check className="w-3.5 h-3.5 stroke-[3]" />}
                   </button>
 
-                  <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between text-[11px] text-white font-semibold">
-                    <span className="bg-slate-900/90 backdrop-blur px-2.5 py-1 rounded-lg border border-slate-800">
+                  <div className="absolute bottom-2.5 left-2.5 right-2.5 flex items-center justify-between text-[11px] font-semibold">
+                    <span className="bg-white/90 backdrop-blur px-2 py-0.5 rounded text-gray-800 border border-gray-200">
                       PID: {prod.pid}
                     </span>
-                    <span className="bg-emerald-500/90 text-slate-950 font-extrabold px-2.5 py-1 rounded-lg">
-                      Est. Profit +${profit.toFixed(2)}
+                    <span className="bg-emerald-50 text-emerald-800 border border-emerald-200 font-bold px-2 py-0.5 rounded">
+                      +${profit.toFixed(2)}
                     </span>
                   </div>
                 </div>
 
                 {/* Details */}
-                <div className="p-5 space-y-3 flex-1 flex flex-col justify-between">
-                  <div className="space-y-1.5">
+                <div className="p-4 space-y-3 flex-1 flex flex-col justify-between">
+                  <div className="space-y-1">
                     <div className="flex items-center justify-between gap-2">
-                      <h3 className="font-bold text-white text-xs leading-snug line-clamp-2">
+                      <h3 className="font-bold text-gray-900 text-xs leading-snug line-clamp-2">
                         {prod.productNameEn}
                       </h3>
                       {existingInStore && (
-                        <span className="px-2 py-0.5 bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 rounded-full text-[9px] font-bold shrink-0 flex items-center gap-1">
+                        <span className="px-2 py-0.5 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded text-[9px] font-bold shrink-0 flex items-center gap-1">
                           <Check className="w-2.5 h-2.5" /> In Store
                         </span>
                       )}
                     </div>
-                    <p className="text-[11px] text-slate-400 line-clamp-2">
+                    <p className="text-[11px] text-gray-500 line-clamp-2">
                       {prod.description}
                     </p>
                   </div>
 
-                  {/* Pricing Matrix with US Delivery */}
-                  <div className="p-3 bg-slate-900/80 rounded-2xl border border-slate-800/80 grid grid-cols-3 gap-2 text-xs text-center">
+                  {/* Pricing Matrix */}
+                  <div className="p-2.5 bg-gray-50 rounded-lg border border-gray-100 grid grid-cols-3 gap-2 text-xs text-center">
                     <div>
-                      <span className="text-[10px] text-slate-500 block uppercase">Product</span>
-                      <span className="font-bold text-slate-300">${cost.toFixed(2)}</span>
+                      <span className="text-[10px] text-gray-400 block">Supplier</span>
+                      <span className="font-semibold text-gray-700">${cost.toFixed(2)}</span>
                     </div>
                     <div>
-                      <span className="text-[10px] text-blue-400 block uppercase">US Delivery</span>
-                      <span className="font-bold text-blue-300">${shipping.toFixed(2)}</span>
+                      <span className="text-[10px] text-gray-400 block">US Ship</span>
+                      <span className="font-semibold text-gray-700">${shipping.toFixed(2)}</span>
                     </div>
                     <div>
-                      <span className="text-[10px] text-emerald-400 block uppercase">Store Retail</span>
-                      <span className="font-extrabold text-white">${retail.toFixed(2)}</span>
+                      <span className="text-[10px] text-gray-400 block">Store Price</span>
+                      <span className="font-bold text-gray-900">${retail.toFixed(2)}</span>
                     </div>
                   </div>
 
-                  {/* Import Button / Live Store Link */}
-                  <div className="pt-2 flex gap-2">
+                  {/* Import Button */}
+                  <div className="pt-1 flex gap-2">
                     {existingInStore ? (
                       <Link
                         to={`/product/${existingInStore.id}`}
                         target="_blank"
-                        className="flex-1 py-2.5 bg-slate-900 hover:bg-slate-800 text-emerald-400 border border-emerald-500/30 font-bold rounded-xl text-xs shadow transition-all flex items-center justify-center gap-1.5"
+                        className="flex-1 py-2 bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold rounded-lg text-xs transition-colors flex items-center justify-center gap-1"
                       >
-                        <Check className="w-3.5 h-3.5 text-emerald-400" />
-                        <span>Live in Store (View ↗)</span>
+                        <Check className="w-3.5 h-3.5" />
+                        <span>View in Store &rarr;</span>
                       </Link>
                     ) : (
                       <button
                         onClick={() => handleImportSingle(prod)}
-                        className="flex-1 py-2.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold rounded-xl text-xs shadow transition-all flex items-center justify-center gap-1.5"
+                        className="flex-1 py-2 bg-black hover:bg-gray-800 text-white font-semibold rounded-lg text-xs transition-colors flex items-center justify-center gap-1"
                       >
                         <Download className="w-3.5 h-3.5" />
-                        <span>Import to Firestore</span>
+                        <span>Import to Store</span>
                       </button>
                     )}
                   </div>
@@ -816,15 +728,15 @@ export const AdminCJDropshipping = () => {
           })}
         </div>
       ) : (
-        <div className="bg-slate-950 rounded-3xl p-12 border border-slate-800 text-center max-w-2xl mx-auto space-y-4">
-          <div className="w-12 h-12 bg-blue-500/10 rounded-2xl flex items-center justify-center text-blue-400 mx-auto">
-            <Search className="w-6 h-6" />
+        <div className="bg-white rounded-xl p-10 border border-gray-200 text-center max-w-xl mx-auto space-y-3 shadow-xs">
+          <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center text-gray-600 mx-auto">
+            <Search className="w-5 h-5" />
           </div>
-          <h3 className="text-sm font-bold text-white">Live CJ Dropshipping Search</h3>
-          <p className="text-xs text-slate-400 max-w-md mx-auto leading-relaxed">
-            {searchKeyword ? `No products returned for "${searchKeyword}". Check your API key or try another search term.` : 'Enter a search term above or enter a CJ Product ID / URL to pull real items from CJ Dropshipping.'}
+          <h3 className="text-sm font-bold text-gray-900">Search CJ Dropshipping Catalog</h3>
+          <p className="text-xs text-gray-500 max-w-sm mx-auto">
+            {searchKeyword ? `No products returned for "${searchKeyword}". Check your query or search again.` : 'Enter a search term above to discover and import apparel.'}
           </p>
-          <div className="flex flex-wrap items-center justify-center gap-2 pt-2">
+          <div className="flex flex-wrap items-center justify-center gap-1.5 pt-2">
             {['Heavyweight Hoodie', 'Oversized T-Shirt', 'Cargo Pants', 'Bomber Jacket', 'Baseball Cap'].map((term) => (
               <button
                 key={term}
@@ -832,9 +744,9 @@ export const AdminCJDropshipping = () => {
                   setSearchKeyword(term);
                   handleSearch(term);
                 }}
-                className="px-3 py-1.5 bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 text-[11px] font-medium rounded-lg transition-colors"
+                className="px-2.5 py-1 bg-gray-50 hover:bg-gray-100 border border-gray-200 text-gray-700 text-[11px] font-medium rounded-md transition-colors"
               >
-                🔍 {term}
+                {term}
               </button>
             ))}
           </div>

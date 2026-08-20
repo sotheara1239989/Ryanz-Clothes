@@ -4,14 +4,14 @@ import {
   ShieldCheck, 
   Truck, 
   RotateCcw, 
-  ArrowRight,
-  X
+  X,
+  Package
 } from 'lucide-react';
 import { listenToCategories } from '../../services/categoryService';
 
 export const Footer = () => {
   const [categories, setCategories] = useState([]);
-  const [modalContent, setModalContent] = useState(null); // 'privacy' | 'terms' | null
+  const [modalContent, setModalContent] = useState(null);
 
   useEffect(() => {
     const unsubscribe = listenToCategories((cats) => {
@@ -21,203 +21,200 @@ export const Footer = () => {
   }, []);
 
   return (
-    <footer className="bg-white text-gray-600 pt-16 pb-12 border-t border-gray-200">
+    <footer className="bg-white text-gray-600 pt-12 pb-10 border-t border-gray-200">
       {/* Guarantees Bar */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12 border-b border-gray-100">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-          <div className="flex items-start gap-4 p-4 rounded-2xl bg-gray-50 border border-gray-100">
-            <div className="w-12 h-12 rounded-xl bg-black text-white flex items-center justify-center shrink-0">
-              <Truck className="w-6 h-6" />
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-10 border-b border-gray-100">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="flex items-center gap-3 p-3.5 rounded-xl bg-gray-50 border border-gray-200">
+            <div className="w-8 h-8 rounded-lg bg-white border border-gray-200 text-gray-800 flex items-center justify-center shrink-0 shadow-xs">
+              <Truck className="w-4 h-4" />
             </div>
             <div>
-              <h4 className="text-gray-900 font-bold text-sm">Free Worldwide Delivery</h4>
-              <p className="text-xs text-gray-500 mt-0.5">Always free shipping to everywhere</p>
+              <h4 className="text-gray-900 font-bold text-xs">Free Worldwide Delivery</h4>
+              <p className="text-[11px] text-gray-500">Zero freight shipping fees</p>
             </div>
           </div>
 
-          <div className="flex items-start gap-4 p-4 rounded-2xl bg-gray-50 border border-gray-100">
-            <div className="w-12 h-12 rounded-xl bg-black text-white flex items-center justify-center shrink-0">
-              <RotateCcw className="w-6 h-6" />
+          <div className="flex items-center gap-3 p-3.5 rounded-xl bg-gray-50 border border-gray-200">
+            <div className="w-8 h-8 rounded-lg bg-white border border-gray-200 text-gray-800 flex items-center justify-center shrink-0 shadow-xs">
+              <RotateCcw className="w-4 h-4" />
             </div>
             <div>
-              <h4 className="text-gray-900 font-bold text-sm">30-Day Free Returns</h4>
-              <p className="text-xs text-gray-500 mt-0.5">Hassle-free exchanges and returns</p>
+              <h4 className="text-gray-900 font-bold text-xs">30-Day Free Returns</h4>
+              <p className="text-[11px] text-gray-500">Hassle-free size exchange</p>
             </div>
           </div>
 
-          <div className="flex items-start gap-4 p-4 rounded-2xl bg-gray-50 border border-gray-100">
-            <div className="w-12 h-12 rounded-xl bg-black text-white flex items-center justify-center shrink-0">
-              <ShieldCheck className="w-6 h-6" />
+          <div className="flex items-center gap-3 p-3.5 rounded-xl bg-gray-50 border border-gray-200">
+            <div className="w-8 h-8 rounded-lg bg-white border border-gray-200 text-gray-800 flex items-center justify-center shrink-0 shadow-xs">
+              <ShieldCheck className="w-4 h-4" />
             </div>
             <div>
-              <h4 className="text-gray-900 font-bold text-sm">100% Authentic Quality</h4>
-              <p className="text-xs text-gray-500 mt-0.5">Heavyweight organic fabrics &amp; design</p>
+              <h4 className="text-gray-900 font-bold text-xs">460GSM Custom Terry</h4>
+              <p className="text-[11px] text-gray-500">Architectural heavyweight cotton</p>
             </div>
           </div>
 
-          <div className="flex items-start gap-4 p-4 rounded-2xl bg-gray-50 border border-gray-100">
-            <div className="w-12 h-12 rounded-xl bg-black text-emerald-400 flex items-center justify-center shrink-0">
-              <ShieldCheck className="w-6 h-6" />
+          <div className="flex items-center gap-3 p-3.5 rounded-xl bg-gray-50 border border-gray-200">
+            <div className="w-8 h-8 rounded-lg bg-white border border-gray-200 text-gray-800 flex items-center justify-center shrink-0 shadow-xs">
+              <Package className="w-4 h-4" />
             </div>
             <div>
-              <h4 className="text-gray-900 font-bold text-sm">Real-Time Inventory</h4>
-              <p className="text-xs text-gray-500 mt-0.5">Live stock &amp; fast order fulfillment</p>
+              <h4 className="text-gray-900 font-bold text-xs">Direct CJ Fulfillment</h4>
+              <p className="text-[11px] text-gray-500">Live tracked parcel updates</p>
             </div>
           </div>
         </div>
       </div>
 
       {/* Main Footer Links */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 grid grid-cols-1 md:grid-cols-12 gap-8 lg:gap-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 grid grid-cols-1 md:grid-cols-12 gap-8">
         {/* Brand Column */}
-        <div className="md:col-span-5 space-y-4">
-          <div className="flex items-center gap-2.5">
+        <div className="md:col-span-5 space-y-3">
+          <div className="flex items-center gap-2">
             <img 
               src="/logo.png" 
               alt="Ryanz Clothes" 
-              className="w-9 h-9 rounded-xl object-cover shadow-sm" 
+              className="w-7 h-7 rounded-md object-contain" 
             />
-            <span className="text-xl font-extrabold tracking-tighter text-gray-900">
-              RYANZ<span className="text-gray-400 font-light ml-1">CLOTHES</span>
+            <span className="text-base font-extrabold tracking-tight text-gray-900 font-sans uppercase">
+              RYANZ<span className="text-gray-400 font-normal ml-1">CLOTHES</span>
             </span>
           </div>
           <p className="text-xs text-gray-500 leading-relaxed max-w-sm">
             Engineered for modern streetwear enthusiasts. Premium cuts, heavy custom-milled fabrics, and architectural silhouettes designed for everyday rotation.
           </p>
+          <p className="text-[11px] text-gray-400 pt-1">
+            Department of Information Technology Engineering (ITE) &bull; Royal University of Phnom Penh (RUPP)
+          </p>
         </div>
 
         {/* Quick Links */}
-        <div className="md:col-span-2 space-y-3">
-          <h4 className="text-xs font-bold uppercase tracking-wider text-gray-900">Store Navigation</h4>
-          <ul className="space-y-2 text-xs">
+        <div className="md:col-span-2 space-y-2.5">
+          <h4 className="text-xs font-bold uppercase tracking-wider text-gray-900">Navigation</h4>
+          <ul className="space-y-1.5 text-xs">
             <li><Link to="/" className="hover:text-black transition-colors">Home</Link></li>
             <li><Link to="/shop" className="hover:text-black transition-colors">Shop All</Link></li>
             <li><Link to="/about" className="hover:text-black transition-colors">About Us</Link></li>
-            <li><Link to="/services" className="hover:text-black transition-colors">Our Services</Link></li>
-            <li><Link to="/contact" className="hover:text-black transition-colors">Contact Us</Link></li>
+            <li><Link to="/services" className="hover:text-black transition-colors">Services</Link></li>
+            <li><Link to="/contact" className="hover:text-black transition-colors">Contact</Link></li>
             <li><Link to="/my-orders" className="hover:text-black transition-colors font-medium">Track Orders</Link></li>
           </ul>
         </div>
 
         {/* Dynamic Categories */}
-        <div className="md:col-span-2 space-y-3">
-          <h4 className="text-xs font-bold uppercase tracking-wider text-gray-900">Categories</h4>
-          <ul className="space-y-2 text-xs">
-            {categories.length > 0 ? (
-              categories.map(cat => (
+        <div className="md:col-span-2 space-y-2.5">
+          <h4 className="text-xs font-bold uppercase tracking-wider text-gray-900">Collections</h4>
+          <ul className="space-y-1.5 text-xs">
+            {categories.length === 0 ? (
+              <li className="text-gray-400">Loading...</li>
+            ) : (
+              categories.map((cat) => (
                 <li key={cat.id}>
-                  <Link 
-                    to={`/shop?category=${cat.slug || cat.name}`} 
+                  <Link
+                    to={`/shop?category=${cat.slug || cat.name}`}
                     className="hover:text-black transition-colors"
                   >
                     {cat.name}
                   </Link>
                 </li>
               ))
-            ) : (
-              <li className="text-gray-400">Loading categories...</li>
             )}
           </ul>
         </div>
 
-        {/* Newsletter */}
+        {/* Academic Project Presentation Deck link */}
         <div className="md:col-span-3 space-y-3">
-          <h4 className="text-xs font-bold uppercase tracking-wider text-gray-900">Stay In The Loop</h4>
-          <p className="text-xs text-gray-500">
-            Subscribe for secret drops, seasonal lookbooks, and private discount codes.
+          <h4 className="text-xs font-bold uppercase tracking-wider text-gray-900">Academic Capstone</h4>
+          <p className="text-xs text-gray-500 leading-relaxed">
+            Developer: <strong className="text-gray-900">Morn Sotheara</strong><br />
+            Advisor: <strong className="text-gray-900">Chhim Bunchhun</strong>
           </p>
-          <form onSubmit={(e) => { e.preventDefault(); alert("Thanks for subscribing to Ryanz Clothes newsletter!"); }} className="flex gap-2">
-            <input
-              type="email"
-              placeholder="Enter your email"
-              required
-              className="bg-gray-50 text-gray-900 text-xs px-3 py-2 rounded-xl border border-gray-200 focus:outline-none focus:border-black flex-1"
-            />
-            <button
-              type="submit"
-              className="px-4 py-2 bg-black text-white hover:bg-gray-800 text-xs font-bold rounded-xl transition-colors flex items-center justify-center"
-            >
-              <ArrowRight className="w-4 h-4" />
-            </button>
-          </form>
+          <a
+            href="/presentation.html"
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex items-center gap-1.5 px-3 py-2 bg-gray-100 hover:bg-gray-200 text-gray-900 text-xs font-semibold rounded-lg border border-gray-200 transition-colors"
+          >
+            <span>View Presentation Deck (12 Slides)</span>
+            <span>&rarr;</span>
+          </a>
         </div>
       </div>
 
-      {/* Bottom Copyright & Policy Modals */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12 pt-6 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-gray-400">
-        <p>© {new Date().getFullYear()} Ryanz Clothes. All rights reserved.</p>
-        <div className="flex items-center gap-4">
+      {/* Bottom Legal & Copyright Bar */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-10 pt-6 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-gray-500">
+        <div>
+          &copy; {new Date().getFullYear()} Ryanz Clothes &bull; All Rights Reserved.
+        </div>
+
+        <div className="flex items-center gap-4 text-xs">
           <button 
-            type="button"
             onClick={() => setModalContent('privacy')}
-            className="hover:text-gray-800 transition-colors cursor-pointer"
+            className="hover:text-black transition-colors"
           >
             Privacy Policy
           </button>
+          <span>&bull;</span>
           <button 
-            type="button"
             onClick={() => setModalContent('terms')}
-            className="hover:text-gray-800 transition-colors cursor-pointer"
+            className="hover:text-black transition-colors"
           >
             Terms of Service
           </button>
         </div>
       </div>
 
-      {/* Policy Modal Overlay */}
+      {/* Privacy Policy / Terms Modal */}
       {modalContent && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 space-y-4 shadow-2xl relative animate-in fade-in zoom-in duration-200">
+        <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl max-w-lg w-full p-6 space-y-4 shadow-xl border border-gray-200 relative animate-in fade-in zoom-in duration-150">
             <div className="flex items-center justify-between pb-3 border-b border-gray-100">
-              <h3 className="text-base font-extrabold text-gray-900">
+              <h3 className="text-base font-bold text-gray-900">
                 {modalContent === 'privacy' ? 'Privacy Policy' : 'Terms of Service'}
               </h3>
               <button 
                 onClick={() => setModalContent(null)}
-                className="p-1 rounded-full text-gray-400 hover:text-black hover:bg-gray-100 transition-colors"
+                className="p-1 rounded-lg text-gray-400 hover:text-black hover:bg-gray-100 transition-colors"
               >
-                <X className="w-5 h-5" />
+                <X className="w-4 h-4" />
               </button>
             </div>
 
-            <div className="text-xs text-gray-600 space-y-3 max-h-96 overflow-y-auto pr-1 leading-relaxed">
+            <div className="text-xs text-gray-600 space-y-3 max-h-80 overflow-y-auto pr-1">
               {modalContent === 'privacy' ? (
                 <>
                   <p>
-                    At <strong>Ryanz Clothes</strong>, we take your personal data privacy seriously. This policy describes how your information is collected, protected, and processed.
+                    <strong>1. Information Collection:</strong> Ryanz Clothes collects order delivery details (name, email, shipping address, and phone number) strictly for processing and dispatching orders via cloud dropshipping fulfillment.
                   </p>
-                  <h4 className="font-bold text-gray-900">1. Information We Collect</h4>
                   <p>
-                    When you purchase items or register an account, we collect necessary contact information (name, email, shipping address) to fulfill your orders and calculate zero-shipping freight delivery.
+                    <strong>2. Data Protection:</strong> User authentication and customer profile data are secured via Google Firebase Authentication and Cloud Firestore security rules.
                   </p>
-                  <h4 className="font-bold text-gray-900">2. Security &amp; Cloud Storage</h4>
                   <p>
-                    Your data is securely authenticated and stored using Google Cloud Firebase security rules with end-to-end SSL encryption. We never sell your personal information.
+                    <strong>3. Third-Party Fulfillment:</strong> Order items and shipping addresses are synchronized with CJ Dropshipping Open API to generate international tracking numbers.
                   </p>
                 </>
               ) : (
                 <>
                   <p>
-                    Welcome to <strong>Ryanz Clothes</strong>. By accessing our platform and placing orders, you agree to the following terms and conditions.
+                    <strong>1. Orders &amp; Pricing:</strong> All prices are displayed in USD ($). Orders placed on Ryanz Clothes are processed immediately for international dispatch.
                   </p>
-                  <h4 className="font-bold text-gray-900">1. Free Delivery Guarantee</h4>
                   <p>
-                    Every order placed on Ryanz Clothes includes 100% free worldwide delivery with zero hidden delivery charges at checkout.
+                    <strong>2. Complimentary Shipping:</strong> We provide 100% free worldwide shipping with end-to-end milestone tracking.
                   </p>
-                  <h4 className="font-bold text-gray-900">2. 30-Day Returns</h4>
                   <p>
-                    Items in original condition with tags attached are eligible for exchange or return within 30 days of package receipt.
+                    <strong>3. Returns &amp; Exchanges:</strong> Customers may request size exchanges or returns within 30 days of receiving their parcel.
                   </p>
                 </>
               )}
             </div>
 
-            <div className="pt-2">
+            <div className="pt-2 border-t border-gray-100 flex justify-end">
               <button
                 onClick={() => setModalContent(null)}
-                className="w-full py-3 bg-black text-white text-xs font-bold rounded-2xl hover:bg-gray-800 transition-colors"
+                className="px-4 py-2 bg-black text-white text-xs font-semibold rounded-lg hover:bg-gray-800 transition-colors"
               >
-                Got It
+                Close
               </button>
             </div>
           </div>

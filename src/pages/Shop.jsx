@@ -437,6 +437,9 @@ export const Shop = () => {
                 </button>
 
                 <div className="flex items-center gap-2 ml-auto sm:ml-0">
+                  <span className="hidden md:inline-block text-[11px] font-semibold text-gray-500 bg-gray-100 px-2.5 py-1 rounded-lg">
+                    {filteredProducts.length} styles ready
+                  </span>
                   <span className="text-xs text-slate-400 font-medium">Sort:</span>
                   <select
                     value={sortBy}

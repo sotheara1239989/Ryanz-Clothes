@@ -524,13 +524,12 @@ export const ProductDetails = () => {
 
               <div className="absolute top-4 left-4 flex flex-col gap-2">
                 {hasDiscount && (
-                  <span className="px-3 py-1 text-xs font-extrabold bg-rose-600 text-white rounded-full shadow-md">
+                  <span className="px-2.5 py-1 text-[11px] font-bold bg-rose-700 text-white rounded-md shadow-xs">
                     -{discountPercent}% OFF
                   </span>
                 )}
                 {featured && (
-                  <span className="px-3 py-1 text-xs font-bold bg-amber-500 text-white rounded-full shadow-md flex items-center gap-1">
-                    <Sparkles className="w-3.5 h-3.5" />
+                  <span className="px-2.5 py-1 text-[11px] font-semibold bg-amber-600 text-white rounded-md shadow-xs">
                     Featured
                   </span>
                 )}

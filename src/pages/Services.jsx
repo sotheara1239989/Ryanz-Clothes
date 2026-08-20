@@ -53,10 +53,10 @@ export const Services = () => {
         </div>
 
         {/* Services Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {servicesList.map((srv, idx) => (
-            <div key={idx} className="bg-white rounded-3xl p-8 border border-gray-100 shadow-xs space-y-3 hover:shadow-sm transition-shadow">
-              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block">{srv.num}</span>
+            <div key={idx} className="bg-white rounded-2xl p-6 sm:p-8 border border-gray-200 shadow-xs space-y-3 hover:border-gray-300 transition-colors">
+              <span className="text-xs font-bold font-mono text-slate-400 block">{srv.num}</span>
               <h3 className="text-base font-bold text-slate-950">{srv.title}</h3>
               <p className="text-xs text-slate-500 leading-relaxed">{srv.desc}</p>
             </div>
@@ -64,7 +64,7 @@ export const Services = () => {
         </div>
 
         {/* Why Choose Us Card */}
-        <div className="bg-slate-950 rounded-3xl p-8 sm:p-12 text-white border border-slate-800 shadow-xl">
+        <div className="bg-slate-950 rounded-2xl p-8 sm:p-12 text-white border border-slate-800 shadow-xl">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
             <div className="lg:col-span-7 space-y-4">
               <span className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400">The Ryanz Difference</span>
@@ -82,7 +82,7 @@ export const Services = () => {
               </div>
             </div>
 
-            <div className="lg:col-span-5 space-y-3 bg-slate-900/80 p-6 rounded-2xl border border-slate-800 text-xs text-slate-300">
+            <div className="lg:col-span-5 space-y-3 bg-slate-900/80 p-6 rounded-xl border border-slate-800 text-xs text-slate-300">
               <div className="flex items-center gap-2">
                 <span className="text-slate-400 font-bold">&bull;</span>
                 <span>Zero hidden shipping costs at checkout</span>

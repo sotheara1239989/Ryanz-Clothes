@@ -91,6 +91,42 @@ export const Home = () => {
         </div>
       </section>
 
+      {/* Brand Guarantees Quick Strip */}
+      <div className="bg-white border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-xs">
+            <div className="flex items-center gap-2.5">
+              <span className="w-2 h-2 rounded-full bg-emerald-600 shrink-0" />
+              <div>
+                <strong className="text-slate-900 block font-bold">100% Free Shipping</strong>
+                <span className="text-slate-500 text-[11px]">Zero courier freight fees</span>
+              </div>
+            </div>
+            <div className="flex items-center gap-2.5">
+              <span className="w-2 h-2 rounded-full bg-slate-900 shrink-0" />
+              <div>
+                <strong className="text-slate-900 block font-bold">460GSM French Terry</strong>
+                <span className="text-slate-500 text-[11px]">Custom architectural drape</span>
+              </div>
+            </div>
+            <div className="flex items-center gap-2.5">
+              <span className="w-2 h-2 rounded-full bg-blue-600 shrink-0" />
+              <div>
+                <strong className="text-slate-900 block font-bold">Direct CJ Fulfillment</strong>
+                <span className="text-slate-500 text-[11px]">End-to-end tracked parcels</span>
+              </div>
+            </div>
+            <div className="flex items-center gap-2.5">
+              <span className="w-2 h-2 rounded-full bg-amber-600 shrink-0" />
+              <div>
+                <strong className="text-slate-900 block font-bold">30-Day Free Returns</strong>
+                <span className="text-slate-500 text-[11px]">Hassle-free size exchange</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-16 flex-1">
         <section className="space-y-6">
           <div className="flex items-center justify-between border-b border-gray-200 pb-4">
