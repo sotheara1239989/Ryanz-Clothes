@@ -17,6 +17,7 @@ import Profile from './pages/Profile';
 import MyOrders from './pages/MyOrders';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import ForgotPassword from './pages/ForgotPassword';
 
 // Admin Components & Pages
 import AdminLayout from './components/admin/AdminLayout';
@@ -74,6 +75,7 @@ export function App() {
                 <Route path="/track-orders" element={<MyOrders />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
+                <Route path="/forgot-password" element={<ForgotPassword />} />
               </Route>
 
               {/* Admin Panel Routes (Protected for Admin) */}

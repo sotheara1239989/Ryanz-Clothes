@@ -5,7 +5,8 @@ import {
   signInWithPopup, 
   signOut, 
   onAuthStateChanged,
-  updateProfile
+  updateProfile,
+  sendPasswordResetEmail
 } from 'firebase/auth';
 import { auth, googleProvider } from '../firebase/config';
 import { getUserProfile, syncUserProfile, updateUserProfile } from '../services/userService';
@@ -68,6 +69,10 @@ export const AuthProvider = ({ children }) => {
     return userCredential;
   };
 
+  const resetPassword = async (email) => {
+    return sendPasswordResetEmail(auth, email);
+  };
+
   const loginWithGoogle = async () => {
     const result = await signInWithPopup(auth, googleProvider);
     if (result.user) {
@@ -97,6 +102,7 @@ export const AuthProvider = ({ children }) => {
     loading,
     login,
     register,
+    resetPassword,
     loginWithGoogle,
     logout,
     updateProfileData

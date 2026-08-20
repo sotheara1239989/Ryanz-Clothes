@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { LogIn, Mail, Lock, ShieldCheck, ArrowRight } from 'lucide-react';
+import { LogIn, Mail, Lock, ShieldCheck, ArrowRight, KeyRound, X, Send, CheckCircle2, AlertCircle } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 
@@ -10,7 +10,14 @@ export const Login = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const { login, loginWithGoogle } = useAuth();
+  // Forgot password modal state
+  const [isForgotModalOpen, setIsForgotModalOpen] = useState(false);
+  const [resetEmail, setResetEmail] = useState('');
+  const [resetLoading, setResetLoading] = useState(false);
+  const [resetSubmitted, setResetSubmitted] = useState(false);
+  const [resetError, setResetError] = useState(null);
+
+  const { login, loginWithGoogle, resetPassword } = useAuth();
   const { showToast } = useToast();
   const navigate = useNavigate();
   const location = useLocation();
@@ -48,6 +55,33 @@ export const Login = () => {
     }
   };
 
+  const handleForgotPasswordSubmit = async (e) => {
+    e.preventDefault();
+    if (!resetEmail.trim()) {
+      setResetError("Please enter your registered email address.");
+      return;
+    }
+
+    try {
+      setResetError(null);
+      setResetLoading(true);
+      await resetPassword(resetEmail.trim());
+      setResetSubmitted(true);
+      showToast("Password reset link sent! Check your inbox.", "success");
+    } catch (err) {
+      console.error("Reset error:", err);
+      let msg = "Failed to send reset link.";
+      if (err.code === 'auth/user-not-found') {
+        msg = "No user found with this email.";
+      } else if (err.code === 'auth/invalid-email') {
+        msg = "Please enter a valid email address.";
+      }
+      setResetError(msg);
+    } finally {
+      setResetLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-[80vh] flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full bg-white rounded-3xl p-8 sm:p-10 border border-gray-100 shadow-xl space-y-8">
@@ -64,8 +98,9 @@ export const Login = () => {
         </div>
 
         {error && (
-          <div className="p-3 bg-rose-50 border border-rose-200 text-rose-700 text-xs rounded-xl font-medium">
-            {error}
+          <div className="p-3.5 bg-rose-50 border border-rose-200 text-rose-700 text-xs rounded-2xl font-medium flex items-center gap-2">
+            <AlertCircle className="w-4 h-4 shrink-0" />
+            <span>{error}</span>
           </div>
         )}
 
@@ -87,7 +122,21 @@ export const Login = () => {
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-700 mb-1">Password</label>
+            <div className="flex items-center justify-between mb-1">
+              <label className="block text-xs font-semibold text-slate-700">Password</label>
+              <button
+                type="button"
+                onClick={() => {
+                  setResetEmail(email);
+                  setResetError(null);
+                  setResetSubmitted(false);
+                  setIsForgotModalOpen(true);
+                }}
+                className="text-[11px] font-bold text-slate-600 hover:text-slate-950 transition-colors hover:underline"
+              >
+                Forgot password?
+              </button>
+            </div>
             <div className="relative">
               <input
                 type="password"
@@ -148,6 +197,98 @@ export const Login = () => {
         </div>
 
       </div>
+
+      {/* Forgot Password Modal */}
+      {isForgotModalOpen && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl max-w-md w-full p-6 sm:p-8 space-y-6 shadow-2xl border border-gray-100 text-slate-900 relative animate-in fade-in zoom-in duration-150">
+            
+            <div className="flex items-center justify-between pb-3 border-b border-gray-100">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-xl bg-slate-950 text-white flex items-center justify-center">
+                  <KeyRound className="w-4 h-4 text-emerald-400" />
+                </div>
+                <h3 className="text-base font-extrabold text-slate-950">Reset Password</h3>
+              </div>
+              <button
+                onClick={() => setIsForgotModalOpen(false)}
+                className="p-1 text-slate-400 hover:text-slate-900 rounded-lg transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {resetError && (
+              <div className="p-3 bg-rose-50 border border-rose-200 text-rose-700 text-xs rounded-xl font-medium flex items-center gap-2">
+                <AlertCircle className="w-4 h-4 shrink-0" />
+                <span>{resetError}</span>
+              </div>
+            )}
+
+            {resetSubmitted ? (
+              <div className="text-center space-y-4 py-2">
+                <div className="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-full flex items-center justify-center mx-auto border border-emerald-200">
+                  <CheckCircle2 className="w-6 h-6" />
+                </div>
+                <div className="space-y-1">
+                  <h4 className="text-sm font-bold text-slate-900">Reset Email Dispatched!</h4>
+                  <p className="text-xs text-slate-500 leading-relaxed">
+                    We've sent a secure reset link to <strong>{resetEmail}</strong>. Please check your inbox and spam folder.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setIsForgotModalOpen(false)}
+                  className="w-full py-2.5 bg-slate-950 hover:bg-black text-white text-xs font-bold rounded-xl transition-all"
+                >
+                  Close &amp; Return to Sign In
+                </button>
+              </div>
+            ) : (
+              <form onSubmit={handleForgotPasswordSubmit} className="space-y-4">
+                <p className="text-xs text-slate-500 leading-relaxed">
+                  Enter your email address and Firebase will send you a secure link to reset your account password.
+                </p>
+
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">Email Address</label>
+                  <div className="relative">
+                    <input
+                      type="email"
+                      value={resetEmail}
+                      onChange={(e) => setResetEmail(e.target.value)}
+                      required
+                      placeholder="yourname@example.com"
+                      className="w-full pl-9 pr-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:outline-none focus:border-slate-900"
+                    />
+                    <Mail className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
+                  </div>
+                </div>
+
+                <div className="flex gap-2 pt-2">
+                  <button
+                    type="button"
+                    onClick={() => setIsForgotModalOpen(false)}
+                    className="flex-1 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl transition-all"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={resetLoading}
+                    className="flex-1 py-2.5 bg-slate-950 hover:bg-black disabled:bg-slate-400 text-white text-xs font-bold rounded-xl transition-all flex items-center justify-center gap-1.5 shadow"
+                  >
+                    <Send className="w-3.5 h-3.5" />
+                    <span>{resetLoading ? 'Sending...' : 'Send Link'}</span>
+                  </button>
+                </div>
+              </form>
+            )}
+
+          </div>
+        </div>
+      )}
+
     </div>
   );
 };
